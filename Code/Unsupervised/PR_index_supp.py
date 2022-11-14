@@ -1,0 +1,386 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Sat Nov  5 10:58:02 2022
+
+@author: jbaer
+"""
+
+import re
+import string as st
+
+from nltk.tokenize import word_tokenize
+from nltk.corpus import stopwords
+from nltk.stem import PorterStemmer
+from collections import Counter
+from tqdm import tqdm
+import numpy as np
+
+class prepare_text:
+    
+    def __init__(self, text):
+        self.text = text
+
+    def preproces_text(self):
+        
+        def clean_sentence(sentence):
+        
+            # remove numbers
+            sentence = re.sub(r'\d+', '', sentence)
+            
+            # define punctations
+            punct = st.punctuation + ('“”–€–’')
+            
+            # remove punctuations and convert characters to lower case
+            sentence = "".join([char.lower() for char in sentence if char not in punct]) 
+            
+            # replace multiple whitespace with single whitespace and remove leading and trailing whitespaces
+            sentence = re.sub('\s+', ' ', sentence).strip()
+        
+            return (sentence)
+    
+        port_stemmer = PorterStemmer()
+        
+        preprocessed_text = []
+            
+        for sentence in tqdm(self.text):
+            
+            #text = ' '.join(text)
+            
+            # use clean text function on data
+            sentence = clean_sentence(sentence)
+            
+            # tokenize text
+            tokens = word_tokenize(sentence)
+            
+            # define stopwords
+            # stop_words = set(stopwords.words('english')) 
+            stop_words = set(stopwords.words('german')) 
+            
+            # define words which mark negations
+            negation_words = ['kein', 'keine', 'keinem', 'keinen', 'keiner', 'keines', 'nicht', 'nichts', 'ohne']
+            
+            # only keep stopwords which are not negation words
+            for word in negation_words:
+                
+                stop_words.discard(word)
+            
+            # stem text and delete stopwords from it
+            stem_sentence = [port_stemmer.stem(w) for w in tokens]
+            stem_sentence = [w for w in stem_sentence if not w in stop_words]
+            
+            preprocessed_text.append(stem_sentence)
+            
+        return(preprocessed_text)
+
+def count_ngrams(data):
+    '''
+    This function takes sentences and given labels for each sentence as input
+    and counts how often each n_gram in the corpus occurs for each label.
+
+    Parameters
+    ----------
+    data : Pandas DataFrame with a column "Sentences", "Label" and "tokens"
+    
+    Returns
+    -------
+    word dictionary : Dictionary with all n-grams wich occur at least 2 times in the corpus and the count 
+    of their occurences in each class.
+    
+    n_grams: list of all n_grams in the coprus which occur at least 2 times
+    '''
+    
+    # create dictionary for the occurence of the n_grams for each label
+    word_dict = dict()
+    
+    # create dictionaryfor the occurence of the n_grams (independent of label)
+    word_count = dict()
+    
+    for index, tokens in enumerate(tqdm((data['tokens']))):
+        
+        # select the current label 
+        label = data.iloc[index]['Label']
+        
+        # Go through each n-gram from 10-gram to 1-gram (starting at 10-grams) where n = j
+        for j in reversed(range(1,11)):
+            
+            # Split tokens into j-grams
+            grams = [tokens[i:i+j] for i in range(len(tokens)-j+1)]
+            
+            if len(grams) != 0:
+            
+                for token in grams:
+                    
+                    if len(token) > 1:
+                      
+                        # join tokens and save them together with the current label
+                        token = ' '.join(token)
+                        entry = tuple([label,token])
+                        
+                        # if the entry is already in the dict, increase the 
+                        # coresponding count by 1 otherwise create a new 
+                        # entry 
+                        if entry in word_dict.keys():
+                            
+                            word_dict[entry] += 1
+                        
+                        else:
+                            
+                            word_dict[entry] = 1
+                        
+                        # do the same as above for the word_count dict without the labels
+                        if token in word_count.keys():
+                            
+                            word_count[token] += 1
+                            
+                        else:
+                            
+                            word_count[token] = 1
+                            
+                    
+                    else:
+                        
+                        token = token[0]
+                        entry = tuple([label,token])
+    
+                        if entry in word_dict.keys():
+                            
+                            word_dict[entry] += 1
+                        
+                        else:
+                            
+                            word_dict[entry] = 1
+                            
+                        if token in word_count.keys():
+                            
+                            word_count[token] += 1
+                            
+                        else:
+                            
+                            word_count[token] = 1
+    
+    n_grams = [word for word, count in word_count.items() if count > 1]
+    word_dict = {word:count for word, count in tqdm(word_dict.items()) if word[1] in n_grams}
+    
+    return(word_dict, n_grams)
+
+def create_dict(word_dict, n_grams, typ):
+    
+    direction_lex = pd.DataFrame({'n_grams': n_grams, 'positive ' + typ: np.repeat(0, len(n_grams)), 'neutral ' + typ: np.repeat(0, len(n_grams)), 'negative ' + typ: np.repeat(0, len(n_grams))})
+
+    for gram, count in tqdm(word_dict.items()):
+        
+        #if gram[1] in n_grams:
+            
+            word = gram[1]
+            label = gram[0]
+            
+            if label == 2:
+                
+                direction_lex.loc[direction_lex['n_grams'] == word, 'positive ' + typ] = count
+                
+            if label == 1:
+            
+                direction_lex.loc[direction_lex['n_grams'] == word, 'neutral ' + typ] = count
+            
+            if label == 0:
+            
+                direction_lex.loc[direction_lex['n_grams'] == word, 'negative ' + typ] = count
+                
+    direction_lex['positive ' + typ + ' index'] = direction_lex['positive ' + typ]/(direction_lex['positive ' + typ] + direction_lex['neutral ' + typ] + direction_lex['negative ' + typ])
+    direction_lex['neutral ' + typ + ' index'] = direction_lex['neutral ' + typ]/(direction_lex['positive ' + typ] + direction_lex['neutral ' + typ] + direction_lex['negative ' + typ])
+    direction_lex['negative ' + typ + ' index'] = direction_lex['negative ' + typ]/(direction_lex['positive '+ typ] + direction_lex['neutral ' + typ] + direction_lex['negative ' + typ])
+                
+    return(direction_lex)
+
+def create_index(data, PR_lex):
+    
+    pos_list = []
+    neu_list = []
+    neg_list = []
+    
+    index_list = []
+    
+    negation_words = ['kein', 'keine', 'keinem', 'keinen', 'keiner', 'keines', 'nicht', 'nichts', 'ohne']
+    
+    for tokens in tqdm(data['tokens']):
+        
+        start_tokens = tokens.copy()
+        
+        negation_index = np.array([1 if neg in negation_words else 0 for neg in tokens])
+        negation_index = np.where(negation_index == 1)[0]
+        
+        negations = []
+        
+        for idx in negation_index:
+                    
+            start = max(0, idx -2)
+            end = min(len(tokens)-1, idx + 2)
+        
+            negations.extend(list(range(start, end+1)))
+                    
+        negations = list(set(negations))
+        
+        # if negations !=[]:
+            
+        #     print(tokens)
+        
+        pos = 0
+        neu = 0
+        neg = 0
+    
+        # tokens = ['inflat', 'eurozon', 'inflat', 'nicht', 'inflat', 'inflat', 'inflat', 'inflat', 'inflat', 'nicht', 'inflat']
+        # tokens = ['jüngste', 'abwertung', 'de', 'usdollar', 'dürfte', 'meinung', 'nicht', 'negativ', 'wachstum', 'inflat', 'auswirken']
+    
+        # Go through each n-gram from 8-gram to 1-gram (starting at 8-grams) where n = j
+        for j in reversed(range(1,9)):
+            
+            if j == 1:
+                
+                grams = tokens
+                keywords = [tuple(ngram)[0] for ngram in PR_lex['tokens'] if len(ngram) == j]
+                     
+            else:
+                
+                # Split tokens into j-grams
+                grams = [tuple(tokens[i:i+j]) for i in range(len(tokens)-j+1)]
+                
+                # Filter out all j-grams from lexicon
+                keywords = [tuple(ngram) for ngram in PR_lex['tokens'] if len(ngram) == j]
+                
+                # if negations != []:
+                
+                #     neg_grams = [tuple(tokens[i:i+j]) for i in range(len(tokens)-j+1)]
+    
+           
+            # Count j-grams
+            #counts = dict(Counter(grams))  
+            
+            # Delete all n-grams from tokens which are not j-grams
+            #keywords_speech = dict([(k,v) for k,v in counts.items() if k in keywords])
+            
+            keywords_speech = [k for k in grams if k in keywords]
+            
+            tokens = ['inflat', 'eurozon', 'inflat', 'nicht', 'inflat', 'inflat', 'inflat', 'inflat', 'inflat', 'nicht', 'inflat']
+      
+            del_index = []  
+      
+            if j > 1 and keywords_speech != []:
+                
+                #print(j)
+                
+                idx_start = 0
+                
+                # delete n_grams which were already considered previosly 
+                for n_gram in keywords_speech:
+                    
+                    for i in range(len(tokens)+1-j):
+                        
+                        if tokens[i] == n_gram[0] and tokens[i+len(n_gram)-1] == n_gram[-1]:
+                            
+                            idx_start = i
+                            idx_end = idx_start + j 
+                            
+                            del_idx = list(range(idx_start, idx_end+1))
+                            del_index.extend(del_idx)
+                    
+                            # idx_start = tokens.index(n_gram[0])
+                            
+                        #del tokens[idx_start:idx_end]
+            
+            del_index = list(set(del_index))
+            
+            def delete_multiple_element(list_object, indices):
+                indices = sorted(indices, reverse=True)
+                for idx in indices:
+                    if idx < len(list_object):
+                        list_object.pop(idx)
+            
+            delete_multiple_element(tokens, del_index)
+            
+            grams_idx = [i for i in range(len(grams)) if grams[i] in keywords_speech]
+            
+            if negations != []:
+            
+                negations_ind = [-1 if gram_idx in negations else 1 for gram_idx in grams_idx]
+                
+            else:
+                
+                negations_ind = [1]*len(keywords_speech)
+            
+            # Count all lexicon j-grams in tokens und multiply the number of their 
+            # occurrences with their respective probabilities
+            
+            if keywords_speech != []:
+            
+                for idx, k in enumerate(keywords_speech):
+                    
+                    if j > 1:
+                        
+                        k = ' '.join(k)
+                                                                
+                    negation = negations_ind[idx]
+    
+                    keyword_prob = PR_lex[PR_lex['keyword'] == k]
+                
+                    if negation == -1:
+                    
+                        pos += float(keyword_prob['negative'])
+                        neu += float(keyword_prob['neutral'])
+                        neg += float(keyword_prob['positive'])
+                        
+                    elif negation == 1:
+                        
+                        pos += float(keyword_prob['positive'])
+                        neu += float(keyword_prob['neutral'])
+                        neg += float(keyword_prob['negative'])
+                
+            
+            # ?????
+            # for keyword in keywords_speech:
+            
+            #     ind = [range(i,i+len(keyword)) for i,x in enumerate(tokens) if tokens[i:i+len(keyword)] == keyword]
+            #     ind_set = set([item for sublist in ind for item in sublist])
+            #     tokens = [x for i,x in enumerate(tokens) if i not in ind_set]     
+          
+        label_all = pos + neu + neg
+        
+        pos_share = pos/label_all
+        neu_share = neu/label_all
+        neg_share = neg/label_all
+        
+        pos_list.append(pos_share)
+        neu_list.append(neu_share)
+        neg_list.append(neg_share)
+        
+        index = pos_share - neg_share
+        
+        index_list.append(index)
+    
+    data['pos share'] = pos_list
+    data['neu share'] = neu_list
+    data['neg share'] = neg_list
+    
+    data['index'] = index_list 
+    
+    #data['date'] = pd.to_datetime(data['date'])
+  
+    return(data)
+
+def inf_senti_index(data):
+
+    index = []    
+    count = []
+
+    for year in set(data['year']):
+        
+        yearly_data = data[data['year'] == year]
+        
+        for month in set(yearly_data['month']):
+            
+            monthly_data = yearly_data[yearly_data['month'] == month]
+            idx = (len(monthly_data[monthly_data['Label'] == 2]) - len(monthly_data[monthly_data['Label'] == 0]))/len(monthly_data)
+            
+            count.append(len(monthly_data))
+            index.append(idx)
+            
+    return(count, index)
