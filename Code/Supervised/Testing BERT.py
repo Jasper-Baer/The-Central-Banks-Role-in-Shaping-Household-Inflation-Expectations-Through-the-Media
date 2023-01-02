@@ -14,6 +14,8 @@ import matplotlib.pyplot as plt
 from sklearn import preprocessing
 from sklearn.preprocessing import MinMaxScaler
 
+from tqdm import tqdm
+
 import torch
 import pandas as pd
 #from transformers import BertModel
@@ -44,18 +46,18 @@ np.random.seed(seed)
 ##############################################################################
 
 # Load data
-#data = pd.read_excel(r'D:\Studium\PhD\Single Author\Data\ECB\press_sents_sample_labeled_speeches_v02.xlsx')
-data = pd.read_excel(r'D:\Studium\PhD\Single Author\Data\inflation_lemmas_example.xlsx')
+data = pd.read_excel(r'D:\Studium\PhD\Single Author\Data\ECB\press_sents_sample_labeled_speeches_v02.xlsx')
+#data = pd.read_excel(r'D:\Studium\PhD\Single Author\Data\inflation_lemmas_example.xlsx')
 
-#idx = data['index']
-data = data[0:2000]
-#data = data[1288:2250]
+#data = data[0:3000]
 
-data = data.rename(columns = {'sentence': 'Sentences', 'Sentiment' : 'Label'})[['Sentences', 'Label']]
+data = data[0:2250]
+
+#data = data.rename(columns = {'sentence': 'Sentences', 'Sentiment' : 'Label'})[['Sentences', 'Label']]
 #data = data.rename(columns = {'sentence': 'Sentences', 'Direction' : 'Label'})[['Sentences', 'Label']]
 #data = data.rename(columns = {'sentence': 'Sentences', 'monetary' : 'Label'})[['Sentences', 'Label']]
 #data = data.rename(columns = {'sentence': 'Sentences', 'outlook' : 'Label'})[['Sentences', 'Label']]
-#data = data.rename(columns = {'sentence': 'Sentences', 'inflation' : 'Label'})[['Sentences', 'Label']]
+data = data.rename(columns = {'sentence': 'Sentences', 'inflation' : 'Label'})[['Sentences', 'Label']]
 
 ##############################################################################
 # Initialize BERT
@@ -65,11 +67,12 @@ data = data.rename(columns = {'sentence': 'Sentences', 'Sentiment' : 'Label'})[[
 # german deepset/gbert-base
 
 # Set word embedding model
-# word_embedding = "bert-base-uncased"
-word_embedding = "deepset/gbert-base"
+word_embedding = "bert-base-uncased"
+#word_embedding = "deepset/gbert-base"
 
-# PATH = r"D:\Studium\PhD\Single Author\Code\News\Sentiment\model_BERT_ecb_mon_speeches.pt"
-PATH = r"D:\Studium\PhD\Single Author\Code\News\Sentiment\model_BERT_news_sent.pt"
+PATH = r"D:\Studium\PhD\Single Author\Code\News\Sentiment\model_BERT_ecb_inf_speeches.pt"
+
+#PATH = r"D:\Studium\PhD\Single Author\Code\News\Sentiment\model_BERT_news_sent.pt"
 
 model = train_test_BERT(data, word_embedding, PATH)
 #model.load_state_dict(torch.load(PATH))
@@ -89,21 +92,70 @@ data_full = pd.read_json(data_json)
 
 data_full = data_full.rename(columns = {'speeches': 'text'})
 
-data_sents = pd.DataFrame()
+data_ECB_sents = pd.DataFrame()
 
-for idx, text in enumerate(data_full['text']):
+for idx, text in tqdm(enumerate(data_full['text'])):
     
     for sent in text:
         
         date = data_full.iloc[idx]['date']    
-        data_sents = data_sents.append({'text': sent, 'date': date}, ignore_index=True)
+        data_ECB_sents = data_ECB_sents.append({'text': sent, 'date': date}, ignore_index=True)
     
-dataloader = pre_processing(data_sents, tokenizer, 100)
+dataloader = pre_processing(data_ECB_sents, tokenizer, 100)
 
-data_sents["Label"] = predict(model, dataloader)
-data_sents.to_excel('D:\Studium\PhD\Single Author\Data\ECB\press_sents_full_index_labeled_outlook.xlsx')
+data_ECB_sents["Label"] = predict(model, dataloader)
+data_ECB_sents.to_excel('D:\Studium\PhD\Single Author\Data\ECB\press_sents_full_index_labeled_inf.xlsx')
 
 ##############################################################################
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 data_labeled = pd.read_excel('D:\Studium\PhD\Single Author\Data\ECB\press_sents_full_index_labeled_outlook.xlsx')
 sentiment_index = []
@@ -138,19 +190,19 @@ data_sents['date'] = pd.to_datetime(data_sents['date'])
 
 ##############################################################################
 
-# data_news = pd.read_excel('D:\Studium\PhD\Single Author\Data\inflation_news.xlsx')
+data_news = pd.read_excel('D:\Studium\PhD\Single Author\Data\inflation_news.xlsx')
 
-# data_news = data_news.rename(columns = {'sentence': 'text'})
-# dataloader = pre_processing(data_news, tokenizer, 100)
+data_news = data_news.rename(columns = {'sentence': 'text'})
+dataloader = pre_processing(data_news, tokenizer, 100)
 
-# data_news["Label"] = predict(model, dataloader)
+data_news["Label"] = predict(model, dataloader)
 
 #data_news.to_csv('D:\Studium\PhD\Single Author\Data\dpa_dir_labels_test.csv')
-#data_news.to_csv('D:\Studium\PhD\Single Author\Data\dpa_sent_labels_test.csv')
+data_news.to_csv('D:\Studium\PhD\Single Author\Data\dpa_sent_labels_test.csv')
 
 ##############################################################################
 
-data_full_sents = pd.read_csv('D:\Studium\PhD\Single Author\Data\dpa_sents_v01.csv')
+#data_full_sents = pd.read_csv('D:\Studium\PhD\Single Author\Data\dpa_sents_v01.csv')
 
 
 

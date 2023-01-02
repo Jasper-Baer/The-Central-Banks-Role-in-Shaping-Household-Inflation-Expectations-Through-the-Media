@@ -9,6 +9,9 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 
+from sklearn.preprocessing import MinMaxScaler
+from matplotlib.collections import LineCollection
+
 def plot_news(data, monthly_count, lex_data = pd.DataFrame(), data_full_sents = pd.DataFrame()):
 
     dates_m = pd.date_range('1/1/1991', '1/1/2019', freq = 'M').tolist()
@@ -31,18 +34,21 @@ def plot_news(data, monthly_count, lex_data = pd.DataFrame(), data_full_sents = 
 
 ##############################################################################
 
-    dates_m = pd.date_range('1/1/2000', '1/1/2019', freq = 'M').tolist()
+    dates_m = pd.date_range('12/1/1999', '1/1/2019', freq = 'M').tolist()
     dates_q = pd.date_range('12/1/1999', '1/1/2019', freq = 'Q').tolist()
     dates_y = pd.date_range('1/1/2000', '1/1/2019', freq = 'Y').tolist()
     
-    data = data[108:]
+    data = data[107:]
     data_inflation_ger = pd.read_excel('D:\Studium\PhD\Single Author\Data\German_inflation_fred.xls')[10:29]
     
     data = pd.DataFrame(data)
-    data['count'] = monthly_count[108:]
+    data['count'] = monthly_count[107:]
     data.index = dates_m
     
     data_q = data.groupby(pd.Grouper(freq="Q")).mean()
+    
+    # correlation between dire_senti higher than just dire
+    #print(np.corrcoef(list(data_q.iloc[:,0]), list(inflation_ger_q.iloc[:,1])))
     
     ### Quarterly dire vs monthly dire
     
@@ -138,7 +144,7 @@ def plot_news(data, monthly_count, lex_data = pd.DataFrame(), data_full_sents = 
 
         ### relative count inf, bert dir quarterly 
     
-        monthly_absolute_count = data_full_sents.groupby(['year', 'month']).count()[108:].iloc[:,0]
+        monthly_absolute_count = data_full_sents.groupby(['year', 'month']).count()[107:].iloc[:,0]
         data['relative count'] = np.array(data['count'])/np.array(monthly_absolute_count)
         
         fig, ax1 = plt.subplots()
@@ -162,3 +168,61 @@ def plot_news(data, monthly_count, lex_data = pd.DataFrame(), data_full_sents = 
         fig.legend(loc = 'lower left')
         plt.title('Quarterly - Relative Count Inf vs Inf')
         plt.show()
+        
+def plot_dire_senti(senti, dire):
+    
+    dates_q = pd.date_range('12/1/1999', '1/1/2019', freq = 'Q').tolist()
+    senti = senti[108:]
+    dire = dire[108:]
+    
+    scaler = MinMaxScaler(feature_range=(0, 1))
+    scaler = scaler.fit(np.array(senti).reshape((len(senti), 1)))
+    sentiment_normalized = scaler.transform(np.array(senti).reshape((len(senti), 1)))
+    
+    colormap = plt.get_cmap('RdYlGn')
+    color = colormap(sentiment_normalized).reshape(len(senti),4)
+    
+    y = dire
+    x = dates_q
+    xy = np.array([x, y]).T.reshape(-1, 1, 2)
+    segments = np.hstack([xy[:-1], xy[1:]])
+    fig, ax = plt.subplots()
+    lc = LineCollection(segments, colors=color)
+    ax.add_collection(lc)
+    ax.autoscale()
+    ax.set_title('A multi-color plot')
+    plt.show()
+    
+def plot_inf_expt(senti, dire):
+    
+    ger_inf_exp = pd.read_excel("D:\Studium\PhD\Github\Single-Author\Data\consumer_subsectors_nsa_q5_nace2.xlsx", sheet_name = "TOT")["CONS.DE.TOT.5.B.M"]
+    ger_inf_exp = pd.read_excel("D:\Studium\PhD\Github\Single-Author\Data\consumer_subsectors_nsa_q6_nace2.xlsx", sheet_name = "TOT")["CONS.DE.TOT.6.B.M"]
+    ger_inf_exp = ger_inf_exp[180:408]
+    
+    dire_short = dire[108:]
+    senti_short = senti[108:]
+    
+    dates_m = pd.date_range('1/1/2000', '1/1/2019', freq = 'M').tolist()
+    #dates_q = pd.date_range('12/1/1999', '1/1/2019', freq = 'Q').tolist()
+    
+    fig, ax1 = plt.subplots()
+        
+    ax2 = ax1.twinx()
+    ax1.plot(dates_m, ger_inf_exp, color = 'green', label = 'Inf Past Exp')
+    ax2.plot(dates_m, dire_short, color = 'blue', label = 'News Dire')
+    
+    fig.legend(loc = 'lower left')
+    plt.title('News inf dire vs inf exp')
+    plt.show()
+    
+    fig, ax1 = plt.subplots()
+        
+    ax2 = ax1.twinx()
+    ax1.plot(dates_m, ger_inf_exp, color = 'green', label = 'Inf Past Exp')
+    ax2.plot(dates_m, senti_short, color = 'blue', label = 'News Senti')
+    
+    fig.legend(loc = 'lower left')
+    plt.title('News inf senti vs inf exp')
+    plt.show()
+    
+    

@@ -11,6 +11,8 @@ import re
 import os
 import nltk
 
+from tqdm import tqdm
+
 os.chdir("D:\Studium\PhD\Github\Single-Author\Code\ECB")
 
 from clean_data import clean_data
@@ -23,7 +25,7 @@ data = pd.read_json(data_json)
 
 press_cons = []
 
-for press_con in data['Texts']:
+for press_con in tqdm(data['Texts']):
     
     press_con = ' '.join(press_con)
 
@@ -72,7 +74,7 @@ data['press sent'] = [nltk.sent_tokenize(text) for text in data['clean press con
 
 press_sents = pd.DataFrame()
 
-for idx, press_sent in enumerate(data['press sent']):
+for idx, press_sent in tqdm(enumerate(data['press sent'])):
     
     for sent in press_sent:
         
@@ -96,14 +98,13 @@ questions_start = ['We are now ready to take your questions.',
                    'I am now at your disposal for questions.',
                    'We are now at your disposal should you have any questions.',
                    'We are now at your disposal for questions.',
-                   'We are now at your disposal for questions.',
                    'Click here for the transcript of questions and answers.']
 
 idx_questions = []
 QAs = []
 speeches = []
 
-for idx, con in enumerate(press_cons):
+for idx, con in tqdm(enumerate(press_cons)):
     
     idxs = None
     
@@ -220,6 +221,10 @@ for speech in speeches:
     for sent in speech:
         
         speeches_list.append(sent)
+
+#pd.DataFrame({'sentence':speeches_list}).to_excel('D:\Studium\PhD\Single Author\Data\ECB\press_sents_full.xlsx')
+
+##############################################################################
 
 data_train = pd.read_excel('D:\Studium\PhD\Single Author\Data\ECB\press_sents_sample_labeled.xlsx')   
 

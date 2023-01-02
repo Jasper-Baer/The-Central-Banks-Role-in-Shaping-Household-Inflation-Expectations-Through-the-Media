@@ -12,7 +12,6 @@ import os
 
 import pylab as plt
 
-
 from nltk.tokenize import word_tokenize
 from collections import Counter
 from ast import literal_eval
@@ -22,91 +21,62 @@ PATH = r"D:\Studium\PhD\Github\Single-Author\Code\Unsupervised"
 
 os.chdir(PATH)
 
-from PR_index_supp import prepare_text, count_ngrams, create_dict, create_index
-
-# f = open('D:\Studium\PhD\Single Author\Data\ECB\press_conferences_cleaned.json')
-# data_json = json.load(f)
-# data = pd.read_json(data_json)
-
-data = pd.read_excel(r'D:\Studium\PhD\Single Author\Data\inflation_lemmas_example.xlsx')
-data = data[0:2000]
-
-label_direction = data['Direction']
-label_sentiment = data['Sentiment']
-
-#data = data.rename(columns = {'sentence': 'Sentences', 'Direction' : 'Label'})[['Sentences', 'Label']]
-#data = data.rename(columns = {'sentence': 'Sentences'})
-
-data['tokens'] = prepare_text(data['sentence']).preproces_text()
+from PR_index_supp import prepare_text, create_index
 
 ##############################################################################
-# Direction
+# Prepare News Data
 ##############################################################################
 
-data['Label'] = label_direction
+# data_inf = pd.read_excel(r'D:\Studium\PhD\Single Author\Data\inflation_lemmas_examplev02.xlsx')
+# data_inf['tokens'] = prepare_text(data_inf['sentence']).preproces_text()
 
-word_dict, n_grams = count_ngrams(data)
-direction_lex = create_dict(word_dict, n_grams, 'direction')
-#direction_lex.drop(['n_grams'], axis = 1, inplace = True)
+# data_sent = pd.read_csv('D:\Studium\PhD\Single Author\Data\dpa_sents_v01.csv')
+# idx = data_inf['index']
+
+# data_final = data_sent.iloc[idx]
+# data_final.to_excel(r'D:\Studium\PhD\Github\Single-Author\Data\full_inf_prepared.xlsx')
+
+# dates = [str(int(year)) + ' ' + str(int(month)) + ' ' + str(int(day)) for year,month, day in zip(list(data_final['year']),list(data_final['month']), list(data_final['day']))]
+# dates = pd.to_datetime(dates, format = '%Y %m %d')
+
+# data_inf['date'] = dates
+
+# data_inf.drop(['Unnamed: 0', 'index'], axis = 1, inplace = True)
+
+# data_inf.to_excel(r'D:\Studium\PhD\Github\Single-Author\Data\full_inf_prepared.xlsx')
 
 ##############################################################################
-# Sentiment
+# Create Index
 ##############################################################################
 
-data['Label'] = label_sentiment
+# PR_lex_dir = pd.read_excel(r'D:\Studium\PhD\Github\Single-Author\Data\PR_lex_dir_news.xlsx')
+# PR_lex_sent = pd.read_excel(r'D:\Studium\PhD\Github\Single-Author\Data\PR_lex_sent_news.xlsx')
 
-word_dict, n_grams = count_ngrams(data)
-sentiment_lex = create_dict(word_dict, n_grams, 'sentiment')
-sentiment_lex.drop(['n_grams'], axis = 1, inplace = True)
+# def prepare_lex(lex):
+    
+#     lex['tokens'] = lex['tokens'].apply(lambda x: literal_eval(str(x)))
 
-PR_lex_full = pd.concat([direction_lex, sentiment_lex], axis=1)
-PR_lex_full['tokens'] = [word_tokenize(keyword) for keyword in PR_lex_full['n_grams']]
+#     idx_null = lex[lex['keyword'] != lex['keyword']].index[0]
+#     lex.loc[[idx_null], 'keyword'] = 'null'
+    
+#     return(lex)
 
-#PR_lex_full.to_excel(r'D:\Studium\PhD\Github\Single-Author\Data\PR_lex_news.xlsx')
-PR_lex_full = pd.read_excel(r'D:\Studium\PhD\Github\Single-Author\Data\PR_lex_news.xlsx')
-PR_lex_full['tokens'] = PR_lex_full['tokens'].apply(lambda x: literal_eval(str(x)))
+# data = pd.read_excel(r'D:\Studium\PhD\Github\Single-Author\Data\full_inf_prepared.xlsx')
+# data['tokens'] = data['tokens'].apply(lambda x: literal_eval(str(x)))
 
-idx_null = PR_lex_full[PR_lex_full['n_grams'] != PR_lex_full['n_grams']].index[0]
-# PR_lex_full = PR_lex_full.loc[PR_lex_full['n_grams'] == idx_null, 'n_grams'] = 'abc'
+# PR_lex_dir = prepare_lex(PR_lex_dir)
+# PR_lex_sent = prepare_lex(PR_lex_sent)
 
-PR_lex_full.loc[[idx_null], 'n_grams'] = 'null'
-
-PR_lex_dir = PR_lex_full[['n_grams', 'tokens', 'positive direction index', 'neutral direction index', 'negative direction index']]
-PR_lex_dir = PR_lex_dir.rename(columns = {'n_grams': 'keyword', 'positive direction index' : 'positive','neutral direction index' : 'neutral','negative direction index' : 'negative'})
-
-PR_lex_sent = PR_lex_full[['n_grams', 'tokens', 'positive sentiment index', 'neutral sentiment index', 'negative sentiment index']]
-PR_lex_sent = PR_lex_sent.rename(columns = {'n_grams': 'keyword', 'positive sentiment index' : 'positive','neutral sentiment index' : 'neutral','negative sentiment index' : 'negative'})
-
-data_inf = pd.read_excel(r'D:\Studium\PhD\Single Author\Data\inflation_lemmas_examplev02.xlsx')
-#data_inf = data_inf.rename(columns = {'sentence': 'Sentences'})
-
-data_inf['tokens'] = prepare_text(data_inf['sentence']).preproces_text()
-
-data_sent = pd.read_csv('D:\Studium\PhD\Single Author\Data\dpa_sents_v01.csv')
-
-#data_inf = data_inf.sample(5000)
-idx = data_inf['index']
-
-data_final = data_sent.iloc[idx]
-
-dates = [str(int(year)) + ' ' + str(int(month)) + ' ' + str(int(day)) for year,month, day in zip(list(data_final['year']),list(data_final['month']), list(data_final['day']))]
-dates = pd.to_datetime(dates, format = '%Y %m %d')
-
-data_inf['date'] = dates
-
-data_dir = create_index(data_inf, PR_lex_dir)
-data_sent = create_index(data_inf, PR_lex_sent)
+# data_dir = create_index(data, PR_lex_dir)
+# data_sent = create_index(data, PR_lex_sent)
 
 # data_dir.to_csv('D:\Studium\PhD\Github\Single-Author\Data\PR_news_direction_results.csv')
 # data_sent.to_csv('D:\Studium\PhD\Github\Single-Author\Data\PR_news_sentiment_results.csv')
-##############################################################################
-# PR_lex = pd.read_csv('D:\Studium\PhD\Github\Single-Author\Data\export_lexicon.csv', delimiter=';')
-# PR_lex['tokens'] = [word_tokenize(keyword) for keyword in PR_lex['keyword']]
-PR_News_lex['tokens'] = [word_tokenize(keyword) for keyword in PR_News_lex['n_grams']]
 
-# PR_lex = pd.read_csv('D:\Studium\PhD\Github\Single-Author\Data\export_lexicon.csv', delimiter=';')
-# PR_lex['tokens'] = [word_tokenize(keyword) for keyword in PR_lex['keyword']]
-#mp_acc_words = PR_lex[PR_lex['mp_acco'] > 0.5]
+##############################################################################
+
+data_dir = pd.read_csv('D:\Studium\PhD\Github\Single-Author\Data\PR_news_direction_results.csv')
+data_sent = pd.read_csv('D:\Studium\PhD\Github\Single-Author\Data\PR_news_sentiment_results.csv')
 
 def prepare_date(data):
     
@@ -118,36 +88,6 @@ def prepare_date(data):
 
 data_dir, monthly_dir, yearly_dir = prepare_date(data_dir)
 data_sent, monthly_sent, yearly_sent = prepare_date(data_sent)
-
-plt.stackplot(data_dir['date'], np.array(data_dir[['pos share', 'neu share', 'neg share']]).transpose())      
-plt.plot(data_dir['date'], data_dir['index']) 
-
-plt.stackplot(data_sent['date'], np.array(data_sent[['pos share', 'neu share', 'neg share']]).transpose())      
-plt.plot(data_sent['date'], data_sent['index']) 
-
-plt.stackplot(pd.to_datetime(monthly_dir.index), np.array(monthly_dir[['pos share', 'neu share', 'neg share']]).transpose())
-plt.show()
-
-plt.plot(pd.to_datetime(monthly_dir.index), monthly_dir['index']) 
-plt.show()
-
-plt.stackplot(pd.to_datetime(monthly_sent.index), np.array(monthly_sent[['pos share', 'neu share', 'neg share']]).transpose())
-plt.plot(pd.to_datetime(monthly_sent.index), monthly_sent['index']) 
-
-plt.plot(pd.to_datetime(monthly_sent.index), monthly_sent['index']) 
-plt.show()
-
-plt.stackplot(pd.to_datetime(yearly_dir.index), np.array(yearly_dir[['pos share', 'neu share', 'neg share']]).transpose())
-plt.show()
-
-plt.plot(pd.to_datetime(yearly_dir.index), yearly_dir['index']) 
-plt.show()
-
-plt.stackplot(pd.to_datetime(yearly_sent.index), np.array(yearly_sent[['pos share', 'neu share', 'neg share']]).transpose())
-plt.show()
-
-plt.plot(pd.to_datetime(yearly_sent.index), yearly_sent['index']) 
-plt.show()
 
 ##############################################################################
 

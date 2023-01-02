@@ -13,12 +13,15 @@ from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer
 from collections import Counter
 from tqdm import tqdm
+
 import numpy as np
+import pandas as pd
 
 class prepare_text:
     
-    def __init__(self, text):
+    def __init__(self, text, language = 'german'):
         self.text = text
+        self.langauge = language
 
     def preproces_text(self):
         
@@ -53,11 +56,17 @@ class prepare_text:
             tokens = word_tokenize(sentence)
             
             # define stopwords
-            # stop_words = set(stopwords.words('english')) 
-            stop_words = set(stopwords.words('german')) 
             
-            # define words which mark negations
-            negation_words = ['kein', 'keine', 'keinem', 'keinen', 'keiner', 'keines', 'nicht', 'nichts', 'ohne']
+            if self.langauge == 'german':
+                
+                stop_words = set(stopwords.words('german'))
+                # define words which mark negations
+                negation_words = ['kein', 'keine', 'keinem', 'keinen', 'keiner', 'keines', 'nicht', 'nichts', 'ohne']
+            
+            elif self.langauge == 'english':
+                
+                stop_words = set(stopwords.words('english')) 
+                negation_words = []
             
             # only keep stopwords which are not negation words
             for word in negation_words:
@@ -192,7 +201,7 @@ def create_dict(word_dict, n_grams, typ):
                 
     return(direction_lex)
 
-def create_index(data, PR_lex):
+def create_index(data, PR_lex, neg_window = 0, test = 1):
     
     pos_list = []
     neu_list = []
@@ -200,10 +209,19 @@ def create_index(data, PR_lex):
     
     index_list = []
     
-    negation_words = ['kein', 'keine', 'keinem', 'keinen', 'keiner', 'keines', 'nicht', 'nichts', 'ohne']
-    
+    if neg_window > 0:
+        
+        negation_words = ['kein', 'keine', 'keinem', 'keinen', 'keiner', 'keines', 'nicht', 'nichts', 'ohne']
+        
+    else:
+        
+        negation_words = []
+     
     for tokens in tqdm(data['tokens']):
         
+       # tokens = ['inflat', 'eurozon', 'inflat', 'nicht', 'inflat', 'inflat', 'inflat', 'inflat', 'inflat', 'nicht', 'inflat']
+       # tokens = ['jüngste', 'abwertung', 'de', 'usdollar', 'dürfte', 'meinung', 'nicht', 'negativ', 'wachstum', 'inflat', 'auswirken']
+    
         start_tokens = tokens.copy()
         
         negation_index = np.array([1 if neg in negation_words else 0 for neg in tokens])
@@ -213,8 +231,8 @@ def create_index(data, PR_lex):
         
         for idx in negation_index:
                     
-            start = max(0, idx -2)
-            end = min(len(tokens)-1, idx + 2)
+            start = max(0, idx - neg_window)
+            end = min(len(tokens)-1, idx + neg_window)
         
             negations.extend(list(range(start, end+1)))
                     
@@ -228,21 +246,22 @@ def create_index(data, PR_lex):
         neu = 0
         neg = 0
     
-        # tokens = ['inflat', 'eurozon', 'inflat', 'nicht', 'inflat', 'inflat', 'inflat', 'inflat', 'inflat', 'nicht', 'inflat']
-        # tokens = ['jüngste', 'abwertung', 'de', 'usdollar', 'dürfte', 'meinung', 'nicht', 'negativ', 'wachstum', 'inflat', 'auswirken']
-    
+        #   #
         # Go through each n-gram from 8-gram to 1-gram (starting at 8-grams) where n = j
         for j in reversed(range(1,9)):
             
             if j == 1:
                 
                 grams = tokens
+                grams_neg = start_tokens
                 keywords = [tuple(ngram)[0] for ngram in PR_lex['tokens'] if len(ngram) == j]
                      
             else:
                 
                 # Split tokens into j-grams
                 grams = [tuple(tokens[i:i+j]) for i in range(len(tokens)-j+1)]
+                
+                grams_neg = [tuple(start_tokens[i:i+j]) for i in range(len(start_tokens)-j+1)]
                 
                 # Filter out all j-grams from lexicon
                 keywords = [tuple(ngram) for ngram in PR_lex['tokens'] if len(ngram) == j]
@@ -260,7 +279,7 @@ def create_index(data, PR_lex):
             
             keywords_speech = [k for k in grams if k in keywords]
             
-            tokens = ['inflat', 'eurozon', 'inflat', 'nicht', 'inflat', 'inflat', 'inflat', 'inflat', 'inflat', 'nicht', 'inflat']
+            #tokens = ['inflat', 'eurozon', 'inflat', 'nicht', 'inflat', 'inflat', 'inflat', 'inflat', 'inflat', 'nicht', 'inflat']
       
             del_index = []  
       
@@ -268,7 +287,7 @@ def create_index(data, PR_lex):
                 
                 #print(j)
                 
-                idx_start = 0
+                #idx_start = 0
                 
                 # delete n_grams which were already considered previosly 
                 for n_gram in keywords_speech:
@@ -297,11 +316,11 @@ def create_index(data, PR_lex):
             
             delete_multiple_element(tokens, del_index)
             
-            grams_idx = [i for i in range(len(grams)) if grams[i] in keywords_speech]
+            grams_neg_idx = [i for i in range(len(grams_neg)) if grams_neg[i] in keywords_speech]
             
             if negations != []:
             
-                negations_ind = [-1 if gram_idx in negations else 1 for gram_idx in grams_idx]
+                negations_ind = [-1 if gram_idx in negations else 1 for gram_idx in grams_neg_idx]
                 
             else:
                 
@@ -310,9 +329,13 @@ def create_index(data, PR_lex):
             # Count all lexicon j-grams in tokens und multiply the number of their 
             # occurrences with their respective probabilities
             
+            count_keywords = Counter(keywords_speech)
+            
             if keywords_speech != []:
             
-                for idx, k in enumerate(keywords_speech):
+                for idx, k in enumerate(list(set(keywords_speech))):
+                    
+                    ocur = count_keywords[k]
                     
                     if j > 1:
                         
@@ -324,15 +347,15 @@ def create_index(data, PR_lex):
                 
                     if negation == -1:
                     
-                        pos += float(keyword_prob['negative'])
-                        neu += float(keyword_prob['neutral'])
-                        neg += float(keyword_prob['positive'])
+                        pos += float(keyword_prob['negative'])*ocur
+                        neu += float(keyword_prob['neutral'])*ocur
+                        neg += float(keyword_prob['positive'])*ocur
                         
                     elif negation == 1:
                         
-                        pos += float(keyword_prob['positive'])
-                        neu += float(keyword_prob['neutral'])
-                        neg += float(keyword_prob['negative'])
+                        pos += float(keyword_prob['positive'])*ocur
+                        neu += float(keyword_prob['neutral'])*ocur
+                        neg += float(keyword_prob['negative'])*ocur
                 
             
             # ?????
@@ -344,13 +367,22 @@ def create_index(data, PR_lex):
           
         label_all = pos + neu + neg
         
-        pos_share = pos/label_all
-        neu_share = neu/label_all
-        neg_share = neg/label_all
+        if label_all > 0:
+            pos_share = pos/label_all
+            neu_share = neu/label_all
+            neg_share = neg/label_all
+            
+        elif label_all == 0:
+            
+            pos_share = 0
+            neu_share = 0
+            neg_share = 0
         
         pos_list.append(pos_share)
         neu_list.append(neu_share)
         neg_list.append(neg_share)
+        
+        print(pos_share)
         
         index = pos_share - neg_share
         
@@ -362,6 +394,7 @@ def create_index(data, PR_lex):
     
     data['index'] = index_list 
     
+    #print('test')
     #data['date'] = pd.to_datetime(data['date'])
   
     return(data)
