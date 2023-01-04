@@ -74,7 +74,7 @@ PR_lex_ECB_mon.rename(columns = {'mp_acco': 'negative', 'mp_neut': 'neutral', 'm
 data = pd.read_csv(r"D:\Studium\PhD\Github\Single-Author\Data\ECB_prepared.csv")[['tokens', 'date', 'Author', 'years']]
 data['tokens'] = data['tokens'].apply(lambda x: literal_eval(str(x)))
 
-data = data[(data['years'] >= 2006) & (data['years'] <= 2014)]
+#data = data[(data['years'] >= 2006) & (data['years'] <= 2014)]
 data = data[data['years'] >= 2006]
 
 data['date'] = pd.to_datetime(data['date'])
@@ -82,16 +82,18 @@ data['date'] = pd.to_datetime(data['date'])
 data.sort_values(by='date', inplace=True)
 data.reset_index(inplace = True, drop = True)
 
+PR_lex_ECB_mon = pd.read_excel(r'D:\Studium\PhD\Github\Single-Author\Data\monetary_own_lexicon.xlsx')
 # PR_lex_ECB_mon = pd.read_excel(r'D:\Studium\PhD\Github\Single-Author\Data\monetary_lexicon.xlsx')
-# PR_lex_ECB_mon['tokens'] = PR_lex_ECB_mon['tokens'].apply(lambda x: literal_eval(str(x)))
+PR_lex_ECB_mon['tokens'] = PR_lex_ECB_mon['tokens'].apply(lambda x: literal_eval(str(x)))
 
 PR_lex_ECB_ec = pd.read_excel(r'D:\Studium\PhD\Github\Single-Author\Data\economic_own_lexicon.xlsx')
 #PR_lex_ECB_ec = pd.read_excel(r'D:\Studium\PhD\Github\Single-Author\Data\economic_lexicon.xlsx')
 PR_lex_ECB_ec['tokens'] = PR_lex_ECB_ec['tokens'].apply(lambda x: literal_eval(str(x)))
 
 data_mon = create_index(data, PR_lex_ECB_mon, neg_window = 0)
-data_mon.to_csv(r'D:\Studium\PhD\Github\Single-Author\Data\ECB_monetary_own_labels.csv')
+data_mon.to_csv(r'D:\Studium\PhD\Github\Single-Author\Data\ECB_monetary_own_trainingsset_labels.csv')
 #data_mon.to_csv(r'D:\Studium\PhD\Github\Single-Author\Data\ECB_monetary_labels.csv')
 
 data_ec = create_index(data, PR_lex_ECB_ec, neg_window = 0)
-data_ec.to_csv(r'D:\Studium\PhD\Github\Single-Author\Data\ECB_economic_own_labels.csv')
+data_ec.to_csv(r'D:\Studium\PhD\Github\Single-Author\Data\ECB_economic_own_trainingsset_labels.csv')
+#data_ec.to_csv(r'D:\Studium\PhD\Github\Single-Author\Data\ECB_economic_labels.csv')
