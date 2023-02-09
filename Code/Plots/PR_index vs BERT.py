@@ -53,16 +53,23 @@ lex_sen.index = lex_sen['date']
 
 data_full_sents = pd.read_csv('D:\Studium\PhD\Single Author\Data\dpa_sents_v01.csv')
 
-number_monthly = data_senti.groupby(["year", "month"]).count()['text']
-count_rel_monthly = []
+number_monthly_inf = data_senti.groupby(["year", "month"]).count()['text']
+number_monthly_all = data_full_sents.groupby(["year", "month"]).count()['sentences']
+
+count_rel = []
 
 for y in range(0, 28):  
     
-    yearly_data = number_monthly[y*12:(y*12)+12]
-    # count_rel_monthly.extend(yearly_data/sum(yearly_data))
-    count_rel_monthly.extend(yearly_data/sum(number_monthly))
+    yearly_data_inf = number_monthly_inf[y*12:(y*12)+12]
+    yearly_data_all = number_monthly_all[y*12:(y*12)+12]
+    count_rel.extend(yearly_data_inf/sum(yearly_data_all))
     
-count_rel = np.array(data_senti.groupby(["year", "month"]).count()['text'])/len(data_senti)
+#count_rel = np.array(data_senti.groupby(["year", "month"]).count()['text'])/len(data_senti)
+
+count_rel = pd.DataFrame(count_rel)
+count_rel.index = pd.date_range('1/1/1991', '1/1/2019', freq = 'M').tolist()
+
+count_rel.to_excel(r'D:\Studium\PhD\Github\Single-Author\Data\count_rel.xlsx')
 
 dire_rel = np.multiply(count_rel, dire)
 # dire = np.multiply(count_rel_monthly, dire)
@@ -74,8 +81,15 @@ plot_news(dire_rel, monthly_count_dire, lex_dir, data_full_sents)
 plot_news(senti, monthly_count_senti, lex_sen, data_full_sents)
 
 dire_senti = np.multiply(senti, dire)
+#dire_senti_rel = np.multiply(dire_senti, count_rel)
 
 plot_news(dire_senti*-1, monthly_count_dire, lex_dir, data_full_sents)
+#plot_news(dire_senti_rel*-1, monthly_count_dire, lex_dir, data_full_sents)
+
+dire_senti = pd.DataFrame(dire_senti)
+dire_senti.index = pd.date_range('1/1/1991', '1/1/2019', freq = 'M').tolist()
+
+dire_senti.to_excel(r'D:\Studium\PhD\Github\Single-Author\Data\news_index_dire_senti.xlsx')
 
 dire_senti_rel = np.multiply(dire_senti, count_rel)
 

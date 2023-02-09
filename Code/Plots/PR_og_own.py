@@ -16,6 +16,8 @@ data_mon2 = pd.read_csv(r'D:\Studium\PhD\Github\Single-Author\Data\ECB_monetary_
 data_ec1 = pd.read_csv(r'D:\Studium\PhD\Github\Single-Author\Data\ECB_economic_labels.csv')
 data_ec2 = pd.read_csv(r'D:\Studium\PhD\Github\Single-Author\Data\ECB_economic_own_trainingsset_labels.csv')
 
+data_inf2 = pd.read_csv(r'D:\Studium\PhD\Github\Single-Author\Data\ECB_inf_own_trainingsset_labels.csv')
+
 pr_data = pd.read_csv(r'D:\Studium\PhD\Github\Single-Author\Data\cbci_data.csv')
 pr_mon = pr_data['r_mp_rest'] - pr_data['r_mp_acco']
 pr_ec = pr_data['r_ec_posi'] - pr_data['r_ec_nega']
