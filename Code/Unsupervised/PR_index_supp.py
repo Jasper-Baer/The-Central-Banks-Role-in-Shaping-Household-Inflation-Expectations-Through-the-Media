@@ -382,7 +382,7 @@ def create_index(data, PR_lex, neg_window = 0, test = 1):
         neu_list.append(neu_share)
         neg_list.append(neg_share)
         
-        print(pos_share)
+        #print(pos_share)
         
         index = pos_share - neg_share
         

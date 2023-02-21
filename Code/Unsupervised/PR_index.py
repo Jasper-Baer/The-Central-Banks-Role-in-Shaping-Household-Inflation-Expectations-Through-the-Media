@@ -49,34 +49,54 @@ from PR_index_supp import prepare_text, create_index
 # Create Index
 ##############################################################################
 
-# PR_lex_dir = pd.read_excel(r'D:\Studium\PhD\Github\Single-Author\Data\PR_lex_dir_news.xlsx')
-# PR_lex_sent = pd.read_excel(r'D:\Studium\PhD\Github\Single-Author\Data\PR_lex_sent_news.xlsx')
+# PR_lex_monetary = pd.read_excel(r'D:\Studium\PhD\Github\Single-Author\Data\monetary_own_lexicon.xlsx')
+# PR_lex_outlook = pd.read_excel(r'D:\Studium\PhD\Github\Single-Author\Data\outlook_own_lexicon.xlsx')
+# PR_lex_inflation = pd.read_excel(r'D:\Studium\PhD\Github\Single-Author\Data\inflation_own_lexicon.xlsx')
 
-# def prepare_lex(lex):
+PR_lex_dir = pd.read_excel(r'D:\Studium\PhD\Github\Single-Author\Data\direction_own_lexicon.xlsx')
+PR_lex_sent = pd.read_excel(r'D:\Studium\PhD\Github\Single-Author\Data\sentiment_own_lexicon.xlsx')
+
+def prepare_lex(lex):
     
-#     lex['tokens'] = lex['tokens'].apply(lambda x: literal_eval(str(x)))
+    lex['tokens'] = lex['tokens'].apply(lambda x: literal_eval(str(x)))
 
-#     idx_null = lex[lex['keyword'] != lex['keyword']].index[0]
-#     lex.loc[[idx_null], 'keyword'] = 'null'
+    idx_null = lex[lex['keyword'] != lex['keyword']].index[0]
+    lex.loc[[idx_null], 'keyword'] = 'null'
     
-#     return(lex)
+    return(lex)
 
-# data = pd.read_excel(r'D:\Studium\PhD\Github\Single-Author\Data\full_inf_prepared.xlsx')
-# data['tokens'] = data['tokens'].apply(lambda x: literal_eval(str(x)))
+data = pd.read_excel(r'D:\Studium\PhD\Single Author\Data\ECB\press_sents_full.xlsx')
+#data = pd.read_excel(r'D:\Studium\PhD\Github\Single-Author\Data\full_inf_prepared.xlsx')
+data['tokens'] = data['tokens'].apply(lambda x: literal_eval(str(x)))
 
-# PR_lex_dir = prepare_lex(PR_lex_dir)
-# PR_lex_sent = prepare_lex(PR_lex_sent)
+#PR_lex_monetary = prepare_lex(PR_lex_monetary)
+#PR_lex_outlook = prepare_lex(PR_lex_outlook)
+#PR_lex_inflation = prepare_lex(PR_lex_inflation)
 
-# data_dir = create_index(data, PR_lex_dir)
-# data_sent = create_index(data, PR_lex_sent)
+PR_lex_dir = prepare_lex(PR_lex_dir)
+PR_lex_sent = prepare_lex(PR_lex_sent)
 
-# data_dir.to_csv('D:\Studium\PhD\Github\Single-Author\Data\PR_news_direction_results.csv')
-# data_sent.to_csv('D:\Studium\PhD\Github\Single-Author\Data\PR_news_sentiment_results.csv')
+#data_monetary = create_index(data, PR_lex_monetary)
+#data_outlook = create_index(data, PR_lex_outlook)
+#data_inflation = create_index(data, PR_lex_inflation)
+
+data_dir = create_index(data, PR_lex_dir)
+data_sent = create_index(data, PR_lex_sent)
+
+#data_monetary.to_csv('D:\Studium\PhD\Github\Single-Author\Data\Regression\PR_ecb_monetary_results.csv')
+#data_outlook.to_csv('D:\Studium\PhD\Github\Single-Author\Data\Regression\PR_ecb_outlook_results.csv')
+#data_inflation.to_csv('D:\Studium\PhD\Github\Single-Author\Data\Regression\PR_ecb_inflation_results.csv')
+
+# data_dir.to_csv('D:\Studium\PhD\Github\Single-Author\Data\Regression\PR_news_direction_results.csv')
+# data_sent.to_csv('D:\Studium\PhD\Github\Single-Author\Data\Regression\PR_news_sentiment_results.csv')
 
 ##############################################################################
 
 data_dir = pd.read_csv('D:\Studium\PhD\Github\Single-Author\Data\PR_news_direction_results.csv')
+data_dir["date"] = pd.to_datetime(data_dir["date"], format='%Y-%m-%d')
+
 data_sent = pd.read_csv('D:\Studium\PhD\Github\Single-Author\Data\PR_news_sentiment_results.csv')
+data_sent["date"] = pd.to_datetime(data_sent["date"], format='%Y-%m-%d')
 
 def prepare_date(data):
     
@@ -88,6 +108,9 @@ def prepare_date(data):
 
 data_dir, monthly_dir, yearly_dir = prepare_date(data_dir)
 data_sent, monthly_sent, yearly_sent = prepare_date(data_sent)
+
+dire_sent = monthly_dir['index']*monthly_sent['index']
+dire_sent.to_excel(r'D:\Studium\PhD\Github\Single-Author\Data\Regression\\news_index_dire_senti_lex.xlsx')
 
 ##############################################################################
 

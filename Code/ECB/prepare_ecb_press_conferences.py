@@ -12,6 +12,8 @@ import os
 import nltk
 
 from tqdm import tqdm
+import warnings
+warnings.simplefilter(action='ignore', category=FutureWarning)
 
 os.chdir("D:\Studium\PhD\Github\Single-Author\Code\ECB")
 
@@ -24,6 +26,7 @@ data_json = json.load(f)
 data = pd.read_json(data_json)
 
 press_cons = []
+sen_dates = []
 
 for press_con in tqdm(data['Texts']):
     
@@ -71,14 +74,6 @@ tokens = clean_data(press_cons)
 
 data['tokens'] = tokens
 data['press sent'] = [nltk.sent_tokenize(text) for text in data['clean press cons']]
-
-press_sents = pd.DataFrame()
-
-for idx, press_sent in tqdm(enumerate(data['press sent'])):
-    
-    for sent in press_sent:
-        
-        press_sents = press_sents.append({'index': idx, 'sentence': sent}, ignore_index=True)
 
 # Delete Greetings from start
 data['press sent'] = [press[1:] for press in data['press sent']]
@@ -214,35 +209,47 @@ for idx, con in tqdm(enumerate(press_cons)):
 data['speeches'] = speeches
 data['QA'] = QAs
 
-speeches_list = []
+# speeches_list = pd.DataFrame()
+# #speeches_list = []
 
-for speech in speeches:
+# for speech in tqdm(speeches):
     
-    for sent in speech:
+#     for sent in speech:
         
-        speeches_list.append(sent)
+#         speeches_list = speeches_list.append({'index': idx, 'sentence': sent, 'date': data['date'].iloc[idx]}, ignore_index=True)
+#         #speeches_list.append(sent)
 
-#pd.DataFrame({'sentence':speeches_list}).to_excel('D:\Studium\PhD\Single Author\Data\ECB\press_sents_full.xlsx')
+data['tokens'] = [[word for sent in list(clean_data(speech)) for word in sent]  for speech in data['speeches']]   
+
+# press_sents = pd.DataFrame()
+
+# for idx, press_sent in tqdm(enumerate(data['press sent'])):
+    
+#     for sent in press_sent:
+        
+#         press_sents = press_sents.append({'index': idx, 'sentence': sent, 'date': data['date'].iloc[idx]}, ignore_index=True)
+       
+data.to_excel('D:\Studium\PhD\Single Author\Data\ECB\press_sents_full.xlsx')
 
 ##############################################################################
 
-data_train = pd.read_excel('D:\Studium\PhD\Single Author\Data\ECB\press_sents_sample_labeled.xlsx')   
+# data_train = pd.read_excel('D:\Studium\PhD\Single Author\Data\ECB\press_sents_sample_labeled.xlsx')   
 
-train_sent = pd.DataFrame()    
+# train_sent = pd.DataFrame()    
 
-for idx, sent in enumerate(data_train['sentence']):
+# for idx, sent in enumerate(data_train['sentence']):
     
-    if sent in speeches_list:
+#     if sent in speeches_list:
         
-        train_sent = train_sent.append(data_train.iloc[idx])
+#         train_sent = train_sent.append(data_train.iloc[idx])
 
-train_sent.reset_index(inplace = True, drop = True)
+# train_sent.reset_index(inplace = True, drop = True)
 
-train_sent.to_excel('D:\Studium\PhD\Single Author\Data\ECB\press_sents_sample_labeled_speeches.xlsx')
+# train_sent.to_excel('D:\Studium\PhD\Single Author\Data\ECB\press_sents_sample_labeled_speeches.xlsx')
 
 #sample_press_sents = press_sents.sample(10000)
 
-#data['press sent'].to_excel('D:\Studium\PhD\Single Author\Data\ECB\press_sents_full.xlsx')
+data['press sent'].to_excel('D:\Studium\PhD\Single Author\Data\ECB\press_sents_full.xlsx')
 #sample_press_sents.to_excel('D:\Studium\PhD\Single Author\Data\ECB\press_sents_sample.xlsx')
     
 data = data.to_json()
