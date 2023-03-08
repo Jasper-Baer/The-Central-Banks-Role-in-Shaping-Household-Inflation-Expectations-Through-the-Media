@@ -12,7 +12,6 @@ import os
 
 import pylab as plt
 
-from nltk.tokenize import word_tokenize
 from collections import Counter
 from ast import literal_eval
 from tqdm import tqdm
@@ -111,6 +110,9 @@ data_sent, monthly_sent, yearly_sent = prepare_date(data_sent)
 
 dire_sent = monthly_dir['index']*monthly_sent['index']
 dire_sent.to_excel(r'D:\Studium\PhD\Github\Single-Author\Data\Regression\\news_index_dire_senti_lex.xlsx')
+
+monthly_dir['index'].to_excel(r'D:\Studium\PhD\Github\Single-Author\Data\Regression\\news_index_dire_lex.xlsx')
+monthly_sent['index'].to_excel(r'D:\Studium\PhD\Github\Single-Author\Data\Regression\\news_index_senti_lex.xlsx')
 
 ##############################################################################
 

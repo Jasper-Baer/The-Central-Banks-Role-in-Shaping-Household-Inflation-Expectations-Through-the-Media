@@ -2,6 +2,10 @@
 %\documentclass[final,times,letterpaper,12pt]{elsarticle}
 
 \usepackage{lineno,hyperref}
+\usepackage{graphicx} 
+\usepackage{subcaption}
+\usepackage{amsmath}
+
 
 \usepackage[dvipsnames]{xcolor} % Für Einfärbung von Notizen. Sollte am Ende wieder entfernt werden.
 
@@ -111,7 +115,11 @@ My dataset consists of two different parts. The textual data from the ECB and th
 I collected two separate datasets for the textual analysis, one for the ECB communication and one for the media news.
 The ECB’s main channel for communication to the media are their press conferences \textcolor{red}{(CITE?)}. The press conference takes place after the ECB’s Governing Council took their monetary policy decision every six weeks. I collected ECB press conference from 2000 until 2022 with a webscrapper from the official ECB website \footnote[1]{The press conferences can be found under https://www.ecb.europa.eu/press/pressconf/html/index.en.html}. I discarded the Q\&A section and all sections which carry no significance, like greetings and acknowledgments, leaving only the introductory statements \textcolor{red}{(cite other who done it similarly)}.
 \\
-\textcolor{red}{(Note 1: News Before I can do the description of the news dataset, I need to know which data I am allowed to use. The next part describes how I clean the news dataset}
+\\
+\textcolor{red}{PLACEHOLDER Description of News Dataset}
+\\
+\\
+\textcolor{red}{Note 1: Before I can do the description of the news dataset, I need to know which data I am allowed to use. The next part describes how I clean the news dataset}
 \\
 \textcolor{red}{Note 2: News dataset is in German, ECB dataset in English}
 \\
@@ -132,26 +140,31 @@ The ECB surveys each quarter professional forecasters regarding their annual HIC
 \\
 \textcolor{red}{NOTE: Besser wäre es, wenn ich Datastream benutze, um an Reuters Umfragedaten zu gelangen.}
 \\
-The consumer inflation expectation is based on the results from the monthly European Commission’s Business and Consumer Survey. The survey collects information about households inflation expectations by asking them if they expect that the prices increase more rapidly, increase at the same rate, remain unchanged or decrease in the next 12 months. To transform the qualitative survey answers into quantitative inflation expectations, I use an rolling-window regression based approach by \cite{Lahiri2015}. 
-
+The consumer inflation expectation is based on the results from the monthly European Commission’s Business and Consumer Survey. The survey collects information about households inflation expectations by asking them if they expect that the prices increase more rapidly, increase at the same rate, remain unchanged or decrease in the next 12 months. To transform the qualitative survey answers into quantitative inflation expectations, I use the rolling-window regression based approach by \cite{Lahiri2015}. See \ref{sec:Quantification of Inflation Expectations} for an explanation.
+\\
+\textcolor{red}{NOTE: Change window size.}
 
 \section{Text Classification} \label{sec:Text Classification}
 
+In the following section I will lay out how I quantified the ECB communication and news. I do this by separating my dataset into individual sentences and then classify each sentence according to predefined categories. The ECB press conferences are classified into three categories where each category consists of three classes. The first two categories are taken from Picault et. al (2017). The first category describes the monetary stance expressed as monetary hawkish, monetary neutral or monetary dovish. The second category describes the economic outlook either as positive, neutral, or negative. I add a third class which describes the inflation outlook either as increasing, steady or decreasing. This third class allows for a direct comparison of the inflation expectations communicated in the ECB press conference to the inflation expectations expressed by the news media.
+The News articles are classified into two categories where each category consists of three classes. The first category describes the economic effect of the inflation expressed in the news which can be either positive, neutral, or negative. The second category describes the inflation direction which can be either increasing, neutral or decreasing.
+
 \subsection{Method for Quantifying the Central Bank Communication and News Coverage}
 
-In the following section I will lay out how I quantified the ECB communication and news. I do this by separating my dataset into individual sentences and then classify each sentence according to predefined categories.
-Two main approaches are mostly used for text classification, the lexicon-based approach, and the machine learning approach. For the lexicon approach a text is classified by taking a list of words, the lexicon, where each word belongs to one of the desired categories, such as “good” for positive sentiment or “bad” for negative sentiment. The text is classified by counting the occurrence of each of these word in the text. The lexicon approach can be modified by adding linguistic rules like negations (CITE?). 
+Two main approaches are mostly used for text classification, the lexicon-based approach, and the machine learning approach. For the lexicon approach a text is classified by taking a list of words, the lexicon, where each word belongs to one of the desired categories, such as “good” for positive sentiment or “bad” for negative sentiment. The text is classified by counting the occurrence of each of these word in the text. The lexicon approach can be modified by adding linguistic rules like negations \textcolor{red}{CITE?}.
+\\ 
 The machine learning text classification approach classifies a text based on supervised or semi-supervised models to a given category. In recent years, deep-learning models have been widely used for text classification.
-(Continue this part with some examples)
-The ECB press conferences are classified into three categories where each category consists of three classes. The first two categories are taken from Picault et. al (2017). The first category describes the monetary stance expressed as monetary hawkish, monetary neutral or monetary dovish. The second category describes the economic outlook either as positive, neutral, or negative. I add a third class which describes the inflation outlook either as increasing, steady or decreasing. This third class allows for a direct comparison of the inflation expectations communicated in the ECB press conference to the inflation expectations expressed by the news media.
-The News articles are classified into two categories where each category consists of three classes. The first category describes the economic effect of the inflation expressed in the news which can be either positive, neutral, or negative. The second category describes the inflation direction which can be either increasing, neutral or decreasing.
+\textcolor{red}{Continue this part with some examples}
+
 \subsection{Training Dataset}
 In the next section I will use supervised models to classify my data into several categories. I trained the models with two trainings dataset which I created, one for the news and one for the ECB press conference. I manually classified 3000 randomly drawn sentences from the ECB press conferences according to the three categories where each sentence was labeled with one of the three classes for each category.  Similarly, 3000 sentence were randomly drawn from the news corpus and labeled based on the two categories. The sentences were then used to classify the remaining sentences from my dataset with the method described in the next two sections.
 \\
-\textcolor{red}{Is it obvious enough why I used two different training datasets? I should further describe my annotation scheme in the appendix and give some examples.}
+\textcolor{red}{Note 1: Is it obvious enough why I used two different training datasets?}
 \\
+\textcolor{red}{I should further describe my annotation scheme in the appendix and give some examples.}
+\subsection{Lexicon Based Text Classification}
 The simple implementation and transparency of Lexicon-based sentiment classification has made it widely used in the literature Shapiro (2020), (CITE), (CITE), (CITE), (CITE). Several lexicons exist for sentiment classification (CITE), (CITE), (CITE). However, these lexicons are not optimized for ECB communication or economic news. (FIND EXAMPLE). Picault et. al (2017) solve this problem by manually classifying each sentence in the ECB press conference based on their monetary stance and economic outlook. The classified sentences are then used to build a lexicon from the word used in the press conferences to classify the monetary stance and economic outlook of a press conference. I implement their approach with my own training dataset. The resulting lexicon is then used to classify each sentence in the ECB press conference for each of the three categories with the formula:
-(FORMULA IN LATEX, same as in Picault et. al (2017) or any other similar papers. It’s just positive words – negative words divided by all words,)
+\textcolor{red}{Insert Formula}, same as in Picault et. al (2017) or any other similar papers. It’s just positive words – negative words divided by all words,)
 with the class score s, the press conference i, the category c, the class j and the number of word occurrences n. A final score for each category in each press conference is calculated by taking the averaging the category score over all sentences from the corresponding press conference.
 I slightly deviate from Picault et. al (2017) by first calculating the category score for each sentence instead of directly calculating score for the full press conference. My approach however is in line with most of the literature (Example from book or paper?).
 Similiar to the press conferences, I calculate the category score for the news. First I create a lexicon for each of the two categories with the method from Picault et. al (2017). The category score for each news sentence in my dataset is calculated with (EQ). A monthly category score is calculated by averaging the sentence score for each month.
@@ -162,30 +175,133 @@ I further deviate from Picault et. al (2017) or similar papers like Marozzi (202
 
 \subsection{News Indexes}\label{sec:News Indexes}
 
-(FIG) depicts the INI together with the quarterly GERMAN CPI growth rate from 2000 to 2018. The index strongly correlates with the inflation (correlation value) with the noticeable exception of the inflation decrease during the Great Recession which was not fully depicted by the INI.
-(FIG) depicts quarterly GERMAN CPI growth from 200 to 2018 together with the number of sentences which I identified as inflation related. Before 2014 an increase in inflation related news is typically accompanied by a high inflation phase. However, from 2014 to 2017 the amount of inflation related news is relatively high during the low inflation phase. 
-(Is there more to say? Should I search for reasons why the INI behaves strangely during the Great Recession? Any ideas?)
-(Note: Maybe I could also mention the number of inflation related news which is highest for high inflation periods especially in 2007 and 2008.)
+Figure~\ref{fig:News Index}(a) depicts the INI together with the monthly Germam CPI growth rate from 2000 to 2018. The index correlates with the inflation with the noticeable exception of the inflation decrease during the Great Recession which was not fully depicted by the INI. The low inflation phase from 2014 to 2016 was however accompanied by a dip of the INI which was lower than during the Great Recession. 
+Figure~\ref{fig:News Index}(b) depicts quarterly German CPI growth from 200 to 2018 together with the number of sentences which I identified as inflation related divided by the total number of sentences to account for the varying number of articles in each year.
+
+% I use this ration rather than the total number of words related to my topic of interest like most others e.g. (CITE) to take into account the varying number of articles in each year. The number of published articles steadily increased other the years.(CHECK, put that into Appendix?).
+
+Before 2014 an increase in inflation related news is typically accompanied by a high inflation phase. However, from 2014 to 2017 the amount of inflation related news is high during the low inflation phase and remains alleviated afterwards. 
+\\
+\textcolor{red}{Note: Is there more to say?}
+
+   \begin{figure}[h!]
+    \centering
+    \setkeys{Gin}{width=\linewidth,height=6cm} %set image parameters
+\begin{subfigure}{6cm}
+    \includegraphics{Inflation_Count.png}
+    \caption{Media Coverage}
+    \label{10}
+\end{subfigure}
+\hfil
+\begin{subfigure}{6cm}
+    \includegraphics{Inflation_Sentiment_Direction.png}
+    \caption{News Inflation Index}
+    \label{100}
+\end{subfigure}
+\caption{Inflation and Media Reporting}
+\label{fig:News Index}
+    \end{figure}
+
+\newpage    
 
 \subsection{ECB Indexes}\label{sec:ECB Indexes}
 
-(FIG) depicts the ECB inflation index in green next to household and professional inflation expectations.
-(Note: The German household inflation expectations are normalized)
-(Repeat same step for ECB index – Outlook vs Eurozone industrial production, Monetary – vs interest rate, Inflation – Eurozone inflation)
-(NOTE: The results are quite similar to Picault et. al (2017) and Marozzi (2021), which is reassuring, but I only add 4 more years to the dataset. Therefore, my approach adds little new information regarding the ECB indices.)
+\textcolor{red}{NOTE 1: Professional Forecaster Inflation Expectations are stronger correlated with ECB Inflation Index than with Inflation Expectations. Could be because of the European prof. Inf. Exp.}
+\\
+\textcolor{red}{NOTE 2: The results are quite similar to Picault et. al (2017) and Marozzi (2021), which is reassuring, but I only add 4 more years to the dataset. Therefore, my approach adds little new information regarding the ECB indices.}
+
+   \begin{figure}[h!]
+    \centering
+    \setkeys{Gin}{width=\linewidth,height=6cm} %set image parameters
+\begin{subfigure}{6cm}
+    \includegraphics{ECB_eco_Industrial_prod.png}
+    \caption{ECB Economic Outlook}
+    \label{ECB_eco}
+\end{subfigure}
+\hfil
+\begin{subfigure}{6cm}
+    \includegraphics{ECB_inf_inf.png}
+    \caption{ECB Inflation}
+    \label{ECB_inf}
+\end{subfigure}
+\vfil
+\begin{subfigure}{6cm}
+    \includegraphics{ECB_mon_df.png}
+    \caption{ECB Monetary}
+    \label{ECB_inf}
+\end{subfigure}
+\caption{ECB Indices}
+\label{fig:ECB Index}
+    \end{figure}
+
+\newpage
 
 \subsection{Difference between ECB and News Indices (Placeholder title)}\label{sec:Difference between ECB and News Indices (Placeholder title)}
 
-(Is an extra subsection for the comparison of ECB and News Indices smart?)
+\cite{Carroll2003} define the inflation expectation error of households as the squared difference between the household inflation expectations and professional inflation expectations. \cite{LamlaLein2014} instead uses the absolute difference. Because I'm not only interested in the absolute size of the inflation gap, but also the direction 
 
-(Rule based forecast for high differences in German household expt)
-The inflation expectation error of household is in the literature typically defined as the difference between household inflation expectations and professional inflation expectations (CITE) (CITE). To measure the error, I use the EU household inflation expectation described in and the professional inflation forecasts for the Eurozone described in (SECTION 2). My interest lies in the deviation between the household inflation expectations from the optimal forecasts. Therefore, I follow Lamla (2014) and calculate the household forecast errors as the difference between the household inflation expectations and professional inflation forecast for the Eurozone in the coming 12 months. I deviate from Lamla (2014) by taking the non-absolute error. (CITE) and (CITE) show that households react differently to news regarding high and low inflation.
+To measure the error, I use the EU household inflation expectation described in and the professional inflation forecasts for the Eurozone described in (SECTION 2). My interest lies in the deviation between the household inflation expectations from the optimal forecasts. Therefore, I follow Lamla (2014) and calculate the household forecast errors as the difference between the household inflation expectations and professional inflation forecast for the Eurozone in the coming 12 months. I deviate from Lamla (2014) by taking the non-absolute error. (CITE) and (CITE) show that households react differently to news regarding high and low inflation.
+
+\newpage
+
+   \begin{figure}[h!]
+    \centering
+    \setkeys{Gin}{width=\linewidth,height=6cm} %set image parameters
+\begin{subfigure}{6cm}
+    \includegraphics{abs_exp_res.png}
+    \caption{Absolute Expt. Gap}
+    \label{10}
+\end{subfigure}
+\hfil
+\begin{subfigure}{6cm}
+    \includegraphics{rel_exp_res.png}
+    \caption{Relative Expt. Gap}
+    \label{100}
+\end{subfigure}
+\vfil
+\begin{subfigure}{6cm}
+    \includegraphics{rel_exp_res_prev2014.png}
+    \caption{Relative Expt. Gap - Before 2014}
+    \label{ECB_inf}
+\end{subfigure}
+\hfil
+\begin{subfigure}{6cm}
+    \includegraphics{rel_exp_res_aft2014.png}
+    \caption{Negative Relative Expt. Gap - After 2014}
+    \label{ECB_inf}
+\end{subfigure}
+\caption{ECB Indices}
+\caption{Inflation Expectation Gap}
+\label{fig:Expectation Gap}
+    \end{figure}
+
+
 (Lamla (2014) uses the absolute error. However, wouldn't it make more sense to take the non-absolute error in case of asymmetric behavior? Some papers indicate asymmetric behavior when it comes to inflation in news. Even if the behavior is symmetric, it could still be interesting to communicate that)
 (How to continue from here? I probaly should define difference metric between the ECB inflation index and the news inflation index. Lamla (2014) simply do some OLS regression (Expecation gap on media indices. However, he also created a theorie which ties his regression together and lets him explain his results. I could try to modify his theory or come up with something on my own. Would that make sense???)
 
 \section{Model}\label{sec:Model}
 
-\section{Estimation}\label{sec:Estimation}
+\section{Estimation (Placeholder Title)}\label{sec:Estimation}
+
+\begin{align}
+|\mu_{t+12} - \nu_{t+12}| = \alpha + |\mu_t - \nu_t| + \beta NewsInflation_t + \gamma ECBInflation_t + \mathbf{\delta} \mathbf{Z_t} + \epsilon_t
+\end{align}
+
+\begin{table}
+\centering 
+  \caption{Inflation Expectation Gap} 
+  \label{tab:Inflation Expectation Gap}
+\begin{tabular}{lccc}   
+\\[-1.8ex]\hline
+\hline \\[-1.8ex] 
+& & &  \\ 
+Gap & & & \\
+NewsInflation & & & \\
+ECBInflation & & & \\
+
+Constant & & & \\
+ \end{tabular} 
+\end{table}
 
 \section{Conclusions} \label{sec:Conclusions}
 
@@ -193,8 +309,45 @@ The inflation expectation error of household is in the literature typically defi
 
 \bibliography{mybibfile}
 
+\newpage
+
 \appendix
 
 \section{Quantification of Inflation Expectations}\label{sec:Quantification of Inflation Expectations}
+
+The European Commission's Business and Consumer Survey consumers are asked if they expect prices to fall, stay the same, increase slower than before, increase at the same rate or increase at a higher rate in the coming 12 months and in the last 12 months. 
+\\
+I use the rolling-window-regression approach by \cite{Lahiri2015} which is based on an extended version of the Carlson-Parkin method \citep{Carlson1975} by \cite{Berk1999}. The extended version of \cite{Berk1999} does not impose unbiasedness of inflation expectations. Instead the current perceived inflation rate is directly linked to the expected inflation rate.  
+\\
+By assumption each responded i forms a subjective probability distribution for individuals percentage price changes $y_{it}$ over the next twelve months. Let $f_i(y{_it})$ be the subjective probability distribution with mean $\mu_{it}$ and variance $\sigma_{it}$. Following \cite{Batchelor1988} method assumes for a survey with five possible answers that the respondent answers prices in the future increase, increase at the same rate, increase at a slower rate, stay the same or fall according as $ y_{it} < - \delta_{it}^L, - \delta_{it}^L < y_{it} < \delta_{it}^U , \delta_{it}^L < y_{it} < \delta_{it}^U,  \delta_{it}^U < y_{it} < \lambda_{it}, \lambda_{it} < y_{it}$ \textcolor{red}{Nochmal überprüfen, Ist Notation von \cite{Batchelor1988} besser?}. Based on the survey responses the corresponding aggregate probabilities can be formulated as $P(y <  -\delta_{it}^L) = A_t, P(y < \delta_{it}^U) - P(y > - \delta_{it}^L) = B_t, P(y < \delta_{it}^U) - P(y > \delta_{it}^L) = C_t, P(y < \lambda_{it}) - P(y > \delta_{it}^U) = D_t.$ I denote $a_t, b_t, c_t$ and $ d_t$ the abscissae of the standard logistical distribution function corresponding to the cumulative probabilities $A_t, \ A_t + B_t, \ A_t + B_t + C_t$ and $A_t + B_t + C_t + D_t$. The mean expected inflation rate $\mu_t = E_t \pi_{t+12}$ can then be formulated as 
+\begin{align*}
+\mu_t = \lambda_t \frac{(a_t + b_t)}{(a_t + b_t - c_t - d_t)}
+\end{align*}
+Similarly, I denote $a_t\sp{\prime}, b_t\sp{\prime}, c_t\sp{\prime}$ and $ d_t\sp{\prime}$ as the abscissae of the standard logistical distribution function for the perceived inflation. Assuming that the response threshold $\lambda_{it}$ \textcolor{red}{Nochmal überprüfen} is the same for expected and perceived inflation, the perceived inflation can be formulated as 
+\begin{align*}
+\mu_t\sp{\prime} = \lambda_t \frac{(a_t\sp{\prime} + b_t\sp{\prime})}{(a_t\sp{\prime} + b_t\sp{\prime} - c_t\sp{\prime} - d_t\sp{\prime})}
+\end{align*}
+For the choice of the scaling parameter $\lambda_t$ I use the rolling window based regression by \cite{Lahiri2015}. Following \cite{Rosenblatt-Wisch2015} running the regression
+\begin{align*}
+\pi_t = \lambda \frac{(a_t\sp{\prime} + b_t\sp{\prime})}{(a_t\sp{\prime} + b_t\sp{\prime} - c_t\sp{\prime} - d_t\sp{\prime})} + u_t 
+\end{align*}
+using a sample window of $t - w + 1 to t$ implies
+\begin{align*}
+\hat{\lambda_t} = \frac{\sum^t_{k = t-w+1}(a_t\sp{\prime} + b_t\sp{\prime})/(a_t\sp{\prime} + b_t\sp{\prime} - c_t\sp{\prime} - d_t\sp{\prime})\pi_t}{\sum^t_{k = t-w+1}(a_t\sp{\prime} + b_t\sp{\prime})/((a_t\sp{\prime} + b_t\sp{\prime} - c_t\sp{\prime} - d_t\sp{\prime}))^2}
+\end{align*}
+where $w$ is the size of the rolling window. \cite{Lahiri2015} choose $w$ as nine years for the inflation expectations of the Michigan Consumer Survey. I follow \cite{Lahiri2015} and also choose nine years for $w$. The resulting household inflation expectations and the professional inflation expectations are shown in figure~\ref{fig:Inflation Expectations}.
+\\
+\textcolor{red}{Robustness Check for different windows?}
+\\
+\textcolor{red}{TO CLOSE TO Rosenblatt-Wisch and Scheufele 2014??}
+
+  \begin{figure}[h!]
+    \centering
+    \includegraphics[width=\linewidth,height=6cm]{household_prof_inf.png}
+    \caption{Inflation Expectations: Household inflation expectations are in blue, Professional forecaster inflation expectations are in red}
+    \end{figure}
+\label{fig:Inflation Expectations}
+
+\section{Additional Rules for Lexicon Text Classification}\label{sec:Additional Rules for Lexicon Text Classification}
 
 \end{document}

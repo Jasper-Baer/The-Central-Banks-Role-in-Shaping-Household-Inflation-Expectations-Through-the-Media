@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (MiKTeX 22.3) (preloaded format=pdflatex 2022.7.9)  26 FEB 2023 19:42
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (MiKTeX 22.3) (preloaded format=pdflatex 2022.7.9)  8 MAR 2023 22:42
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -257,6 +257,95 @@ Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
 )
 \Hy@SectionHShift=\skip53
 )
+(C:\Users\Nutzer\AppData\Local\Programs\MiKTeX\tex/latex/caption\subcaption.sty
+Package: subcaption 2022/01/07 v1.5 Sub-captions (AR)
+(C:\Users\Nutzer\AppData\Local\Programs\MiKTeX\tex/latex/caption\caption.sty
+Package: caption 2022/03/01 v3.6b Customizing captions (AR)
+
+(C:\Users\Nutzer\AppData\Local\Programs\MiKTeX\tex/latex/caption\caption3.sty
+Package: caption3 2022/03/17 v2.3b caption3 kernel (AR)
+\caption@tempdima=\dimen155
+\captionmargin=\dimen156
+\caption@leftmargin=\dimen157
+\caption@rightmargin=\dimen158
+\caption@width=\dimen159
+\caption@indent=\dimen160
+\caption@parindent=\dimen161
+\caption@hangindent=\dimen162
+Package caption Info: elsarticle document class detected.
+
+(C:\Users\Nutzer\AppData\Local\Programs\MiKTeX\tex/latex/caption\caption-elsart
+icle.sto
+File: caption-elsarticle.sto 2020/08/22 v2.0 Adaption of the caption package to
+ the elsarticle document class (AR)
+))
+\c@caption@flags=\count285
+\c@continuedfloat=\count286
+Package caption Info: hyperref package is loaded.
+)
+\c@subfigure=\count287
+\c@subtable=\count288
+)
+(C:\Users\Nutzer\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsmath.sty
+Package: amsmath 2021/10/15 v2.17l AMS math features
+\@mathmargin=\skip54
+
+For additional information on amsmath, use the `?' option.
+(C:\Users\Nutzer\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amstext.sty
+Package: amstext 2021/08/26 v2.01 AMS text
+
+(C:\Users\Nutzer\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsgen.sty
+File: amsgen.sty 1999/11/30 v2.0 generic functions
+\@emptytoks=\toks20
+\ex@=\dimen163
+))
+(C:\Users\Nutzer\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsbsy.sty
+Package: amsbsy 1999/11/29 v1.2d Bold Symbols
+\pmbraise@=\dimen164
+)
+(C:\Users\Nutzer\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsopn.sty
+Package: amsopn 2021/08/26 v2.02 operator names
+)
+\inf@bad=\count289
+LaTeX Info: Redefining \frac on input line 234.
+\uproot@=\count290
+\leftroot@=\count291
+LaTeX Info: Redefining \overline on input line 399.
+\classnum@=\count292
+\DOTSCASE@=\count293
+LaTeX Info: Redefining \ldots on input line 496.
+LaTeX Info: Redefining \dots on input line 499.
+LaTeX Info: Redefining \cdots on input line 620.
+\Mathstrutbox@=\box58
+\strutbox@=\box59
+\big@size=\dimen165
+LaTeX Font Info:    Redeclaring font encoding OML on input line 743.
+LaTeX Font Info:    Redeclaring font encoding OMS on input line 744.
+\macc@depth=\count294
+\c@MaxMatrixCols=\count295
+\dotsspace@=\muskip17
+\c@parentequation=\count296
+\dspbrk@lvl=\count297
+\tag@help=\toks21
+\row@=\count298
+\column@=\count299
+\maxfields@=\count300
+\andhelp@=\toks22
+\eqnshift@=\dimen166
+\alignsep@=\dimen167
+\tagshift@=\dimen168
+\tagwidth@=\dimen169
+\totwidth@=\dimen170
+\lineht@=\dimen171
+\@envbody=\toks23
+\multlinegap=\skip55
+\multlinetaggap=\skip56
+\mathdisplay@stack=\toks24
+LaTeX Info: Redefining \[ on input line 2938.
+LaTeX Info: Redefining \] on input line 2939.
+)
+\linenoamsmath@ams@eqpen=\count301
+
 (C:\Users\Nutzer\AppData\Local\Programs\MiKTeX\tex/latex/xcolor\xcolor.sty
 Package: xcolor 2021/10/31 v2.13 LaTeX color extensions (UK)
 
@@ -276,42 +365,73 @@ Package xcolor Info: Model `wave' substituted by `hsb' on input line 1375.
 
 (C:\Users\Nutzer\AppData\Local\Programs\MiKTeX\tex/latex/graphics\dvipsnam.def
 File: dvipsnam.def 2016/06/17 v3.0m Driver-dependent file (DPC,SPQR)
-)) (First_Draw.aux)
+)) (First_Draw.aux
+
+LaTeX Warning: Label `ECB_inf' multiply defined.
+
+
+LaTeX Warning: Label `sub@ECB_inf' multiply defined.
+
+
+LaTeX Warning: Label `10' multiply defined.
+
+
+LaTeX Warning: Label `sub@10' multiply defined.
+
+
+LaTeX Warning: Label `100' multiply defined.
+
+
+LaTeX Warning: Label `sub@100' multiply defined.
+
+
+LaTeX Warning: Label `ECB_inf' multiply defined.
+
+
+LaTeX Warning: Label `sub@ECB_inf' multiply defined.
+
+
+LaTeX Warning: Label `ECB_inf' multiply defined.
+
+
+LaTeX Warning: Label `sub@ECB_inf' multiply defined.
+
+)
 \openout1 = `First_Draw.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 51.
-LaTeX Font Info:    ... okay on input line 51.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 51.
-LaTeX Font Info:    ... okay on input line 51.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 51.
-LaTeX Font Info:    ... okay on input line 51.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 51.
-LaTeX Font Info:    ... okay on input line 51.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 51.
-LaTeX Font Info:    ... okay on input line 51.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 51.
-LaTeX Font Info:    ... okay on input line 51.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 51.
-LaTeX Font Info:    ... okay on input line 51.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 51.
-LaTeX Font Info:    ... okay on input line 51.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 51.
-LaTeX Font Info:    ... okay on input line 51.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 55.
+LaTeX Font Info:    ... okay on input line 55.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 55.
+LaTeX Font Info:    ... okay on input line 55.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 55.
+LaTeX Font Info:    ... okay on input line 55.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 55.
+LaTeX Font Info:    ... okay on input line 55.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 55.
+LaTeX Font Info:    ... okay on input line 55.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 55.
+LaTeX Font Info:    ... okay on input line 55.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 55.
+LaTeX Font Info:    ... okay on input line 55.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 55.
+LaTeX Font Info:    ... okay on input line 55.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 55.
+LaTeX Font Info:    ... okay on input line 55.
 
 (C:\Users\Nutzer\AppData\Local\Programs\MiKTeX\tex/context/base/mkii\supp-pdf.m
 kii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count285
-\scratchdimen=\dimen155
-\scratchbox=\box58
-\nofMPsegments=\count286
-\nofMParguments=\count287
-\everyMPshowfont=\toks20
-\MPscratchCnt=\count288
-\MPscratchDim=\dimen156
-\MPnumerator=\count289
-\makeMPintoPDFobject=\count290
-\everyMPtoPDFconversion=\toks21
+\scratchcounter=\count302
+\scratchdimen=\dimen172
+\scratchbox=\box60
+\nofMPsegments=\count303
+\nofMParguments=\count304
+\everyMPshowfont=\toks25
+\MPscratchCnt=\count305
+\MPscratchDim=\dimen173
+\MPnumerator=\count306
+\makeMPintoPDFobject=\count307
+\everyMPtoPDFconversion=\toks26
 )
 (C:\Users\Nutzer\AppData\Local\Programs\MiKTeX\tex/latex/epstopdf-pkg\epstopdf-
 base.sty
@@ -331,7 +451,7 @@ G,.JBIG2,.JB2,.eps]
 cfg
 File: epstopdf-sys.cfg 2021/03/18 v2.0 Configuration of epstopdf for MiKTeX
 ))
-Package hyperref Info: Link coloring OFF on input line 51.
+Package hyperref Info: Link coloring OFF on input line 55.
 
 (C:\Users\Nutzer\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\nameref.sty
 Package: nameref 2021-04-02 v2.47 Cross-referencing by name of section
@@ -343,23 +463,17 @@ Package: refcount 2019/12/15 v3.6 Data extraction from label references (HO)
 tlestring.sty
 Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
 )
-\c@section@level=\count291
+\c@section@level=\count308
 )
-LaTeX Info: Redefining \ref on input line 51.
-LaTeX Info: Redefining \pageref on input line 51.
-LaTeX Info: Redefining \nameref on input line 51.
+LaTeX Info: Redefining \ref on input line 55.
+LaTeX Info: Redefining \pageref on input line 55.
+LaTeX Info: Redefining \nameref on input line 55.
  (First_Draw.out) (First_Draw.out)
 \@outlinefile=\write4
 \openout4 = `First_Draw.out'.
 
-LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <8> on input line 73.
-LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <6> on input line 73.
-LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <5> on input line 73.
-LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <7> on input line 73.
+Package caption Info: Begin \AtBeginDocument code.
+Package caption Info: End \AtBeginDocument code.
 
 Overfull \hbox (2.22221pt too wide) has occurred while \output is active
 [] 
@@ -367,68 +481,157 @@ Overfull \hbox (2.22221pt too wide) has occurred while \output is active
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\<def>-command' on input line 73.
+(hyperref)                removing `\<def>-command' on input line 77.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\cnotenum' on input line 73.
+(hyperref)                removing `\cnotenum' on input line 77.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\<def>-command' on input line 73.
+(hyperref)                removing `\<def>-command' on input line 77.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\@corref' on input line 73.
+(hyperref)                removing `\@corref' on input line 77.
 
 [1
 
 
 {C:/Users/Nutzer/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}]
-Underfull \hbox (badness 10000) in paragraph at lines 79--105
+Underfull \hbox (badness 10000) in paragraph at lines 83--109
 
  []
 
 [2] [3]
-Overfull \hbox (60.78085pt too wide) in paragraph at lines 112--112
+Overfull \hbox (60.78085pt too wide) in paragraph at lines 116--116
 [][][]\OT1/cmr/m/n/8 The press con-fer-ences can be found un-der https://www.ec
 b.europa.eu/press/pressconf/html/index.en.html| 
  []
 
-[4] [5]
-Overfull \hbox (11.7228pt too wide) in paragraph at lines 149--160
+
+Underfull \hbox (badness 10000) in paragraph at lines 115--135
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 115--135
+
+ []
+
+[4] [5] [6]
+Overfull \hbox (11.7228pt too wide) in paragraph at lines 166--173
 \OT1/cmr/m/n/10 (CITE), (CITE), (CITE). Sev-eral lex-i-cons ex-ist for sen-ti-m
 ent clas-si-fi-ca-tion (CITE),
  []
 
-[6] [7] [8] (First_Draw.bbl [9]) [10] [11] (First_Draw.aux)
+[7]
+<Inflation_Count.png, id=161, 529.22719pt x 316.93407pt>
+File: Inflation_Count.png Graphic file (type png)
+<use Inflation_Count.png>
+Package pdftex.def Info: Inflation_Count.png  used on input line 191.
+(pdftex.def)             Requested size: 170.71281pt x 170.7211pt.
+<Inflation_Sentiment_Direction.png, id=162, 529.22719pt x 316.93407pt>
+File: Inflation_Sentiment_Direction.png Graphic file (type png)
+<use Inflation_Sentiment_Direction.png>
+Package pdftex.def Info: Inflation_Sentiment_Direction.png  used on input line 
+197.
+(pdftex.def)             Requested size: 170.71281pt x 170.7211pt.
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+[8]
+<ECB_eco_Industrial_prod.png, id=168, 529.22719pt x 316.93407pt>
+File: ECB_eco_Industrial_prod.png Graphic file (type png)
+<use ECB_eco_Industrial_prod.png>
+Package pdftex.def Info: ECB_eco_Industrial_prod.png  used on input line 217.
+(pdftex.def)             Requested size: 170.71281pt x 170.7211pt.
+<ECB_inf_inf.png, id=169, 529.22719pt x 316.93407pt>
+File: ECB_inf_inf.png Graphic file (type png)
+<use ECB_inf_inf.png>
+Package pdftex.def Info: ECB_inf_inf.png  used on input line 223.
+(pdftex.def)             Requested size: 170.71281pt x 170.7211pt.
+<ECB_mon_df.png, id=170, 529.22719pt x 316.93407pt>
+File: ECB_mon_df.png Graphic file (type png)
+<use ECB_mon_df.png>
+Package pdftex.def Info: ECB_mon_df.png  used on input line 229.
+(pdftex.def)             Requested size: 170.71281pt x 170.7211pt.
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+[9 <./Inflation_Count.png> <./Inflation_Sentiment_Direction.png>] [10 <./ECB_ec
+o_Industrial_prod.png> <./ECB_inf_inf.png> <./ECB_mon_df.png>] [11]
+<abs_exp_res.png, id=193, 528.47438pt x 325.215pt>
+File: abs_exp_res.png Graphic file (type png)
+<use abs_exp_res.png>
+Package pdftex.def Info: abs_exp_res.png  used on input line 251.
+(pdftex.def)             Requested size: 170.7119pt x 170.72058pt.
+<rel_exp_res.png, id=194, 528.47438pt x 325.215pt>
+File: rel_exp_res.png Graphic file (type png)
+<use rel_exp_res.png>
+Package pdftex.def Info: rel_exp_res.png  used on input line 257.
+(pdftex.def)             Requested size: 170.7119pt x 170.72058pt.
+<rel_exp_res_prev2014.png, id=195, 528.47438pt x 325.215pt>
+File: rel_exp_res_prev2014.png Graphic file (type png)
+<use rel_exp_res_prev2014.png>
+Package pdftex.def Info: rel_exp_res_prev2014.png  used on input line 263.
+(pdftex.def)             Requested size: 170.7119pt x 170.72058pt.
+<rel_exp_res_aft2014.png, id=196, 528.47438pt x 325.215pt>
+File: rel_exp_res_aft2014.png Graphic file (type png)
+<use rel_exp_res_aft2014.png>
+Package pdftex.def Info: rel_exp_res_aft2014.png  used on input line 269.
+(pdftex.def)             Requested size: 170.7119pt x 170.72058pt.
+ [12 <./abs_exp_res.png> <./rel_exp_res.png> <./rel_exp_res_prev2014.png> <./re
+l_exp_res_aft2014.png>]
+Overfull \hbox (14.95435pt too wide) detected at line 288
+[]
+ []
+
+(First_Draw.bbl [13] [14]) [15] [16]
+<household_prof_inf.png, id=255, 528.47438pt x 325.215pt>
+File: household_prof_inf.png Graphic file (type png)
+<use household_prof_inf.png>
+Package pdftex.def Info: household_prof_inf.png  used on input line 343.
+(pdftex.def)             Requested size: 344.99608pt x 170.72058pt.
+ [17 <./household_prof_inf.png>] [18]
+(First_Draw.aux)
+
+LaTeX Warning: There were multiply-defined labels.
+
 Package rerunfilecheck Info: File `First_Draw.out' has not changed.
-(rerunfilecheck)             Checksum: 73E5B65303AED1E3A0A3EDB060EFB299;2429.
+(rerunfilecheck)             Checksum: 889ABF1AA54A31A480106352C279CFB9;3073.
  ) 
 Here is how much of TeX's memory you used:
- 10108 strings out of 478582
- 159265 string characters out of 2843873
- 461318 words of memory out of 3000000
- 28143 multiletter control sequences out of 15000+600000
- 472554 words of font info for 39 fonts, out of 8000000 for 9000
+ 12300 strings out of 478582
+ 198648 string characters out of 2843873
+ 497529 words of memory out of 3000000
+ 30272 multiletter control sequences out of 15000+600000
+ 474077 words of font info for 45 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 70i,8n,76p,902b,487s stack positions out of 10000i,1000n,20000p,200000b,80000s
+ 70i,9n,77p,1368b,520s stack positions out of 10000i,1000n,20000p,200000b,80000s
 <C:/Users/Nutzer/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm
 /cmbx10.pfb><C:/Users/Nutzer/AppData/Local/Programs/MiKTeX/fonts/type1/public/a
-msfonts/cm/cmr10.pfb><C:/Users/Nutzer/AppData/Local/Programs/MiKTeX/fonts/type1
-/public/amsfonts/cm/cmr12.pfb><C:/Users/Nutzer/AppData/Local/Programs/MiKTeX/fo
-nts/type1/public/amsfonts/cm/cmr6.pfb><C:/Users/Nutzer/AppData/Local/Programs/M
-iKTeX/fonts/type1/public/amsfonts/cm/cmr7.pfb><C:/Users/Nutzer/AppData/Local/Pr
-ograms/MiKTeX/fonts/type1/public/amsfonts/cm/cmr8.pfb><C:/Users/Nutzer/AppData/
-Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy6.pfb><C:/Users/Nutzer
-/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy7.pfb><C:/Use
-rs/Nutzer/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmti10.p
-fb><C:/Users/Nutzer/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/c
-m/cmti8.pfb><C:/Users/Nutzer/AppData/Local/Programs/MiKTeX/fonts/type1/public/a
-msfonts/cm/cmtt8.pfb>
-Output written on First_Draw.pdf (11 pages, 190370 bytes).
+msfonts/cm/cmbx7.pfb><C:/Users/Nutzer/AppData/Local/Programs/MiKTeX/fonts/type1
+/public/amsfonts/cm/cmex10.pfb><C:/Users/Nutzer/AppData/Local/Programs/MiKTeX/f
+onts/type1/public/amsfonts/cm/cmmi10.pfb><C:/Users/Nutzer/AppData/Local/Program
+s/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi7.pfb><C:/Users/Nutzer/AppData/Loca
+l/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Users/Nutzer/App
+Data/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/Users/N
+utzer/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr6.pfb><C:
+/Users/Nutzer/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr7
+.pfb><C:/Users/Nutzer/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts
+/cm/cmr8.pfb><C:/Users/Nutzer/AppData/Local/Programs/MiKTeX/fonts/type1/public/
+amsfonts/cm/cmsy10.pfb><C:/Users/Nutzer/AppData/Local/Programs/MiKTeX/fonts/typ
+e1/public/amsfonts/cm/cmsy6.pfb><C:/Users/Nutzer/AppData/Local/Programs/MiKTeX/
+fonts/type1/public/amsfonts/cm/cmsy7.pfb><C:/Users/Nutzer/AppData/Local/Program
+s/MiKTeX/fonts/type1/public/amsfonts/cm/cmti10.pfb><C:/Users/Nutzer/AppData/Loc
+al/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmti8.pfb><C:/Users/Nutzer/Ap
+pData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmtt8.pfb>
+Output written on First_Draw.pdf (18 pages, 346038 bytes).
 PDF statistics:
- 225 PDF objects out of 1000 (max. 8388607)
- 41 named destinations out of 1000 (max. 500000)
- 121 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 348 PDF objects out of 1000 (max. 8388607)
+ 60 named destinations out of 1000 (max. 500000)
+ 187 words of extra memory for PDF output out of 10000 (max. 10000000)
 

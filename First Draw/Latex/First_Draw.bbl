@@ -1,4 +1,4 @@
-\begin{thebibliography}{11}
+\begin{thebibliography}{15}
 \expandafter\ifx\csname natexlab\endcsname\relax\def\natexlab#1{#1}\fi
 \providecommand{\url}[1]{\texttt{#1}}
 \providecommand{\href}[2]{#2}
@@ -11,6 +11,20 @@
 \providecommand{\Pubmed}[1]{\href{pmid:#1}{\path{#1}}}
 \providecommand{\bibinfo}[2]{#2}
 \ifx\xfnm\relax \def\xfnm[#1]{\unskip,\space#1}\fi
+%Type = Article
+\bibitem[{Batchelor \& Orr(1988)}]{Batchelor1988}
+\bibinfo{author}{Batchelor, R.}, \& \bibinfo{author}{Orr, A.~B.}
+  (\bibinfo{year}{1988}).
+\newblock \bibinfo{title}{Inflation expectations revisited}.
+\newblock {\it \bibinfo{journal}{Economica}\/},  {\it \bibinfo{volume}{55}\/},
+  \bibinfo{pages}{317–331}.
+%Type = Article
+\bibitem[{Berk(1999)}]{Berk1999}
+\bibinfo{author}{Berk, J.~M.} (\bibinfo{year}{1999}).
+\newblock \bibinfo{title}{Measuring inflation expectations: a survey data
+  approach}.
+\newblock {\it \bibinfo{journal}{Applied Economics}\/},  {\it
+  \bibinfo{volume}{31.11}\/}, \bibinfo{pages}{1467--1480}.
 %Type = Article
 \bibitem[{Blinder et~al.(2017)Blinder, Ehrmann, De~Haan \&
   Jansen}]{Blinderetal2017}
@@ -31,6 +45,13 @@
   Promise or false hope?}
 \newblock {\it \bibinfo{journal}{Journal of Economic Literature
   (forthcoming)}\/}, .
+%Type = Article
+\bibitem[{Carlson \& Parkin(1975)}]{Carlson1975}
+\bibinfo{author}{Carlson, J.~A.}, \& \bibinfo{author}{Parkin, M.}
+  (\bibinfo{year}{1975}).
+\newblock \bibinfo{title}{Inflation expectations}.
+\newblock {\it \bibinfo{journal}{Economica}\/},  {\it
+  \bibinfo{volume}{42.166}\/}, \bibinfo{pages}{123--138}.
 %Type = Article
 \bibitem[{Carroll(2003)}]{Carroll2003}
 \bibinfo{author}{Carroll, C.~D.} (\bibinfo{year}{2003}).
@@ -101,5 +122,13 @@
   communication}.
 \newblock {\it \bibinfo{journal}{Journal of International Money and
   Finance}\/},  {\it \bibinfo{volume}{79}\/}, \bibinfo{pages}{136--156}.
+%Type = Article
+\bibitem[{Rosenblatt-Wisch \& Scheufele(2015)}]{Rosenblatt-Wisch2015}
+\bibinfo{author}{Rosenblatt-Wisch, R.}, \& \bibinfo{author}{Scheufele, R.}
+  (\bibinfo{year}{2015}).
+\newblock \bibinfo{title}{Quantification and characteristics of household
+  inflation expectations in switzerland}.
+\newblock {\it \bibinfo{journal}{Applied Economics}\/},  {\it
+  \bibinfo{volume}{47.26}\/}, \bibinfo{pages}{2699--2716}.
 
 \end{thebibliography}
