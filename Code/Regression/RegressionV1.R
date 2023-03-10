@@ -9,7 +9,7 @@ library("ggplot2")
 
 #####################################################################################
 
-data = read_excel('D:/Studium/PhD/Github/Single-Author/Data/regression_data_monthly.xlsx')
+data = read_excel('D:/Single Author/Github/Single-Author/Data/Regression/regression_data_monthly.xlsx')
 data = data.frame(data)
 
 data1 = data %>% select(German.Absolute.Expectations.Gap,German.Relative.Expectations.Gap,

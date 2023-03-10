@@ -1,0 +1,3 @@
+- If Media follows ECB more strongely, i.e, if the ECB draws the Media attention that the Expectation Gap is smaller.
+
+- Information Regidities Paper von Thorsrud mit in Einleitung aufnehmen.

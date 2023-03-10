@@ -5,6 +5,7 @@
 \usepackage{graphicx} 
 \usepackage{subcaption}
 \usepackage{amsmath}
+\usepackage{booktabs}
 
 
 \usepackage[dvipsnames]{xcolor} % Für Einfärbung von Notizen. Sollte am Ende wieder entfernt werden.
@@ -276,13 +277,36 @@ To measure the error, I use the EU household inflation expectation described in 
     \end{figure}
 
 
-(Lamla (2014) uses the absolute error. However, wouldn't it make more sense to take the non-absolute error in case of asymmetric behavior? Some papers indicate asymmetric behavior when it comes to inflation in news. Even if the behavior is symmetric, it could still be interesting to communicate that)
-(How to continue from here? I probaly should define difference metric between the ECB inflation index and the news inflation index. Lamla (2014) simply do some OLS regression (Expecation gap on media indices. However, he also created a theorie which ties his regression together and lets him explain his results. I could try to modify his theory or come up with something on my own. Would that make sense???)
+\textcolor{red}{Lamla (2014) uses the absolute error. However, wouldn't it make more sense to take the non-absolute error in case of asymmetric behavior? Some papers indicate asymmetric behavior when it comes to inflation in news. Even if the behavior is symmetric, it could still be interesting to communicate that}
+\\
+\\
+\textcolor{red}{How to continue from here? I probaly should define difference metric between the ECB inflation index and the news inflation index. Lamla (2014) simply do some OLS regression (Expecation gap on media indices. However, he also created a theorie which ties his regression together and lets him explain his results. I could try to modify his theory or come up with something on my own. Would that make sense???}
 
 \section{Model}\label{sec:Model}
 
+$\pi^i_t$ = information regarding inflation which agents follow \\
+$\pi^{ECB}_t$ = information regarding inflation from ECB \\
+$\pi^n_t$ = information regarding inflation from news \\
+
+$\epsilon_t$ = normal distributed error with mean zero and variance $\sigma_{ECB,t}$ \\
+$\gamma_t$ = media bias \\
+$\lambda_t$ = media bias weight (1 = full bias, 0 bias) \\
+
+$\pi^{ECB}_t$ = $\pi_t + \epsilon_t$ (assuming that ECB is unbiased) \\
+$\pi^n_t$ = $\pi_t + \lambda_t * \pi^{ECB}_t + (1-\lambda_t) * \gamma_t$ \\
+
+$\pi^i_t$ = $\alpha_t * \pi^{ECB}_t + (1-\alpha_t) * \pi^n$ \\
+$\pi^i_t$ = $\alpha_t * (\pi_t + \epsilon_t) + (1-\alpha_t) * (\pi_t + \lambda_t * \pi^{ECB}_t + (1-\lambda_t) * \gamma_t)$ \\
+$\pi^i_t$ = $\pi_t + \alpha_t * \epsilon_t + (1-\alpha_t) * (\lambda_t * \pi^{ECB}_t + (1-\lambda_t) * \gamma_t)$ \\
+
 \section{Estimation (Placeholder Title)}\label{sec:Estimation}
 
+To understand how the media differs in their reporting about inflation compared to the official ECB communication, 
+
+I measure the difference in inflation related news and inflation related ECB communication. 
+To measure the difference of the ECB inflation index and the News Inflation Index 
+
+\cite{LamlaLein2014} regressed professional forecaster inflation expectations on media 
 \begin{align}
 |\mu_{t+12} - \nu_{t+12}| = \alpha + |\mu_t - \nu_t| + \beta NewsInflation_t + \gamma ECBInflation_t + \mathbf{\delta} \mathbf{Z_t} + \epsilon_t
 \end{align}
@@ -291,15 +315,22 @@ To measure the error, I use the EU household inflation expectation described in 
 \centering 
   \caption{Inflation Expectation Gap} 
   \label{tab:Inflation Expectation Gap}
-\begin{tabular}{lccc}   
+\begin{tabular}{lcccccc}   
 \\[-1.8ex]\hline
 \hline \\[-1.8ex] 
-& & &  \\ 
-Gap & & & \\
-NewsInflation & & & \\
-ECBInflation & & & \\
-
-Constant & & & \\
+& $Gap_{t+1}$ & $\mu_t$ & $\nu_t$ & & &\\ 
+$Gap_t$ & & & & & &\\
+$NewsInflation_t$ & & & & & & \\
+$ECBInflation_t$ & & & & & &\\
+$ECBMonetary_t$ & & & & & &\\
+$ECBOutlook_t$ & & & & & &\\
+$News ECB Difference_t$ & & & & & &\\
+$Inflation_t$ & & & & & &\\
+$IndustrialProduction_t$ & & & & & &\\
+$Constant$ & & & & & &\\
+\midrule
+	$R^2$ & & & & & &\\
+\bottomrule
  \end{tabular} 
 \end{table}
 
