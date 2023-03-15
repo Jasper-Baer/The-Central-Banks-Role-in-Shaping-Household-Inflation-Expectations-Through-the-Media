@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (MiKTeX 20.10) (preloaded format=pdflatex 2020.10.27)  10 MAR 2023 23:42
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (MiKTeX 20.10) (preloaded format=pdflatex 2020.10.27)  15 MAR 2023 20:28
 entering extended mode
 **./First_Draw.tex
 (First_Draw.tex
@@ -534,12 +534,12 @@ ent clas-si-fi-ca-tion (CITE),
  []
 
 [7]
-<Inflation_Count.png, id=161, 529.22719pt x 316.93407pt>
+<Inflation_Count.png, id=169, 529.22719pt x 316.93407pt>
 File: Inflation_Count.png Graphic file (type png)
 <use Inflation_Count.png>
 Package pdftex.def Info: Inflation_Count.png  used on input line 192.
 (pdftex.def)             Requested size: 170.71281pt x 170.7211pt.
-<Inflation_Sentiment_Direction.png, id=162, 529.22719pt x 316.93407pt>
+<Inflation_Sentiment_Direction.png, id=170, 529.22719pt x 316.93407pt>
 File: Inflation_Sentiment_Direction.png Graphic file (type png)
 <use Inflation_Sentiment_Direction.png>
 Package pdftex.def Info: Inflation_Sentiment_Direction.png  used on input line 
@@ -550,17 +550,17 @@ Package pdftex.def Info: Inflation_Sentiment_Direction.png  used on input line
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
 [8]
-<ECB_eco_Industrial_prod.png, id=168, 529.22719pt x 316.93407pt>
+<ECB_eco_Industrial_prod.png, id=176, 529.22719pt x 316.93407pt>
 File: ECB_eco_Industrial_prod.png Graphic file (type png)
 <use ECB_eco_Industrial_prod.png>
 Package pdftex.def Info: ECB_eco_Industrial_prod.png  used on input line 218.
 (pdftex.def)             Requested size: 170.71281pt x 170.7211pt.
-<ECB_inf_inf.png, id=169, 529.22719pt x 316.93407pt>
+<ECB_inf_inf.png, id=177, 529.22719pt x 316.93407pt>
 File: ECB_inf_inf.png Graphic file (type png)
 <use ECB_inf_inf.png>
 Package pdftex.def Info: ECB_inf_inf.png  used on input line 224.
 (pdftex.def)             Requested size: 170.71281pt x 170.7211pt.
-<ECB_mon_df.png, id=170, 529.22719pt x 316.93407pt>
+<ECB_mon_df.png, id=178, 529.22719pt x 316.93407pt>
 File: ECB_mon_df.png Graphic file (type png)
 <use ECB_mon_df.png>
 Package pdftex.def Info: ECB_mon_df.png  used on input line 230.
@@ -571,22 +571,22 @@ LaTeX Warning: `!h' float specifier changed to `!ht'.
 
 [9 <./Inflation_Count.png> <./Inflation_Sentiment_Direction.png>] [10 <./ECB_ec
 o_Industrial_prod.png> <./ECB_inf_inf.png> <./ECB_mon_df.png>] [11]
-<abs_exp_res.png, id=193, 528.47438pt x 325.215pt>
+<abs_exp_res.png, id=201, 528.47438pt x 325.215pt>
 File: abs_exp_res.png Graphic file (type png)
 <use abs_exp_res.png>
 Package pdftex.def Info: abs_exp_res.png  used on input line 252.
 (pdftex.def)             Requested size: 170.7119pt x 170.72058pt.
-<rel_exp_res.png, id=194, 528.47438pt x 325.215pt>
+<rel_exp_res.png, id=202, 528.47438pt x 325.215pt>
 File: rel_exp_res.png Graphic file (type png)
 <use rel_exp_res.png>
 Package pdftex.def Info: rel_exp_res.png  used on input line 258.
 (pdftex.def)             Requested size: 170.7119pt x 170.72058pt.
-<rel_exp_res_prev2014.png, id=195, 528.47438pt x 325.215pt>
+<rel_exp_res_prev2014.png, id=203, 528.47438pt x 325.215pt>
 File: rel_exp_res_prev2014.png Graphic file (type png)
 <use rel_exp_res_prev2014.png>
 Package pdftex.def Info: rel_exp_res_prev2014.png  used on input line 264.
 (pdftex.def)             Requested size: 170.7119pt x 170.72058pt.
-<rel_exp_res_aft2014.png, id=196, 528.47438pt x 325.215pt>
+<rel_exp_res_aft2014.png, id=204, 528.47438pt x 325.215pt>
 File: rel_exp_res_aft2014.png Graphic file (type png)
 <use rel_exp_res_aft2014.png>
 Package pdftex.def Info: rel_exp_res_aft2014.png  used on input line 270.
@@ -598,7 +598,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 280--284
 
 [12 <./abs_exp_res.png> <./rel_exp_res.png> <./rel_exp_res_prev2014.png> <./rel
 _exp_res_aft2014.png>]
-Underfull \hbox (badness 10000) in paragraph at lines 287--290
+Underfull \hbox (badness 10000) in paragraph at lines 288--290
 
  []
 
@@ -608,40 +608,63 @@ Underfull \hbox (badness 10000) in paragraph at lines 291--294
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 295--297
+Underfull \hbox (badness 10000) in paragraph at lines 295--299
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 298--301
+Underfull \hbox (badness 10000) in paragraph at lines 300--301
 
  []
 
 
-Overfull \hbox (14.95435pt too wide) detected at line 312
+Underfull \hbox (badness 10000) in paragraph at lines 308--352
+
+ []
+
+[13] [14]
+
+Package natbib Warning: Citation `Erhmann2017' on page 15 undefined on input li
+ne 355.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 355--360
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 365--371
+
+ []
+
+[15]
+Overfull \hbox (14.95435pt too wide) detected at line 382
 []
  []
 
-[13] (First_Draw.bbl [14] [15]) [16] [17]
-<household_prof_inf.png, id=261, 528.47438pt x 325.215pt>
+(First_Draw.bbl [16] [17]) [18] [19]
+<household_prof_inf.png, id=282, 528.47438pt x 325.215pt>
 File: household_prof_inf.png Graphic file (type png)
 <use household_prof_inf.png>
-Package pdftex.def Info: household_prof_inf.png  used on input line 377.
+Package pdftex.def Info: household_prof_inf.png  used on input line 447.
 (pdftex.def)             Requested size: 344.99608pt x 170.72058pt.
- [18 <./household_prof_inf.png>]
-[19] (First_Draw.aux)
+
+
+Package natbib Warning: There were undefined citations.
+
+[20 <./household_prof_inf.png>] [21] (First_Draw.aux)
 Package rerunfilecheck Info: File `First_Draw.out' has not changed.
-(rerunfilecheck)             Checksum: 3286EE21916F39922502EA1D0AC9EAEC;1141.
+(rerunfilecheck)             Checksum: 270084460214D1C2231A4CC299156AB3;1282.
 
 
 LaTeX Warning: There were multiply-defined labels.
 
  ) 
 Here is how much of TeX's memory you used:
- 9072 strings out of 480236
- 142960 string characters out of 2879607
- 458089 words of memory out of 3000000
- 25414 multiletter control sequences out of 15000+200000
+ 9079 strings out of 480236
+ 143059 string characters out of 2879607
+ 458146 words of memory out of 3000000
+ 25417 multiletter control sequences out of 15000+200000
  539906 words of font info for 46 fonts, out of 3000000 for 9000
  1141 hyphenation exceptions out of 8191
  72i,10n,77p,1368b,494s stack positions out of 5000i,500n,10000p,200000b,50000s
@@ -650,23 +673,25 @@ m/cmbx10.pfb><C:/Users/Matthis/AppData/Local/Programs/MiKTeX/fonts/type1/public
 /amsfonts/cm/cmbx7.pfb><C:/Users/Matthis/AppData/Local/Programs/MiKTeX/fonts/ty
 pe1/public/amsfonts/cm/cmex10.pfb><C:/Users/Matthis/AppData/Local/Programs/MiKT
 eX/fonts/type1/public/amsfonts/cm/cmmi10.pfb><C:/Users/Matthis/AppData/Local/Pr
-ograms/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi7.pfb><C:/Users/Matthis/AppDat
-a/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Users/Matt
-his/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/
-Users/Matthis/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr6
+ograms/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi5.pfb><C:/Users/Matthis/AppDat
+a/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi7.pfb><C:/Users/Matt
+his/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/
+Users/Matthis/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr1
+2.pfb><C:/Users/Matthis/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfon
+ts/cm/cmr5.pfb><C:/Users/Matthis/AppData/Local/Programs/MiKTeX/fonts/type1/publ
+ic/amsfonts/cm/cmr6.pfb><C:/Users/Matthis/AppData/Local/Programs/MiKTeX/fonts/t
+ype1/public/amsfonts/cm/cmr7.pfb><C:/Users/Matthis/AppData/Local/Programs/MiKTe
+X/fonts/type1/public/amsfonts/cm/cmr8.pfb><C:/Users/Matthis/AppData/Local/Progr
+ams/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Users/Matthis/AppData/
+Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy6.pfb><C:/Users/Matthi
+s/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy7.pfb><C:/Us
+ers/Matthis/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmti10
 .pfb><C:/Users/Matthis/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfont
-s/cm/cmr7.pfb><C:/Users/Matthis/AppData/Local/Programs/MiKTeX/fonts/type1/publi
-c/amsfonts/cm/cmr8.pfb><C:/Users/Matthis/AppData/Local/Programs/MiKTeX/fonts/ty
-pe1/public/amsfonts/cm/cmsy10.pfb><C:/Users/Matthis/AppData/Local/Programs/MiKT
-eX/fonts/type1/public/amsfonts/cm/cmsy6.pfb><C:/Users/Matthis/AppData/Local/Pro
-grams/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy7.pfb><C:/Users/Matthis/AppData
-/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmti10.pfb><C:/Users/Matt
-his/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmti8.pfb><C:/
-Users/Matthis/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmtt
-8.pfb>
-Output written on First_Draw.pdf (19 pages, 335843 bytes).
+s/cm/cmti8.pfb><C:/Users/Matthis/AppData/Local/Programs/MiKTeX/fonts/type1/publ
+ic/amsfonts/cm/cmtt8.pfb>
+Output written on First_Draw.pdf (21 pages, 364865 bytes).
 PDF statistics:
- 340 PDF objects out of 1000 (max. 8388607)
- 61 named destinations out of 1000 (max. 500000)
- 187 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 366 PDF objects out of 1000 (max. 8388607)
+ 65 named destinations out of 1000 (max. 500000)
+ 203 words of extra memory for PDF output out of 10000 (max. 10000000)
 

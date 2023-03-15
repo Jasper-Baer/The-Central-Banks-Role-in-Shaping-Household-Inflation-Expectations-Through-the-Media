@@ -81,10 +81,10 @@ PLACEHOLDER Keyword 1 \sep Keyword 2 \sep Keyword 3 \sep Keyword 4 \sep Keyword 
 
 \section{Introduction} \label{sec:intro}
 
-Central bank communication has become an important tool of modern monetary policy \citep{Blinderetal2017}. Central bankers use communication is a important tool for guiding inflation expectations and ensuring trust. In recent years, most of the communication was aimed at financial experts. However, central banks are increasingly reaching out to the general public \citep{Blinderetal2022}. The media plays a crucial rule in this mechanism by making the information of the central bank communication available to the general public, which makes it crucial to understand how central bank communication is reported in the media for understanding the effects of central bank communication on the general public.
+Central bank communication has become an important tool of modern monetary policy \citep{Blinderetal2017}. Central banks use communication as an important tool for guiding inflation expectations and ensuring trust. In recent years, most of the communication was aimed at financial experts. However, central banks are increasingly reaching out to the general public \citep{Blinderetal2022}. The media plays a crucial role in this mechanism by making the information of the central bank communication available to the general public, which makes it crucial to understand how central bank communication is reported in the media for understanding the effects of central bank communication on the general public.
 \\
-Most of the literature focuses on a direct link between central bank communication and financial variables. \textcolor{red}{(To close to \cite{Picaultetal2022}.)} Similar to \cite{Picaultetal2022}, I adapt a framework by \cite{HayoNeuenkirch2015} where media acts a channel between the central bank communication and the perception of monetary policy by financial markets. 
-Following this line of thought I assume that the media coverage of central bank communication acts as a channel between the central bank and the households. I assume that households consume the news about the central bank communication rather than the original central bank communication. This view is in line with \cite{Gardt2022} who show that according to the ECB Knowledge and Attitudes Survey, May 2021 households mostly hear about the ECB from television and newspapers (online and printed) and rarely by using direct sources like the ECB website. \textcolor{red}{(To close to \cite{Blinderetal2022}.)}
+Most of the literature focuses on a direct link between central bank communication and financial variables. \textcolor{red}{(To close to \cite{Picaultetal2022}.)} Similar to \cite{Picaultetal2022}, I adapt a framework by \cite{HayoNeuenkirch2015} where media acts as a channel between the central bank communication and the perception of monetary policy by financial markets. 
+Following this line of thought, I assume that the media coverage of central bank communication acts as a channel between the central bank and the households. I assume that households consume the news about the central bank communication rather than the original central bank communication. This view is in line with \cite{Gardt2022} who show that according to the ECB Knowledge and Attitudes Survey, May 2021 households mostly hear about the ECB from television and newspapers (online and printed) and rarely by using direct sources like the ECB website. \textcolor{red}{(To close to \cite{Blinderetal2022}.)}
 \\
 Since \cite{Carroll2003} created a model for inflation expectations that considers the amount of media coverage several studies have analyzed the role of media coverage for the inflation expectation forming process \cite{Ehrmann2017},  \textcolor{red}{(To close to \cite{Larsen2021}, more citations?)}
 Newer studies, extend the analysis to also incorporate the tone \citep{LamlaLein2014} and the topics \citep{Larsen2021} of media coverage. 
@@ -101,11 +101,11 @@ Using the \textcolor{red}{data-driven} lexicon approach by \cite{PicaultRenault2
 I investigate the influence of media coverage in German newspapers of ECB press conferences on household's inflation expectation accuracy. 
 Firstly, I investigate if the information given in regard to inflation in media coverage deviates from the inflation information in the original press conferences by the ECB which would introduce a bias and could potentially influence how the general public perceives monetary policy decisions. Secondly, I investigate how media coverage and central bank communication can be used to \textcolor{red}{explain} the household's inflation expectation errors.
 \\
-This paper, is to my knowledge, the first paper which explicitly investigates the link between ECB communication and news coverage in regard to household inflation expectations. Furthermore, it contributes to the literature by demonstrating how the news about inflation deviates from the corresponding ECB communication, allowing to better understand how the ECB communication is conveyed to the general public and explains the channel through which the general public reacts to ECB communication.
+This paper is to my knowledge, the first paper which explicitly investigates the link between ECB communication and news coverage in regard to household inflation expectations. Furthermore, it contributes to the literature by demonstrating how the news about inflation deviates from the corresponding ECB communication, allowing us to better understand how the ECB communication is conveyed to the general public and explains the channel through which the general public reacts to ECB communication.
 \\
 \\
 % Furthermore, this paper applies a semi supervised approach that does only rely on a few pre-selected words instead of a full training dataset.
-\textcolor{red}{(NOTE 1: I could maybe ask Tri and take his method instead. It is still supervised, but I could slightly modify it to produce a lexicon. It would most likely be a improvement over Picault et. al (2017) due to the word embeddings)}
+\textcolor{red}{(NOTE 1: I could maybe ask Tri and take his method instead. It is still supervised, but I could slightly modify it to produce a lexicon. It would most likely be an improvement over Picault et. al (2017) due to the word embeddings)}
 \textcolor{red}{(NOTE 2: Before I can describe the model which I use for the second part, I need to certain what exactly I want to regress and how to do it.)}
 \section{Data} \label{sec:Data}
 
@@ -284,7 +284,7 @@ To measure the error, I use the EU household inflation expectation described in 
 
 \section{Model}\label{sec:Model}
 
-$\pi^i_t$ = information regarding inflation which agents follow \\
+%$\pi^i_t$ = information regarding inflation which agents follow \\
 $\pi^{ECB}_t$ = information regarding inflation from ECB \\
 $\pi^n_t$ = information regarding inflation from news \\
 
@@ -292,14 +292,87 @@ $\epsilon_t$ = normal distributed error with mean zero and variance $\sigma_{ECB
 $\gamma_t$ = media bias \\
 $\lambda_t$ = media bias weight (1 = full bias, 0 bias) \\
 
-$\pi^{ECB}_t$ = $\pi_t + \epsilon_t$ (assuming that ECB is unbiased) \\
-$\pi^n_t$ = $\pi_t + \lambda_t * \pi^{ECB}_t + (1-\lambda_t) * \gamma_t$ \\
+$\pi^{ECB}_t$ = $\pi^{Eurozone}_t + \epsilon_t$ (assuming that ECB is unbiased and focused on the Eurozone as a whole instead of country specific inflation.) 
+\\
+\textcolor{red}{Check if other papers made a difference for Eurozone inflation and country specific inflation.}
+\\
 
-$\pi^i_t$ = $\alpha_t * \pi^{ECB}_t + (1-\alpha_t) * \pi^n$ \\
-$\pi^i_t$ = $\alpha_t * (\pi_t + \epsilon_t) + (1-\alpha_t) * (\pi_t + \lambda_t * \pi^{ECB}_t + (1-\lambda_t) * \gamma_t)$ \\
-$\pi^i_t$ = $\pi_t + \alpha_t * \epsilon_t + (1-\alpha_t) * (\lambda_t * \pi^{ECB}_t + (1-\lambda_t) * \gamma_t)$ \\
+$\pi^n_t$ = $\lambda_t * \pi^{ECB}_t + (1-\lambda_t) * (\gamma_t + \pi_t)$ (News can either follow ECB and just reproduce the ECBs press conferences ($\lambda_t = 1)$ or they could ignore the press conferences completely ($\lambda_t = 0$).) \\
 
-\section{Estimation (Placeholder Title)}\label{sec:Estimation}
+%$\pi^i_t$ = $\alpha_t * \pi^{ECB}_t + (1-\alpha_t) * \pi^n$ \\
+%$\pi^i_t$ = $\alpha_t * (\pi_t + \epsilon_t) + (1-\alpha_t) * (\pi_t + \lambda_t * \pi^{ECB}_t + (1-\lambda_t) * \gamma_t)$ \\
+%$\pi^i_t$ = $\pi_t + \alpha_t * \epsilon_t + (1-\alpha_t) * (\lambda_t * \pi^{ECB}_t + (1-\lambda_t) * \gamma_t)$ \\
+
+\subsection{Baysian Learning Framework}
+% Einmal observed CB mit noise und dann kommuniziert es mit some noise. Da sollte ein noise raus 
+\textcolor{red}{Baysian Framework from Kandel and Zilberfarb (1999) in Sheen and Wang (2022) and in Lamala and Lein (2014)}\\
+\\
+I assume that the central bank observes the true inflation $\pi_t$ with some noise. Let $c_t$ denote a measure that captures inflation-related information that the central bank communicates to the general public, i.e., inflation-related news in press conferences
+\\
+$ c_t = \pi_t + \epsilon_t \quad \epsilon_t \sim N(0, \sigma^c_t)$
+\\ 
+where $\epsilon_t$ represents the noise in the central bank's observation. 
+\\
+Without the central bank's communication, the media's "baseline" signal can be formulated as
+\\
+$ s^b_t = \alpha_t + \pi_t + \omega_t  \quad \omega_t \sim N(0, \sigma_t^{s^b}) $
+\\
+where $\alpha_t$ captures the media bias and $\omega_t$ is the noise. The media can decide how closely to follow the central bank's communication. Hence, the media's inflation signal can be defined as 
+\\
+$ s_t = \lambda_t s^b_t + (1-\lambda_t)c_t $
+\\ 
+where $\lambda_t$ denotes the weight that the media places on $s_t$. $\lambda_t = 1$ would indicate that the media ignores the central bank's communication completely and $\lambda = 0$ indicates that the media only reproduces the information from the central bank's communication. 
+\\
+Given that $s_t$ is a linear combination of normal random variables and assuming that $\epsilon_t $ and $\omega_t$ are independent the media sends a normally distributed signal $s_t \sim N(\mu_s, \sigma^s_t).$ 
+\\
+where 
+\\$\mu_s = \lambda_t (\alpha_t + \pi_t) + (1-\lambda_t) \pi_t$ 
+\\
+$\sigma_t^s = \lambda_t^2 \sigma_t^{s^b} + (1- \lambda_t)^2 \sigma^c_t$
+\\
+The households hold a prior belief $\gamma_t \sim N(\pi_t, \sigma^h_t)$ about the future inflation $\pi_{t+1}$. Hence, the representative household forms its inflation expectations according to
+\\
+$ f(\pi_{t+1}|c_t, \pi_t, \lambda_t, \alpha_t) \propto  h(s_t|\alpha_t, \pi_t, \lambda_t) k(\pi_t)$
+\\
+where $f(\pi_{t+1}|c_t, \pi_t, \lambda_t, \alpha_t)$ is the posterior belief of a representative household on inflation $\pi_{t+1}$ after receiving the inflation related news signal. Assuming normality the posterior distribution can be represented as normal distribution with mean $\mu_t$ and variance $\vartheta_t$, where
+\\
+$ \mu_t = \rho \pi_t + (1 - \rho)(\lambda_t (\alpha_t + \pi_t) + (1-\lambda_t) \pi_t) $
+\\
+$ \mu_t = \rho \pi_t + (1- \rho) (\pi_t + \lambda_t \alpha_t)  $
+\\
+$\rho = \frac{\frac{1}{V}\sigma^s_t}{{\sigma^h_t + \frac{1}{V}}\sigma^s_t}$
+\\
+\frac{\partial }{•}
+\\
+For $\lambda_t = 0$ $\mu = \pi$. Hence, if the media perfectly reproduces the central bank communication, households would on average follow the current inflation for their expected inflation while $\lambda_t = 1$ would mean that media sends a signal which is biased by $\alpha_t$.  
+\\
+\textbf{Hypothesis 1:} If the media closely follows the central bank communication, households will be able to more directly follow inflation.
+\\
+\\
+\textbf{Hypothesis 2:} If the media is strongly biased, 
+\\
+\textcolor{red}{Note: For a robustness check I could assume that households directly observe the ECB communication. Maybe I could even create a scenario in which the household ignore the media and only receive a news signal from the ECB, simulating a "perfect" communication scenario for the ECB.}  
+
+\section{Econometric Framework}\label{sec:Econometric Framework}
+
+I follow \cite{Erhmann2017} and define two different types of inflation expectation biases; $\mathbf{B}_t = \{B^r_t, B^e_t \}$ where $B^r_t$ is the difference between the HCPI and the transformed household inflation expectation at the forecast horizon, and $B^e_t$ is the difference between the professional inflation forecast and the transformed household inflation expectations.
+\\
+\textcolor{red}{to close to Erhmann et al. 2017?}
+\\
+$\mathbf{B}_t = \alpha + \beta_1 Media^c_t + \beta_2 Media^i_t + \beta_3 \pi_{t-1} + \epsilon_t$ \\
+
+where $\alpha$ is a constant, 
+
+%$Media^c_t$ is the news count in period $t$, $Media^i_t$ is the news inflation index  
+
+The equation is estimated via OLS using Newey-West standard errors.
+\\
+To avoid simultaneity issues I follow \cite{LamlaLein2014} In order to obtain media data for a given month, I aggregate the media reports for each month, excluding any articles which are potentially related to the consumer survey results in the month. Specifically, I sum up the media articles until the day before the consumer survey is released. The sentences from the summed up articles are then used to derive the news index and news count for the given month.
+\\
+\textcolor{red}{Bezug zur Methode herstellen. Am besten Gleichung zitieren}
+\\
+
+\section{Estimation Results (Placeholder Title)}\label{sec:Estimation Results}
 
 To understand how the media differs in their reporting about inflation compared to the official ECB communication, 
 

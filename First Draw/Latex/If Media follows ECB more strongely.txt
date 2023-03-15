@@ -1,3 +1,12 @@
 - If Media follows ECB more strongely, i.e, if the ECB draws the Media attention that the Expectation Gap is smaller.
 
 - Information Regidities Paper von Thorsrud mit in Einleitung aufnehmen.
+
+- Consumers’ Attitudes and Their Inflation Expectations -> Uses Bias between real inflation and household expecationas AND Bias between prof. expecations and household expectations
+
+- Grafik mit Inflationerwartungen noch um echte Inflation erweitern
+
+- Aggregate news data up to release of ECB survey (like Lamla and Lein (2014)  
+
+Using aggregated data, Lamla and Maag (2012) and Dräger (2015) indeed find
+the content of media reports have an asymmetric impact on inflation expectations
