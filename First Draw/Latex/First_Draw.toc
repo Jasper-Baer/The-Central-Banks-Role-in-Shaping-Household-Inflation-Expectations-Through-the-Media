@@ -1,0 +1,16 @@
+\contentsline {section}{\numberline {1}Introduction}{3}{section.1}%
+\contentsline {section}{\numberline {2}Model}{4}{section.2}%
+\contentsline {section}{\numberline {3}Data}{7}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Textual Data}{7}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Quantitative Data}{8}{subsection.3.2}%
+\contentsline {section}{\numberline {4}Text Classification}{9}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Method for Quantifying the Central Bank Communication and News Coverage}{9}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Training Dataset}{10}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.3}Lexicon Based Text Classification}{10}{subsection.4.3}%
+\contentsline {section}{\numberline {5}Descriptive Analysis}{11}{section.5}%
+\contentsline {section}{\numberline {6}Econometric Framework}{15}{section.6}%
+\contentsline {section}{\numberline {7}Results}{16}{section.7}%
+\contentsline {section}{\numberline {8}Conclusions}{16}{section.8}%
+\let \numberline \tmptocnumberline 
+\contentsline {section}{\numberline {Appendix \nobreakspace {}A}Quantification of Inflation Expectations}{19}{appendix.A}%
+\contentsline {section}{\numberline {Appendix \nobreakspace {}B}Additional Rules for Lexicon Text Classification}{21}{appendix.B}%
