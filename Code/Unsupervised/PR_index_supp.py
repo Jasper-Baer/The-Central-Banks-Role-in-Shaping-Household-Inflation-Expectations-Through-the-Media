@@ -198,7 +198,7 @@ def create_dict(word_dict, n_grams, typ):
     direction_lex['positive ' + typ + ' index'] = direction_lex['positive ' + typ]/(direction_lex['positive ' + typ] + direction_lex['neutral ' + typ] + direction_lex['negative ' + typ])
     direction_lex['neutral ' + typ + ' index'] = direction_lex['neutral ' + typ]/(direction_lex['positive ' + typ] + direction_lex['neutral ' + typ] + direction_lex['negative ' + typ])
     direction_lex['negative ' + typ + ' index'] = direction_lex['negative ' + typ]/(direction_lex['positive '+ typ] + direction_lex['neutral ' + typ] + direction_lex['negative ' + typ])
-                
+            
     return(direction_lex)
 
 def create_index(data, PR_lex, neg_window = 0, test = 1):
@@ -207,7 +207,12 @@ def create_index(data, PR_lex, neg_window = 0, test = 1):
     neu_list = []
     neg_list = []
     
+    pos_PMI_list = []
+    neu_PMI_list = []
+    neg_PMI_list = []
+    
     index_list = []
+    index_list_PMI = []
     
     if neg_window > 0:
         
@@ -245,6 +250,10 @@ def create_index(data, PR_lex, neg_window = 0, test = 1):
         pos = 0
         neu = 0
         neg = 0
+        
+        pos_PMI = 0
+        neu_PMI = 0
+        neg_PMI = 0
     
         #   #
         # Go through each n-gram from 8-gram to 1-gram (starting at 8-grams) where n = j
@@ -351,11 +360,19 @@ def create_index(data, PR_lex, neg_window = 0, test = 1):
                         neu += float(keyword_prob['neutral'])*ocur
                         neg += float(keyword_prob['positive'])*ocur
                         
+                        pos_PMI += float(keyword_prob['PMI negative'])*ocur
+                        neu_PMI += float(keyword_prob['PMI neutral'])*ocur
+                        neg_PMI += float(keyword_prob['PMI positive'])*ocur
+                        
                     elif negation == 1:
                         
                         pos += float(keyword_prob['positive'])*ocur
                         neu += float(keyword_prob['neutral'])*ocur
                         neg += float(keyword_prob['negative'])*ocur
+                        
+                        pos_PMI += float(keyword_prob['PMI positive'])*ocur
+                        neu_PMI += float(keyword_prob['PMI neutral'])*ocur
+                        neg_PMI += float(keyword_prob['PMI negative'])*ocur
                 
             
             # ?????
@@ -366,35 +383,53 @@ def create_index(data, PR_lex, neg_window = 0, test = 1):
             #     tokens = [x for i,x in enumerate(tokens) if i not in ind_set]     
           
         label_all = pos + neu + neg
+        label_all_PMI = pos_PMI + neu_PMI + neg_PMI
         
         if label_all > 0:
+            
             pos_share = pos/label_all
             neu_share = neu/label_all
             neg_share = neg/label_all
+            
+            pos_PMI_share = pos_PMI/label_all_PMI
+            neu_PMI_share = neu_PMI/label_all_PMI
+            neg_PMI_share = neg_PMI/label_all_PMI
             
         elif label_all == 0:
             
             pos_share = 0
             neu_share = 0
             neg_share = 0
+            
+            pos_PMI_share = 0
+            neu_PMI_share = 0
+            neg_PMI_share = 0
         
         pos_list.append(pos_share)
         neu_list.append(neu_share)
         neg_list.append(neg_share)
         
-        #print(pos_share)
+        pos_PMI_list.append(pos_PMI_share)
+        neu_PMI_list.append(neu_PMI_share)
+        neg_PMI_list.append(neg_PMI_share)
         
         index = pos_share - neg_share
+        index_PMI = pos_PMI_share - neg_PMI_share
         
         index_list.append(index)
+        index_list_PMI.append(index_PMI)
     
     data['pos share'] = pos_list
     data['neu share'] = neu_list
     data['neg share'] = neg_list
     
-    data['index'] = index_list 
+    data['pos share PMI'] = pos_PMI_list
+    data['neu share PMI'] = neu_PMI_list
+    data['neg share PMI'] = neg_PMI_list
     
-    #print('test')
+    data['index'] = index_list 
+    data['index PMI'] = index_list_PMI
+
     #data['date'] = pd.to_datetime(data['date'])
   
     return(data)

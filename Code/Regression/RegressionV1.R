@@ -9,7 +9,7 @@ library("ggplot2")
 
 #####################################################################################
 
-data = read_excel('D:/Single Author/Github/Single-Author/Data/Regression/regression_data_monthly.xlsx')
+data = read_excel('D:/Studium/PhD/Github/Single-Author/Data/Regression/regression_data_monthly.xlsx')
 data = data.frame(data)
 
 data1 = data %>% select(German.Absolute.Expectations.Gap,German.Relative.Expectations.Gap,
@@ -46,7 +46,7 @@ data1 = cbind(data1, time)
 data1 = data1[(lag_order+1):dim(data1)[1],]
 data1 = cbind(data1, data_lags)
 #data1 = data1[1:95,]
-data1 = data1[48:dim(data1)[1],]
+data1 = data1[24:dim(data1)[1],]
 step = 3
 
 #time = time[((lag_order+1):(dim(data1)[1]+lag_order)),]
@@ -304,13 +304,16 @@ ggplot(data1, aes(x = time)) +
 
 ##########################################################################
 
+#data1$German.Absolute.Expectations.Gap[is.nan(data1$German.Absolute.Expectations.Gap)] <- 0
+data1$German.Absolute.Expectations.Gap[is.na(data1$German.Absolute.Expectations.Gap)] <- 0
+
 coeff = max(data1$ECB_News_res_inf)/max(data1$German.Absolute.Expectations.Gap)
 
 ggplot(data1[step:dim(data1)[1],], aes(x = time)) + 
   geom_hline(yintercept = 0) + 
-  geom_line(aes(y = ECB_News_res_inf.role/coeff+0.025/coeff), colour="blue", linetype = 1) +
+  geom_line(aes(y = ECB_News_res_inf.role/coeff+0.015/coeff), colour="blue", linetype = 1) +
   geom_line(aes(y = German.Absolute.Expectations.Gap.role), colour="red", linetype = 2) +
-  scale_y_continuous(name = "Absolute Expectation Gap", sec.axis = sec_axis(~.*coeff-0.025, name = "Residuals from ECB Index on News Index")) +
+  scale_y_continuous(name = "Absolute Expectation Gap", sec.axis = sec_axis(~.*coeff-0.015, name = "Residuals from ECB Index on News Index")) +
   scale_x_date(date_labels="%Y", breaks = unique(years), name = "") +
   theme_classic() + 
   theme(axis.text.y.left = element_text(color = "red"),
@@ -321,11 +324,32 @@ ggplot(data1[step:dim(data1)[1],], aes(x = time)) +
         panel.grid.minor = element_blank(),
         panel.grid.major = element_blank()) 
 
+data1$German.Relative.Expectations.Gap[is.na(data1$German.Relative.Expectations.Gap)] <- 0
+
 coeff = max(data1$ECB_News_res_inf)/max(data1$German.Relative.Expectations.Gap)
 
 ggplot(data1[step:dim(data1)[1],], aes(x = time)) + 
   geom_hline(yintercept = 0) + 
   geom_line(aes(y = ECB_News_res_inf.role/coeff+0.025/coeff), colour="blue", linetype = 1) +
+  geom_line(aes(y = German.Relative.Expectations.Gap.role), colour="red", linetype = 2) +
+  scale_y_continuous(name = "Relative Expectation Gap", sec.axis = sec_axis(~.*coeff-0.025, name = "Residuals from ECB Index on News Index")) +
+  scale_x_date(date_labels="%Y", breaks = unique(years), name = "") +
+  theme_classic() + 
+  theme(axis.text.y.left = element_text(color = "red"),
+        axis.text.y.right = element_text(color = "blue"),
+        axis.title.y = element_text(color = "red"),
+        axis.title.y.right = element_text(color = "blue", vjust = 2),
+        axis.text.x = element_text(angle = 45, vjust = 0.5, size = 11),
+        panel.grid.minor = element_blank(),
+        panel.grid.major = element_blank()) 
+
+############################################
+
+coeff = max(data1$ECB_News_res_inf)/max(data1$German.Relative.Expectations.Gap)
+
+ggplot(data1[step:dim(data1)[1],], aes(x = time)) + 
+  geom_hline(yintercept = 0) + 
+  geom_line(aes(y = ECB_News_res_inf.role/coeff-0.06/coeff), colour="blue", linetype = 1) +
   geom_line(aes(y = German.Relative.Expectations.Gap.role*-1), colour="red", linetype = 2) +
   scale_y_continuous(name = "Relative Expectation Gap", sec.axis = sec_axis(~.*coeff-0.025, name = "Residuals from ECB Index on News Index")) +
   scale_x_date(date_labels="%Y", breaks = unique(years), name = "") +
@@ -337,14 +361,16 @@ ggplot(data1[step:dim(data1)[1],], aes(x = time)) +
         axis.text.x = element_text(angle = 45, vjust = 0.5, size = 11),
         panel.grid.minor = element_blank(),
         panel.grid.major = element_blank()) 
+
+############################################
 
 coeff = max(data1$ECB_News_res_inf)/max(data1$German.Relative.Expectations.Gap)
 
 ggplot(data1[step:(dim(data1)[1]-60),], aes(x = time)) + 
   geom_hline(yintercept = 0) + 
-  geom_line(aes(y = ECB_News_res_inf.role/coeff+0.025/coeff), colour="blue", linetype = 1) +
-  geom_line(aes(y = German.Relative.Expectations.Gap.role*-1), colour="red", linetype = 2) +
-  scale_y_continuous(name = "Relative Expectation Gap", sec.axis = sec_axis(~.*coeff-0.025, name = "Residuals from ECB Index on News Index")) +
+  geom_line(aes(y = ECB_News_res_inf.role/coeff+0.005/coeff), colour="blue", linetype = 1) +
+  geom_line(aes(y = German.Relative.Expectations.Gap.role), colour="red", linetype = 2) +
+  scale_y_continuous(name = "Relative Expectation Gap", sec.axis = sec_axis(~.*coeff-0.005, name = "Residuals from ECB Index on News Index")) +
   scale_x_date(date_labels="%Y", breaks = unique(years), name = "") +
   theme_classic() + 
   theme(axis.text.y.left = element_text(color = "red"),
@@ -360,7 +386,7 @@ coeff = max(data1$ECB_News_res_inf)/max(data1$German.Relative.Expectations.Gap)
 ggplot(data1[(step+110):(dim(data1)[1]),], aes(x = time)) + 
   geom_hline(yintercept = 0) + 
   geom_line(aes(y = ECB_News_res_inf.role/coeff+0.025/coeff), colour="blue", linetype = 1) +
-  geom_line(aes(y = German.Relative.Expectations.Gap.role), colour="red", linetype = 2) +
+  geom_line(aes(y = German.Relative.Expectations.Gap.role*-1), colour="red", linetype = 2) +
   scale_y_continuous(name = "Relative Expectation Gap", sec.axis = sec_axis(~.*coeff-0.025, name = "Residuals from ECB Index on News Index")) +
   scale_x_date(date_labels="%Y", breaks = unique(years), name = "") +
   theme_classic() + 
