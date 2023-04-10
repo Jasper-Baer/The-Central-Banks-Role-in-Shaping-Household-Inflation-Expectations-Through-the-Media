@@ -1,4 +1,4 @@
-\begin{thebibliography}{21}
+\begin{thebibliography}{25}
 \expandafter\ifx\csname natexlab\endcsname\relax\def\natexlab#1{#1}\fi
 \providecommand{\url}[1]{\texttt{#1}}
 \providecommand{\href}[2]{#2}
@@ -11,6 +11,21 @@
 \providecommand{\Pubmed}[1]{\href{pmid:#1}{\path{#1}}}
 \providecommand{\bibinfo}[2]{#2}
 \ifx\xfnm\relax \def\xfnm[#1]{\unskip,\space#1}\fi
+%Type = Article
+\bibitem[{Ardia et~al.(2019)Ardia, Bluteau \& Boudt}]{Ardia2019}
+\bibinfo{author}{Ardia, D.}, \bibinfo{author}{Bluteau, K.}, \&
+  \bibinfo{author}{Boudt, K.} (\bibinfo{year}{2019}).
+\newblock \bibinfo{title}{Questioning the news about economic growth: Sparse
+  forecasting using thousands of news-based sentiment values}.
+\newblock {\it \bibinfo{journal}{International Journal of Forecasting}\/},
+  {\it \bibinfo{volume}{35}\/}, \bibinfo{pages}{1370--1386}.
+%Type = Article
+\bibitem[{Barbaglia et~al.(2022)Barbaglia, Consoli \& Manzan}]{Barbaglia2022}
+\bibinfo{author}{Barbaglia, L.}, \bibinfo{author}{Consoli, S.}, \&
+  \bibinfo{author}{Manzan, S.} (\bibinfo{year}{2022}).
+\newblock \bibinfo{title}{Forecasting with economic news}.
+\newblock {\it \bibinfo{journal}{Journal of Business \& Economic
+  Statistics}\/},  (pp. \bibinfo{pages}{1--12}).
 %Type = Article
 \bibitem[{Batchelor \& Orr(1988)}]{Batchelor1988}
 \bibinfo{author}{Batchelor, R.}, \& \bibinfo{author}{Orr, A.~B.}
@@ -107,14 +122,6 @@
 \newblock {\it \bibinfo{journal}{Journal of Banking \& Finance}\/},  {\it
   \bibinfo{volume}{59}\/}, \bibinfo{pages}{27--37}.
 %Type = Article
-\bibitem[{Kandel \& Zilberfarb(1999)}]{KandelZilberfarb1999}
-\bibinfo{author}{Kandel, E.}, \& \bibinfo{author}{Zilberfarb, B.-Z.}
-  (\bibinfo{year}{1999}).
-\newblock \bibinfo{title}{Differential interpretation of information in
-  inflation forecasts}.
-\newblock {\it \bibinfo{journal}{Review of Economics and Statistics}\/},  {\it
-  \bibinfo{volume}{81}\/}, \bibinfo{pages}{217--226}.
-%Type = Article
 \bibitem[{Lahiri \& Zhao(2015)}]{Lahiri2015}
 \bibinfo{author}{Lahiri, K.}, \& \bibinfo{author}{Zhao, Y.}
   (\bibinfo{year}{2015}).
@@ -147,12 +154,28 @@
 \newblock {\it \bibinfo{journal}{JJournal of Monetary Economics}\/},  {\it
   \bibinfo{volume}{117}\/}, \bibinfo{pages}{507--520}.
 %Type = Article
+\bibitem[{Loughran \& McDonald(2011)}]{Loughran2011}
+\bibinfo{author}{Loughran, T.}, \& \bibinfo{author}{McDonald, B.}
+  (\bibinfo{year}{2011}).
+\newblock \bibinfo{title}{When is a liability not a liability? textual
+  analysis, dictionaries, and 10-ks}.
+\newblock {\it \bibinfo{journal}{The Journal of finance}\/},  {\it
+  \bibinfo{volume}{66}\/}, \bibinfo{pages}{35--65}.
+%Type = Article
 \bibitem[{Nimark \& Pitschner(2019)}]{Nimark2019}
 \bibinfo{author}{Nimark, K.~P.}, \& \bibinfo{author}{Pitschner, S.}
   (\bibinfo{year}{2019}).
 \newblock \bibinfo{title}{News media and delegated information choice}.
 \newblock {\it \bibinfo{journal}{Journal of Economic Theory}\/},  {\it
   \bibinfo{volume}{181}\/}, \bibinfo{pages}{160--196}.
+%Type = Article
+\bibitem[{Nyman et~al.(2021)Nyman, Kapadia \& Tuckett}]{Nyman2021}
+\bibinfo{author}{Nyman, R.}, \bibinfo{author}{Kapadia, S.}, \&
+  \bibinfo{author}{Tuckett, D.} (\bibinfo{year}{2021}).
+\newblock \bibinfo{title}{News and narratives in financial systems: exploiting
+  big data for systemic risk assessment}.
+\newblock {\it \bibinfo{journal}{Journal of Economic Dynamics and Control}\/},
+  {\it \bibinfo{volume}{127}\/}.
 %Type = Article
 \bibitem[{Picault et~al.(2022)Picault, Pinter \& Renault}]{Picaultetal2022}
 \bibinfo{author}{Picault, M.}, \bibinfo{author}{Pinter, J.}, \&
@@ -177,5 +200,12 @@
   inflation expectations in switzerland}.
 \newblock {\it \bibinfo{journal}{Applied Economics}\/},  {\it
   \bibinfo{volume}{47.26}\/}, \bibinfo{pages}{2699--2716}.
+%Type = Article
+\bibitem[{Shapiro et~al.(2022)Shapiro, Sudhof \& Wilson}]{Shapiro2022}
+\bibinfo{author}{Shapiro, A.~H.}, \bibinfo{author}{Sudhof, M.}, \&
+  \bibinfo{author}{Wilson, D.~J.} (\bibinfo{year}{2022}).
+\newblock \bibinfo{title}{Measuring news sentiment}.
+\newblock {\it \bibinfo{journal}{Journal of econometrics}\/},  {\it
+  \bibinfo{volume}{228}\/}, \bibinfo{pages}{221--243}.
 
 \end{thebibliography}

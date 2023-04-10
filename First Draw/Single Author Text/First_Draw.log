@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (MiKTeX 20.10) (preloaded format=pdflatex 2020.10.27)  29 MAR 2023 23:02
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (MiKTeX 20.10) (preloaded format=pdflatex 2020.10.27)  6 APR 2023 22:52
 entering extended mode
 **./First_Draw.tex
 (First_Draw.tex
@@ -507,120 +507,109 @@ Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
 
 
 {C:/Users/Matthis/AppData/Local/MiKTeX/pdftex/config/pdftex.map}] [2]
-[3] [4] [5]
-Underfull \hbox (badness 10000) in paragraph at lines 229--239
+[3] [4] [5] [6]
+Underfull \hbox (badness 10000) in paragraph at lines 249--270
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 229--239
+Underfull \hbox (badness 10000) in paragraph at lines 249--270
 
  []
 
-[6]
-Underfull \hbox (badness 10000) in paragraph at lines 241--258
+[7]
+Underfull \hbox (badness 10000) in paragraph at lines 276--298
 
  []
 
-
-Underfull \hbox (badness 10000) in paragraph at lines 241--258
-
- []
-
-[7] [8] [9]
-Overfull \hbox (11.7228pt too wide) in paragraph at lines 314--319
-\OT1/cmr/m/n/10 (CITE), (CITE), (CITE). Sev-eral lex-i-cons ex-ist for sen-ti-m
-ent clas-si-fi-ca-tion (CITE),
- []
-
-[10]
-<Inflation_Count.png, id=206, 529.22719pt x 316.93407pt>
+[8] [9] [10] [11] [12]
+<Inflation_Count.png, id=254, 529.22719pt x 316.93407pt>
 File: Inflation_Count.png Graphic file (type png)
 <use Inflation_Count.png>
-Package pdftex.def Info: Inflation_Count.png  used on input line 332.
+Package pdftex.def Info: Inflation_Count.png  used on input line 391.
 (pdftex.def)             Requested size: 170.71281pt x 170.7211pt.
-<Inflation_Sentiment_Direction.png, id=207, 529.22719pt x 316.93407pt>
+<Inflation_Sentiment_Direction.png, id=255, 529.22719pt x 316.93407pt>
 File: Inflation_Sentiment_Direction.png Graphic file (type png)
 <use Inflation_Sentiment_Direction.png>
 Package pdftex.def Info: Inflation_Sentiment_Direction.png  used on input line 
-338.
+397.
 (pdftex.def)             Requested size: 170.71281pt x 170.7211pt.
- [11]
-<ECB_eco_Industrial_prod.png, id=214, 529.22719pt x 316.93407pt>
+ [13]
+<ECB_eco_Industrial_prod.png, id=263, 529.22719pt x 316.93407pt>
 File: ECB_eco_Industrial_prod.png Graphic file (type png)
 <use ECB_eco_Industrial_prod.png>
-Package pdftex.def Info: ECB_eco_Industrial_prod.png  used on input line 352.
+Package pdftex.def Info: ECB_eco_Industrial_prod.png  used on input line 411.
 (pdftex.def)             Requested size: 170.71281pt x 170.7211pt.
-<ECB_inf_inf.png, id=215, 529.22719pt x 316.93407pt>
+<ECB_inf_inf.png, id=264, 529.22719pt x 316.93407pt>
 File: ECB_inf_inf.png Graphic file (type png)
 <use ECB_inf_inf.png>
-Package pdftex.def Info: ECB_inf_inf.png  used on input line 358.
+Package pdftex.def Info: ECB_inf_inf.png  used on input line 417.
 (pdftex.def)             Requested size: 170.71281pt x 170.7211pt.
-<ECB_mon_df.png, id=216, 529.22719pt x 316.93407pt>
+<ECB_mon_df.png, id=265, 529.22719pt x 316.93407pt>
 File: ECB_mon_df.png Graphic file (type png)
 <use ECB_mon_df.png>
-Package pdftex.def Info: ECB_mon_df.png  used on input line 364.
+Package pdftex.def Info: ECB_mon_df.png  used on input line 423.
 (pdftex.def)             Requested size: 170.71281pt x 170.7211pt.
 
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-[12 <./Inflation_Count.png> <./Inflation_Sentiment_Direction.png>] [13 <./ECB_e
-co_Industrial_prod.png> <./ECB_inf_inf.png> <./ECB_mon_df.png>] [14]
-<abs_exp_res.png, id=236, 528.47438pt x 325.215pt>
+[14 <./Inflation_Count.png> <./Inflation_Sentiment_Direction.png>] [15 <./ECB_e
+co_Industrial_prod.png> <./ECB_inf_inf.png> <./ECB_mon_df.png>] [16]
+<abs_exp_res.png, id=284, 528.47438pt x 325.215pt>
 File: abs_exp_res.png Graphic file (type png)
 <use abs_exp_res.png>
-Package pdftex.def Info: abs_exp_res.png  used on input line 388.
+Package pdftex.def Info: abs_exp_res.png  used on input line 447.
 (pdftex.def)             Requested size: 170.7119pt x 170.72058pt.
-<rel_exp_res.png, id=237, 528.47438pt x 325.215pt>
+<rel_exp_res.png, id=285, 528.47438pt x 325.215pt>
 File: rel_exp_res.png Graphic file (type png)
 <use rel_exp_res.png>
-Package pdftex.def Info: rel_exp_res.png  used on input line 394.
+Package pdftex.def Info: rel_exp_res.png  used on input line 453.
 (pdftex.def)             Requested size: 170.7119pt x 170.72058pt.
-<rel_exp_res_prev2014.png, id=238, 528.47438pt x 325.215pt>
+<rel_exp_res_prev2014.png, id=286, 528.47438pt x 325.215pt>
 File: rel_exp_res_prev2014.png Graphic file (type png)
 <use rel_exp_res_prev2014.png>
-Package pdftex.def Info: rel_exp_res_prev2014.png  used on input line 400.
+Package pdftex.def Info: rel_exp_res_prev2014.png  used on input line 459.
 (pdftex.def)             Requested size: 170.7119pt x 170.72058pt.
-<rel_exp_res_aft2014.png, id=239, 528.47438pt x 325.215pt>
+<rel_exp_res_aft2014.png, id=287, 528.47438pt x 325.215pt>
 File: rel_exp_res_aft2014.png Graphic file (type png)
 <use rel_exp_res_aft2014.png>
-Package pdftex.def Info: rel_exp_res_aft2014.png  used on input line 406.
+Package pdftex.def Info: rel_exp_res_aft2014.png  used on input line 465.
 (pdftex.def)             Requested size: 170.7119pt x 170.72058pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 444--450
+Underfull \hbox (badness 10000) in paragraph at lines 503--509
 
  []
 
-[15 <./abs_exp_res.png> <./rel_exp_res.png> <./rel_exp_res_prev2014.png> <./rel
-_exp_res_aft2014.png>] (First_Draw.bbl [16] [17]) [18] [19]
-<household_prof_inf.png, id=296, 528.47438pt x 325.215pt>
+[17 <./abs_exp_res.png> <./rel_exp_res.png> <./rel_exp_res_prev2014.png> <./rel
+_exp_res_aft2014.png>] (First_Draw.bbl [18] [19] [20]) [21] [22]
+<household_prof_inf.png, id=344, 528.47438pt x 325.215pt>
 File: household_prof_inf.png Graphic file (type png)
 <use household_prof_inf.png>
-Package pdftex.def Info: household_prof_inf.png  used on input line 520.
+Package pdftex.def Info: household_prof_inf.png  used on input line 579.
 (pdftex.def)             Requested size: 528.47308pt x 325.2142pt.
 
-Overfull \hbox (183.47308pt too wide) in paragraph at lines 520--521
+Overfull \hbox (183.47308pt too wide) in paragraph at lines 579--580
  [][] 
  []
 
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-[20] [21 <./household_prof_inf.png>] (First_Draw.aux)
+[23] [24 <./household_prof_inf.png>] (First_Draw.aux)
 Package rerunfilecheck Info: File `First_Draw.out' has not changed.
-(rerunfilecheck)             Checksum: BE23308434AE0FA77B10326FA9F4F9DE;939.
+(rerunfilecheck)             Checksum: A489D606438949F844AC9721D7F3C234;863.
 
 
 LaTeX Warning: There were multiply-defined labels.
 
  ) 
 Here is how much of TeX's memory you used:
- 9104 strings out of 480236
- 143478 string characters out of 2879607
- 460163 words of memory out of 3000000
- 25428 multiletter control sequences out of 15000+200000
- 539906 words of font info for 46 fonts, out of 3000000 for 9000
+ 9135 strings out of 480236
+ 143989 string characters out of 2879607
+ 460409 words of memory out of 3000000
+ 25441 multiletter control sequences out of 15000+200000
+ 540527 words of font info for 48 fonts, out of 3000000 for 9000
  1141 hyphenation exceptions out of 8191
  72i,10n,77p,1368b,494s stack positions out of 5000i,500n,10000p,200000b,50000s
 <C:/Users/Matthis/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/c
@@ -642,9 +631,9 @@ grams/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy7.pfb><C:/Users/Matthis/AppData
 his/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmti8.pfb><C:/
 Users/Matthis/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmtt
 8.pfb>
-Output written on First_Draw.pdf (21 pages, 356637 bytes).
+Output written on First_Draw.pdf (24 pages, 370595 bytes).
 PDF statistics:
- 377 PDF objects out of 1000 (max. 8388607)
- 79 named destinations out of 1000 (max. 500000)
- 171 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 429 PDF objects out of 1000 (max. 8388607)
+ 95 named destinations out of 1000 (max. 500000)
+ 163 words of extra memory for PDF output out of 10000 (max. 10000000)
 

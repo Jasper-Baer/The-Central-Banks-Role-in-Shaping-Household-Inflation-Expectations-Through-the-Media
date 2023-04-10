@@ -152,26 +152,22 @@ I find that inflation information in the news and ECB press conferences is stron
 %A subbranch of this literature focuses on the connection between inflation expectations and central bank communication. \cite{Picaultetal2022} investigate how the reporting about the ECB in the media can be used to predict financial market inflation expectations. \\
 % Kurzer Abschnitt in der ich auf Media Biases eingehe (Media reacts to central bank communication, negativity bias)
 \section{Model}\label{sec:Model} 
-I augment the Bayesian learning model for inflation expectation by \cite{LamlaLein2014} by explicitly adding a channel for central banks communication. I assume that the central bank sends a noisy signal for the future inflation $\pi_{t+1}$ based on the observation to the media. Let $c_t$ denote the signal that captures inflation-related information about the central bank's inflation forecast $\Theta_t$ that the central bank communicates to the media, i.e., inflation-related information in press conferences. I further assume that the signal is normally distributed $c_t \sim N(\Theta_t, \sigma^c_t)$ with variance $\sigma^c_t$. This assumption also implies that the central bank only sends one unambiguous signal at each period $t$ rather than multiple conflicting signal at the same period.
+I extend the Bayesian learning model for inflation expectation by \cite{LamlaLein2014} by explicitly adding a channel for central bank communication. I assume that the central bank sends a noisy signal for the future inflation $\pi_{t+1}$ 
+%based on the observation of variables which are relevant for the inflation $\mathbf{X}_t$ to the media
+.Let $c_t$ denote the signal that captures information about the central bank's inflation forecast $\Theta_t$ that the central bank communicates to the media; that is, inflation-related information in press conferences. I further assume that the signal is normally distributed, $c_t \sim N(\Theta_t, \sigma^c_t)$, with variance $\sigma^c_t$. This assumption implies that the central bank only sends one unambiguous signal at each period $t$ rather than multiple conflicting signals at the same period.
 % In the case of the ECB this inflation forecast is equal to the ECB staff's inflation projection 
 %\\
 %$ c_t = \pi_{t+1} + \epsilon_t \quad \epsilon_t \sim N(0, \sigma^c_t)$
 %\\ 
 %where $\epsilon_t$ represents the noise in the central bank's observation. 
 %\\
-Without the central bank's communication, the media sends a noisy "baseline" signal about the rational forecast of inflation $\Psi_t$ to the households based on a number of media reports $V$ with $s^b_{\nu,t} \sim N(\Psi_t + \alpha_t, \sigma^{sb}_t) $ 
-%\\
-%$ s^b_t = \alpha_t + \pi_{t+1} + \omega_t  \quad \omega_t \sim N(0, \sigma_t^{s^b}) $
-%\\
-where $\alpha_t$ captures the media bias. %\footnote{Note that media bias in this context is a rather broad concept and can capture different factors such as political biases or misinformation. For an in depth discussion of the term see (CITE).}. 
-The media can decide how closely to follow the central bank's communication. Hence, the media's inflation signal can be defined as 
+In the absence of the central bank's communication, the media sends a noisy "baseline" signal about the rational forecast of inflation $\Psi_t$ for future inflation $\pi_{t+1}$ to households based on a number of media reports $V$, with $s^b_{\nu,t} \sim N(\Psi_t + \alpha_t, \sigma^{sb}_t)$. Here, $\alpha_t$ captures the media bias, and I assume that $\alpha_t > 0$. The media can decide how closely to follow the central bank's communication. Therefore, the media's inflation signal can be defined as:
 \begin{equation}
 s_{\nu,t} = (1-\lambda_{\nu,t}) s^b_{\nu,t} + \lambda_{\nu,t} c_t \quad 0\leq \lambda_{\nu,t} \leq 1
 \end{equation}
-where $\lambda_{\nu, t}$ denotes the weight that the media report places on the central bank's signal $c_t$ relative to the "baseline" media signal $s^b_{\nu,t}$. $\lambda_{\nu,t} = 0$ would indicate that the media report ignores the central bank's communication completely while $\lambda_{\nu,t} = 1$ would describe a situation in which the media only reproduces the information from the central bank's communication. 
+where $\lambda_{\nu, t}$ denotes the weight that the media report places on the central bank's signal $c_t$ relative to the "baseline" media signal $s^b_{\nu,t}$. A value of $\lambda_{\nu,t} = 0$ indicates that the media report completely ignores the central bank's communication, while $\lambda_{\nu,t} = 1$ describes a situation where the media only reproduces information from the central bank's communication.
 \\
-Given that $s_{\nu,t}$ is a linear combination of normal random variables and assuming that
-$\sigma^c_t$ and $\sigma^{sb}_{\nu,t}$ are independent, the media sends a normally distributed signal about $\pi_{t+1}$ with $s_{\nu,t} \sim N(\mu_s, \sigma^s_{\nu,t})$ where 
+Given that $s_{\nu,t}$ is a linear combination of normal random variables and assuming that $\sigma^c_t$ and $\sigma^{sb}{\nu,t}$ are independent, the media sends a normally distributed signal about $\pi{t+1}$ with $s_{\nu,t} \sim N(\mu^s_{\nu,t}, \sigma^s_{\nu,t})$, where:
 \begin{equation} 
 \mu_{\nu,t}^s = (1-\lambda_{\nu,t}) (\alpha_t + \Psi_t) + \lambda_{\nu,t} \Theta_t 
 \end{equation}
@@ -182,14 +178,28 @@ $\sigma^c_t$ and $\sigma^{sb}_{\nu,t}$ are independent, the media sends a normal
 %\mu_s = \lambda_t \alpha_t + \pi_{t+1} 
 %\end{equation}
 \\
-The households hold a prior belief $\gamma_t \sim N(\pi_t, \sigma^h_t)$ about the future inflation $\pi_{t+1}$. Hence, the representative household forms its inflation expectations according to
-%\begin{equation}
-%f(\pi_{t+1}|c_t, \pi_t, \lambda_{\nu,t}, \alpha_{\nu,t}) \propto \Pi^V_{\nu = 1} h(s_{\nu,t}|\alpha_{\nu,t}, \pi_t, \lambda_{\nu,t}) k(\pi_t)
-%\end{equation}
+The households hold a prior belief $\gamma_t \sim N(\pi_t, \sigma^h_t)$ about the future inflation $\pi_{t+1}$. The households then update their beliefs based on the media's signal. Following the Bayesian updating rule, the households' posterior beliefs about future inflation $\pi_{t+1}$ are:
 \begin{equation}
-f(\pi_{t+1}|s_{\nu,t}) \propto \Pi^V_{\nu = 1} h(s_{\nu,t}|\alpha_t, \pi_t, \lambda_{\nu,t}, c_t) k(\pi_t)
+\pi_{t+1}^h \sim N(\mu^h_{t+1}, \sigma^h_{t+1})
 \end{equation}
-where $f(.)$ is the posterior belief of a representative household on inflation $\pi_{t+1}$ after receiving the inflation related news signal. Assuming normality the posterior distribution is a normal distribution with mean $\mu_t$
+where $\mu^h_{t+1}$ and $\sigma^h_{t+1}$ are the updated mean and variance of the household's belief about future inflation, respectively. To compute the updated mean and variance, the households combine their prior beliefs with the media's signal:
+%\begin{equation}
+%\mu^h_{t+1} = \frac{\sigma^s_{\nu,t} \gamma_t + \sigma^h_t \mu^s_{\nu,t}}{\sigma^s_{\nu,t} + \sigma^h_t}
+%\end{equation}
+%\begin{equation}
+%\sigma^h_{t+1} = \frac{\sigma^s_{\nu,t} \sigma^h_t}{\sigma^s_{\nu,t} + \sigma^h_t}
+%\end{equation}
+
+%Hence, the representative household forms its inflation expectations according to
+%%\begin{equation}
+%%f(\pi_{t+1}|c_t, \pi_t, \lambda_{\nu,t}, \alpha_{\nu,t}) \propto \Pi^V_{\nu = 1} h(s_{\nu,t}|\alpha_{\nu,t}, \pi_t, \lambda_{\nu,t}) k(\pi_t)
+%%\end{equation}
+%\begin{equation}
+%f(\pi_{t+1}|s_{\nu,t}) \propto \Pi^V_{\nu = 1} h(s_{\nu,t}|\alpha_t, \Psi_t, \lambda_{\nu,t}, \Theta_t) k(\pi_t)
+%\end{equation}
+%
+%where $f(.)$ is the posterior belief of a representative household on inflation $\pi_{t+1}$ after receiving the inflation related news signal. Assuming normality the posterior distribution is a normal distribution with mean $\mu_t$
+
 \begin{equation}
 \mu_t = \rho_t \pi_t + (1- \rho_t) \bar{\mu_t^s} 
 \end{equation}
@@ -201,52 +211,81 @@ where
 =\Psi_t + \alpha_t - \bar{\lambda_t} \alpha_t - \bar{\lambda_t} \Psi_t + \bar{\lambda_t}\Theta_t 
 \end{equation}
 \begin{equation}
-=\bar{\lambda_t}(\Theta_t - \Psi_t) + \Psi_t+ \alpha_t(1- \bar{\lambda_t})
+=\bar{\lambda_t}(\Theta_t - \Psi_t) + \alpha_t(1- \bar{\lambda_t}) + \Psi_t
 \end{equation}
 and
 \begin{equation}
 \rho_t = \frac{\frac{1}{V}\sigma^s_t}{{\sigma^h_t + \frac{1}{V}}\sigma^s_t}
 \end{equation}
 \\
-For $\bar{\lambda_t} = 0$ the mean would be $\mu_t = \rho_t \pi_t + (1- \rho) (\Psi_t +\alpha_t)$. Hence, if the media completely ignores the central bank communication, the mean of the posterior is the weighted average of the prior and the biased media signal\footnote{This case is equivalent to the model from \cite{LamlaLein2014} with media bias.}. If the media perfectly reproduce the central bank communication, i.e, $\bar{\lambda_t} = 1$ the mean would be $\mu_t = \rho_t \pi_t + (1-\rho_t) \Theta_t$. 
+For $\bar{\lambda_t} = 0$, the mean would be $\mu_t = \rho_t \pi_t + (1- \rho_t) (\alpha_t + \Psi_t)$. Hence, if the media completely ignores the central bank communication, the mean of the posterior is the weighted average of the prior and the biased media signal\footnote{This case is equivalent to the model from \cite{LamlaLein2014} with media bias.}. If the media perfectly reproduce the central bank communication, i.e., $\bar{\lambda_t} = 1$, the mean would be $\mu_t = \rho_t \pi_t + (1-\rho_t) \Theta_t$. 
 \\
-I follow \cite{Ehrmann2017} and define two different types of inflation expectation biases; $\mathbf{B}_t = \{B^r_t, B^e_t \}$ where $B^r_t$ is the difference between the HCPI and the household inflation expectation at the forecast horizon, and $B^e_t$ is the difference between the professional inflation forecast and the household inflation expectations. I assume that the rational inflation signal of the ECB and of the media are similar, i.e, $\Theta_t \approx \Psi_t$.
+$B_t$ is the difference between the professional inflation forecast and the household inflation expectations. I assume that the rational inflation forecasts of the central bank and of the media are similar, i.e, $\Theta_t \approx \Psi_t$.
 \begin{equation}
-B^e_t = |\bar{\mu^s_t} - \Psi_t| = |\rho_t (\pi_t - \Psi_t) + (1-\rho_t)(\alpha_t - \bar{\lambda_t} \alpha_t)|
+B_t = |\mu_t - \Psi_t| = |\rho_t \pi_t + (1-\rho_t)(\alpha_t(1- \bar{\lambda_t}) + \Psi_t) - \Psi_t|
+\end{equation}
+\begin{equation}
+= |\rho_t (\pi_t - \Psi_t - \alpha_t (1-\bar{\lambda}_t)) + \alpha_t (1- \bar{\lambda}_t)|
+\end{equation}
+\begin{equation}
+= |(1-\rho_t)(1-\bar{\lambda}_t)\alpha_t + \rho(\pi_t - \Psi_t)|
+\end{equation}
+\\
+If $\pi_t$ is larger or close to $\Psi_t$ 
+\begin{equation}
+= (1-\rho_t)(1-\bar{\lambda}_t)\alpha_t + \rho(\pi_t - \Psi_t) > 0
+\end{equation} 
+\begin{equation}
+\frac{\partial B_t}{\partial \bar{\lambda_t}} = -(1-\rho_t)\alpha_t < 0
+\end{equation}
+Hence, an increase in $\lambda_t$ will lead to a decrease in the inflation expectation error of the households. The intuition behind this is that if the prior inflation $\pi_t$ is considerably larger or close to the rational forecast $\Psi_t$, households may overshoot their expectations based on their prior. Consequently, increasing the weight given to the central bank communication helps to adjust the expectations downward.
+\\
+Similar, for $\pi_t <<\Psi_t$
+\begin{equation}
+= (1-\rho_t)(1-\bar{\lambda}_t)\alpha_t + \rho(\pi_t^0 - \Psi_t) < 0
+\end{equation}
+\begin{equation}
+\frac{\partial B_t}{\partial \bar{\lambda_t}} = (1-\rho_t)\alpha_t > 0
 \end{equation}
 %\begin{equation}
-%B^e_t = |\bar{\mu^s_t} - \Psi_t| = |\rho_t(\pi_t - \Psi_t - \alpha_t(1 - \bar{\lambda_t})) + \alpha_t (1 - \bar{\lambda_t})|
+%\frac{\partial B_t}{\partial \bar{\lambda_t}} = (1-\rho_t)\alpha_t < 0 \quad \alpha_t < 0
 %\end{equation}
-%\begin{equation}
-%B^r_t = |\bar{\mu^s_t} - \pi_{t+1}| = |\rho_t (\pi_t - \Psi_t) + (1-\rho_t)(\alpha_t - \bar{\lambda_t} \alpha_t) + \Psi_t - \pi_{t+1}|
-%\end{equation}
-\textcolor{red}{I would actually need to assume $(\pi_t - \Psi_t) \geq 0$ to get a simple solution for the derivative. Is there a way circumvent this?}
-\begin{equation}
-\frac{\partial \mathbf{B}_t}{\partial \bar{\lambda_t}} = -(1-\rho_t)\alpha_t < 0 \quad \alpha_t > 0
-\end{equation}
-\begin{equation}
-\frac{\partial \mathbf{B}_t}{\partial \bar{\lambda_t}} = (1-\rho_t)\alpha_t < 0 \quad \alpha_t < 0
-\end{equation}
-Thus, the partial effect of the weight given to the central bank increases the inflation forecast accuracy. The effect is stronger, the larger the media bias is. The weight determines how closely the media follows their "baseline" signal. The "baseline" signal biases the overall media signal by the media bias. Hence, the closer the media follows their "baseline" the stronger the media bias in the overall media signal. 
-%depends on the difference between the central bank's inflation forecast and the professional inflation forecast $\Theta_t - \Psi_t$ and the media bias $\alpha_t$. Hence,
+If the prior inflation $\pi_t$ is significantly smaller than $\Psi_t$, households undershoot their inflation expectations. In this case, the effect of an increase in $\lambda_t$ increases the expectation error if the media bias is positive, as the media bias acts as an upward "correction." The more weight the media places on their baseline signal, the larger the effect of $\alpha_t$, which then corrects the inflation expectations upward.
+%\\
+%\\
+%\textcolor{red}{Ist recht unintuiuv und alles sehr kompliziert und langwierig. Gibt es vielleicht Annahmen, die ich treffen kann, um dieser Unterscheidung aus dem Weg zu gehen?}
+%\\
+%\\
+\\ 
+Thus, the partial effect of the weight given to the central bank increases the inflation forecast accuracy is ambiguous and depends on the size of $\pi_t$ and $\Psi_t$. The effect is stronger, the larger the media bias is. 
+\\
+The weight determines how closely the media follows their "baseline" signal. The "baseline" signal introduces the media bias into the overall media signal. Therefore, the closer the media follows their "baseline", the stronger the media bias in the overall media signal. 
 From this follows my first hypothesis
 \\
 \\
-\textbf{Hypothesis 1:} \textit{If the medias signal is affected by a media bias, an increase of the weight given to the central bank communication by the media has a positive effect on the household inflation forecasting accuracy.} 
+\textbf{Hypothesis 1:} \textit{If the media's signal is affected by a media bias, an increase in the weight given to the central bank communication by the media has an ambiguous effect on the household inflation forecasting accuracy, depending on the size of the difference between the current inflation and the rational inflation forecast.} 
 \\
 \\
-Regarding the partial effect of the media bias
+Similarly, the media bias can affect the inflation forecasting accuracy of households. The partial effect of the media bias for $\pi_t$ larger or close to $\Psi_t$ is
 \begin{equation}
-\frac{\partial \mathbf{B}_t}{\partial \alpha_t} = (1-\rho_t) (1-\bar{\lambda_t}) > 0 \quad \lambda_t \neq 0
+\frac{\partial \mathbf{B}_t}{\partial \alpha_t} = (1-\rho_t) (1-\bar{\lambda_t}) > 0 
 \end{equation}
-The partial effect of the media bias is always positive and its size depends on the average weight given to the "baseline" signal of the media $1 - \bar{\lambda_t}$. A high weight of the media's "baseline" signal increases the effect the media bias has on the overall media signal. 
-% In case of the ECB as the central bank and German media reports, $\Psi_t$ relates to the professional inflation forecast for Germany while $\Theta_t$ relates to the ECB staff's inflation projection for the Eurozone. Hence, $\Psi_t \neq \Theta_t$.
+and for $\pi_t << \Psi_t$
+\begin{equation}
+\frac{\partial \mathbf{B}_t}{\partial \alpha_t} = -(1-\rho_t) (1-\bar{\lambda_t}) < 0 
+\end{equation}
+The sign of the partial effect of the media bias is ambiguous, depending of the difference between $\Psi_t$ and $\pi_t$. The media bias can either bias the expectations upward for $\pi_t$ larger or close to $\Psi_t$, or "correct" the expectations if the prior is sufficiently small. The size of the effect is determined by $\lambda_t$.  A high weight of the media's "baseline" signal increases the size of effect of the media bias has on the overall media signal. 
 Hence, my second hypothesis is
 \\
 \\
-\textbf{Hypothesis 2:} \textit{A increase of the media bias, leads to a decrease of the forecast inflation accuracy.}
-\\
-%\textcolor{red}{Note: For a robustness check I could assume that households directly observe the ECB communication. Maybe I could create a scenario in which the household ignore the media and only receive a news signal from the ECB, simulating a "perfect" communication scenario for the ECB.}  
+\textbf{Hypothesis 2:} \textit{An increase of the media bias by the media has an ambiguous effect on the household inflation forecasting accuracy depending on the size of the difference between the current inflation and the rational inflation forecast.}
+%\\
+%\textcolor{red}{Additional hypothesis 3 - (WIP)}
+%\\
+%I assume that the households prior variance $\sigma^h_t$ depends positively on the economic uncertainty $U_t$, $\frac{\partial \sigma^h_t}{\partial U_t}$, while the medias "baseline" signal and central banks communication signals are not affected by the economic uncertainty. Hence, $\frac{\partial \rho_t}{\partial U_t} < 0$.  
+%\\
+%\textcolor{red}{Additional hypothesis 4 - (WIP)}
+%\\
 %\\
 %\textbf{Hypothesis 3:} \textit{The households place a higher weight on the media signal during periods of economic uncertainty or high inflation.}
 %\\
@@ -255,20 +294,23 @@ Hence, my second hypothesis is
 %\textbf{Hypothesis 4:} More transparent central bank communication reduces the inflation expectation bias.
 %\\
 %\textcolor{red}{This would be an interesting hypothesis, but it is currently not in the model.}
+%\textcolor{red}{Note: For a robustness check I could assume that households directly observe the ECB communication. Maybe I could create a scenario in which the household ignore the media and only receive a news signal from the ECB, simulating a "perfect" communication scenario for the ECB.}  
 
 \section{Data} \label{sec:Data}
 
-My dataset consists of two different parts. The textual data from the ECB and the Media and the quantitative data regarding inflation and inflation expectations. In  section~\ref{sec:Textual Data} I describe the textual data. In section~\ref{sec:Text Classification} I describe how I transformed the textual data into quantitative data and in section~\ref{sec:Quantitative Data} I describe the remaining quantitative data.
+My dataset consists of two distinct components: textual data from ECB press conferences and newspaper articles, and quantitative data on inflation and inflation expectations. Section~\ref{sec:Textual_Data} describes the textual data, and Section~\ref{sec:Quantitative_Data} outlines the quantitative data.
 
-\subsection{Textual Data} \label{sec:Textual Data}
+\subsection{Textual Data} \label{sec:Textual_Data}
 
-I collected two separate datasets for the textual analysis, one for the ECB communication and one for the media news.
-The ECB’s main channel for communication to the media are their press conferences. The press conferences are in English and take place after the ECB’s Governing Council took their monetary policy decision every six weeks. I collected ECB press conference from 2000 until 2022 with a webscrapper
+I collected two separate datasets for textual analysis: one for ECB communications and another for newspaper articles. The ECB's primary mode of communication with the media is through their press conferences, which are conducted in English every six weeks following the ECB's Governing Council monetary policy decisions. I gathered ECB press conference transcripts from the official ECB website from 2000 to 2022 using a web scraper. I excluded the Q\&A section and other less significant sections, such as greetings and acknowledgments, retaining only the introductory statements.
 %\textcolor{red}{Ich sollte um Erlaubnis fragne, sonst sagen, dass die Presse Conferenzen manuell gesammelt wurden.} 
-from the official ECB website. I discarded the Q\&A section and all sections which carry no significance, like greetings and acknowledgments, leaving only the introductory statements.
 % \textcolor{red}{(cite other who done it similarly?)}.
 \\
-The media news data was provided by the largest German news agency Dpa. The data consists of over 7 million newspaper articles published from 1991 until 2018. I filtered out all articles which are unrelated to the economy as well as all articles which are purely financial news, like reporting of stock movement or business news. For all detailed description see \textcolor{red}{Cite Mariia, Philip, Kai and me}
+The media news data was provided by Dpa, the largest German news agency. This dataset consists of over 7 million newspaper articles in German published by Dpa between 1991 and 2018. I filtered out articles unrelated to the economy and those solely focused on financial news, such as stock movement reports or business updates. Furthermore, I removed purely numeric information like tables from the articles. For a detailed description of the cleaning process, see \textcolor{red}{[Cite Mariia, Philip, Kai, and me]}.
+\\
+To isolate data relevant to inflation, I included only sentences containing the word "Inflation" and its synonyms, such as "Preisteigerung" or "Preiserhöhung" (price increase) \footnote{The words are: Inflation (Inflation), Inflationsrate (Inflation rate), Verbraucherpreisindex (Consumer Price Index, CPI), Lebenshaltungskosten (Cost of living), Geldentwertung (Currency devaluation), Teuerung (Price inflation), Preisanstieg (Price increase), Preiserhöhung (Price hike), Verteuerung (Increase in prices), Deflation (Deflation), Hyperinflation (Hyperinflation), Geldwert (Money value), Preisindex (Price index), Preisniveau (Price level), Kaufkraft (Purchasing power), and Warenkorb (Basket of goods).}.
+\\
+To reduce the dimensionality of the remaining data, I applied several pre-processing steps commonly used in the literature to both textual datasets: lowercasing, removing punctuation, eliminating stopwords (e.g., and, but, or) that convey no information, and removing numbers.
 %\textcolor{red}{(better word?)}. 
 %I futhermore ensure that all duplicates \textcolor{red}{Add further steps which we take}. 
 %\\
@@ -276,55 +318,72 @@ The media news data was provided by the largest German news agency Dpa. The data
 %\\
 %\textcolor{red}{Note 2: News dataset is in German, ECB dataset in English}
 %\\
-To filter out any data that is not relevant for inflation, I only included sentences which contain the word “Inflation” (inflation) and synonyms of inflation like “Preisteigerung” (price increase). 
 %\\
 %\textcolor{red}{Note 4: Not sure if this is the best way to select inflation related sentences. Maybe some kind of topic modeling would be better suited.}
-\\
-To reduce the dimensionality of the data I apply several pre-processing steps to the two datasets which are commonly used in the literature: Lowercasing, removing punctuation, removing stopwords (e.g., and, but, or) which carry no information and removing numbers.
 
-\subsection{Quantitative Data} \label{sec:Quantitative Data}
+\subsection{Quantitative Data} \label{sec:Quantitative_Data}
 
-%I use the quarterly year-on-year HCPI growth rate for the Eurozone collected from the Eurostat database as inflation.
-The ECB surveys each quarter professional forecasters regarding their annual HICP expectations and provides the results to the general public. The survey ranges from the first quarter of 1999 up until the last quarter of 2022. I use the one-year-ahead annual HCPI point forecast averaged over all responds as my professional inflation forecast. 
+I use the quarterly year-on-year HICP growth rate for Germany, sourced from the Eurostat database, as a measure of inflation.
 \\
-%\textcolor{red}{NOTE: Besser wäre es, wenn ich Datastream benutze, um an Reuters Umfragedaten zu gelangen.}
-The consumer inflation expectation is based on the results from the monthly European Commission's Business and Consumer Survey. The survey collects information about households inflation expectations by asking them if they expect that the prices increase more rapidly, increase at the same rate, remain unchanged or decrease in the next 12 months. To transform the qualitative survey answers into quantitative inflation expectations, I use the rolling-window regression based approach by \cite{Lahiri2015}. See \ref{sec:Quantification of Inflation Expectations} for an explanation.
+For the rational inflation forecast, I employ the ECB surveys of professional forecasters. Each quarter, the ECB surveys professional forecasters about their year-on-year inflation expectations. To obtain the final forecast, I calculate the average of all forecasts. The survey data covers the period from the first quarter of 1999 to the last quarter of 2022.
+\\
+For household inflation expectations, I utilize the monthly European Commission's Business and Consumer Survey. In this survey, German households are asked about their expectations regarding price changes in the next 12 months. They can anticipate faster rising prices, prices rising at a consistent pace, prices rising more slowly, prices remaining unchanged, or prices decreasing.
+\\
+To transform qualitative survey responses into quantitative inflation expectations, I apply a rolling-window regression-based approach by \cite{Lahiri2015}. This approach is based on an extended version of \cite{Carlson1975} by \cite{Berk1999} and has been simplified by \cite{Rosenblatt-Wisch2015}. A detailed explanation can be found in Section \ref{sec:Quantification_of_Inflation_Expectations}.
+\\
+Although quantifying qualitative survey data is not as optimal as using quantitative survey results, it is necessary due to the lack of publicly available quantitative survey-based inflation expectations data for German households.
+%\textcolor{red}{Cite others who also done it like that}
 %\\
 %\textcolor{red}{NOTE: Change window size.}
-
-\section{Text Classification} \label{sec:Text Classification}
-
-In the following section I will lay out how I quantified the ECB communication and news. I do this by separating my dataset into individual sentences and then classify each sentence according to predefined categories. The ECB press conferences are classified into three categories where each category consists of three classes. The first two categories are taken from Picault et. al (2017). The first category describes the monetary stance expressed as monetary hawkish, monetary neutral or monetary dovish. The second category describes the economic outlook either as positive, neutral, or negative. I add a third class which describes the inflation outlook either as increasing, steady or decreasing. This third class allows for a direct comparison of the inflation expectations communicated in the ECB press conference to the inflation expectations expressed by the news media.
-The News articles are classified into two categories where each category consists of three classes. The first category describes the economic effect of the inflation expressed in the news which can be either positive, neutral, or negative. The second category describes the inflation direction which can be either increasing, neutral or decreasing.
-
-\subsection{Method for Quantifying the Central Bank Communication and News Coverage}
-
-Two main approaches are mostly used for text classification, the lexicon-based approach, and the machine learning approach. For the lexicon approach a text is classified by taking a list of words, the lexicon, where each word belongs to one of the desired categories, such as “good” for positive sentiment or “bad” for negative sentiment. The text is classified by counting the occurrence of each of these word in the text. The lexicon approach can be modified by adding linguistic rules like negations \textcolor{red}{CITE?}.
-\\ 
-The machine learning text classification approach classifies a text based on supervised or semi-supervised models to a given category. In recent years, deep-learning models have been widely used for text classification.
-\textcolor{red}{Continue this part with some examples}
-
-\subsection{Training Dataset}
-In the next section I will use supervised models to classify my data into several categories. I trained the models with two trainings dataset which I created, one for the news and one for the ECB press conference. I manually classified 3000 randomly drawn sentences from the ECB press conferences according to the three categories where each sentence was labeled with one of the three classes for each category.  Similarly, 3000 sentence were randomly drawn from the news corpus and labeled based on the two categories. The sentences were then used to classify the remaining sentences from my dataset with the method described in the next two sections.
+\section{Text Classification} \label{sec:Quantification of Text Data}
+In this section, I explain my methodology for quantifying ECB communication and newspaper articles. I divide my dataset into individual sentences and classify each sentence according to predefined categories. ECB press conferences fall into three categories, each consisting of three classes. The first two categories, adapted from \cite{PicaultRenault2017}, characterize the monetary stance as monetary hawkish, monetary neutral, or monetary dovish, and represent the economic outlook as positive, neutral, or negative. I introduce a third category that conveys the inflation outlook as increasing, steady, or decreasing, enabling a direct comparison between inflation expectations communicated in ECB press conferences and those expressed in the news media.
 \\
-\textcolor{red}{Note 1: Is it obvious enough why I used two different training datasets?}
+News articles are classified into two categories, each with three classes. The first category describes the economic impact of inflation reported in the news as positive, neutral, or negative, while the second category indicates the direction of inflation as increasing, neutral, or decreasing.
+%\textcolor{red}{Note 1: Is it obvious enough why I used two different training datasets?}
+%\\
+%\textcolor{red}{I should further describe my annotation scheme in the appendix and give some examples.}
 \\
-\textcolor{red}{I should further describe my annotation scheme in the appendix and give some examples.}
-\subsection{Lexicon Based Text Classification}
-The simple implementation and transparency of Lexicon-based sentiment classification has made it widely used in the literature Shapiro (2020), (CITE), (CITE), (CITE), (CITE). Several lexicons exist for sentiment classification (CITE), (CITE), (CITE). However, these lexicons are not optimized for ECB communication or economic news. (FIND EXAMPLE). Picault et. al (2017) solve this problem by manually classifying each sentence in the ECB press conference based on their monetary stance and economic outlook. The classified sentences are then used to build a lexicon from the word used in the press conferences to classify the monetary stance and economic outlook of a press conference. I implement their approach with my own training dataset. The resulting lexicon is then used to classify each sentence in the ECB press conference for each of the three categories with the formula:
-\textcolor{red}{Insert Formula}, same as in Picault et. al (2017) or any other similar papers. It’s just positive words – negative words divided by all words,)
-with the class score s, the press conference i, the category c, the class j and the number of word occurrences n. A final score for each category in each press conference is calculated by taking the averaging the category score over all sentences from the corresponding press conference.
-I slightly deviate from Picault et. al (2017) by first calculating the category score for each sentence instead of directly calculating score for the full press conference. My approach however is in line with most of the literature (Example from book or paper?).
-Similiar to the press conferences, I calculate the category score for the news. First I create a lexicon for each of the two categories with the method from Picault et. al (2017). The category score for each news sentence in my dataset is calculated with (EQ). A monthly category score is calculated by averaging the sentence score for each month.
+To achieve the text classification two main approaches are used in the literature: Machine Learning text classification and Lexicon-based text classification. Machine Learning (ML) text classification utilizes complex probabilistic models, usually trained on large datasets. Modern ML models are able to take into account the grammatical and syntactical structure of texts. However, the complexity of these models comes with a drawback. Modern deep-learning models like BERT (Devlin et al 2018) are "black-boxes" and require large training datasets.
+\\
+Lexicon-based text classification utilizes a lexicon to classify the category of a given text. A lexicon is a collection of words or phrases associated which specific category classes. This approach relies on the frequency, or weights of the words or phrases in the lexicon to determine the category of a given text. 
+\\
+The simple implementation and transparency of Lexicon-based sentiment classification has made it widely used in the economic and finance literature, e.g., \cite{Shapiro2022}, \cite{Loughran2011}, \cite{Barbaglia2022}, \cite{Nyman2021}, \cite{Ardia2019}. The most prominent lexicon for sentiment classification of texts from the finance and economic domain was created by \cite{Loughran2011}). \cite{PicaultRenault2017} developed a lexicon for classifying ECB press conferences and measuring the conveyed economic outlook and monetary stance . However, these lexicons were not created for classifying inflation directions and sentiment with regard to inflation. Hence, I implement a similar approach like \cite{Shapiro2022} and \cite{PicaultRenault2017} and create data-driven lexicons based on the training datasets created by me. The lexicon is then used to classify each sentence in the ECB press conferences according to the three mentioned categories and each of the newspaper sentences according to the two mentioned categories.
+\\
+I created two training datasets: one for the newspaper articles and one for the ECB press conferences. Due to the different categories and different styles of these two types of text, I created two training datassets.
+\\
+I manually classified 3000 randomly drawn sentences from the ECB press conferences according to the three categories, with each sentence being labeled with one of the three classes for each category. Similarly, 3000 sentences were randomly drawn from the news corpus and labeled based on the two categories. I then used these datasets to create one lexicon for the ECB press conferences and for the newspaper articles.
+\\
+The lexicons are created by calculating the degree to which each word in the training dataset is associated with a class. The association is calculated using pointwise mutual information (PMI). Following Church and Hanks (1990) PMI is defined as
+\begin{equation}
+PMI(c,w) = log_2 (\frac{p(c,w)}{p(c)p(w)})
+\end{equation}
+where $p(w)$ is the words share of total words in the training dataset, $p(c)$ is the total share of sentences belonging to class $c$ and $p(c,w)$ is the words share in class $c$ of total words. The PMI measure how closely a is associated with a class. This formula is applied to all words for all categories in the two training datasets.  
+\\
+The lexicons are then used to to assign a category specific score to each press conference and newspaper sentences. Each ECB press conference is treated as a independent text and all newspapers sentences from one month are concatenated to one text for each month. Then I calculate a score for each category and score by.
+\begin{equation}
+score_i^c = \frac{\sum_{j=1}^n (PMI(c_3, w_{i,j}) - PMI(c_1,w_{i,j}))}{\sum_{j=1}^n (PMI(c_3, w_{i,j}) + PMI(c_2, w_{i,j}) + PMI(c_1, w_{i,j}))}
+\end{equation}
+where $score_i^c$ is the score of text $i$ specific to category $c_g$. $g$ denotes the class in the respective category.For the ECB monetary categories these are $c_3$ for hawkish, positive economic outlook and increasing inflation. $c_1$ stands for dovish, negative economic outlook and decreasing inflation. $c_2$ denotes the neutral class. For the newspaper data $c_3$ stand for increasing inflation and positive sentiment. $c_1$ for decreasing inflation and negative sentiment. $PMI(c_3, w_{i,j})$, $PMI(c_2, w_{i,j})$, and $PMI(c_1, w_{i,j})$ are the PMI values of word $w_{i,j}$ in text $i$ of the respective class, and $n$ is the number of words in the text. 
+\\
+To improve the text classification, I follow \cite{Shapiro2022} and implement negations. Negation words like "not" directly impact the class of a sentence, e.g., "the inflation is rising" vs. "the inflation is not rising". I follow CITE and handle these negations by multiplying the PMI-value of each word by $-1$ if the word is within a three word window of a negation word. 
+\\
+For the newspaper articles, I have therefore two monthly indizes. One for the direction of the inflation and one for the sentiment regarding the inflation. I combine both these indizes to one by multiplying them with each other. I call the resulting index Inflation News Index (INI). 
+\\
+The (ECB) press conferences, occur eight times a year. To convert the press conference-based indizes to a monthly frequency, I create a monthly time series covering the entire period for which I have press conference data. For each month, I assign the index value from the most recent press conference preceding that month. This approach assumes that the index remains constant between press conferences and only changes when a new press conference is released. By using this method, I obtain a monthly index that reflects the information available to market participants at each point in time. 
+%\textcolor{red}{I further deviate from Picault et. al (2017) or similar papers like Marozzi (2021) (Still WP, and he at least uses valence shifters) by applying several linguistic rules to take grammatical(?) relations into account.
+%(I added negation handling and I will add some more rules. Not sure if I should describe that in the main text or in the appendix. The rules are using POS tags to identify negative and positive phrases, e.g., a negative adjective in front of a positive noun results in a negative phrase instead of a neutral phrase.}
 
-\textcolor{red}{I further deviate from Picault et. al (2017) or similar papers like Marozzi (2021) (Still WP, and he at least uses valence shifters) by applying several linguistic rules to take grammatical(?) relations into account.
-(I added negation handling and I will add some more rules. Not sure if I should describe that in the main text or in the appendix. The rules are using POS tags to identify negative and positive phrases, e.g., a negative adjective in front of a positive noun results in a negative phrase instead of a neutral phrase.}
+\subsection{Measuring how closely the Media follows Central Bank Communication}
 
+Dependency parsing is a natural processing techniques that identifies the grammatical structure of a given text. 
+\\
+I use it to identify all sentences in which the ECB or any of its Governing Council members is the subject. This approach is close to \cite{Picaultetal2022}, expect that they use part-of-speech tagging instead of dependency parsing to identify the corresponding subjects.
+%\\
+%\textcolor{red}{I could improve this: (From \cite{Picaultetal2022}) - We remove not only the sentences in which the subject is explicitly the ECB or a member of the Governing
+%Council but also sentences where the subject is a pronoun indirectly referring to the member of the ECB or the ECB itself (as identified by the subject of the previous sentence(s) in that case).}
 \section{Descriptive Analysis} \label{sec:Descriptive Analysis}
-
-I relate my news index and the amount of media coverage with the inflation. In general, inflation related news is strongly correlated with inflation itself. As figure~\ref{fig:News Index}(a) shows the high inflation phases in 2008 and 2011/2012 are both accompanied by a short peak in inflation related news while phases of lower inflation in between are accompanied by less media coverage. However, after 2013 media coverage peaked during the low inflation phase of 2014 to 2017 and remained elevated afterwards. Figure~\ref{fig:News Index}(b) shows that the news index correlates with the inflation with the noticeable exception of the inflation decrease during the Great Recession which was acompanied by a only moderate decrease of the INI. The low inflation phase from 2014 to 2016 was however accompanied by a dip of the INI which was lower than during the Great Recession. 
+I relate my news index and the amount of media coverage to inflation. In general, inflation-related news is strongly correlated with inflation itself. As Figure~\ref{fig:News Index}(a) shows, the high inflation phases in 2008 and 2011/2012 are both accompanied by a short peak in inflation-related news, while phases of lower inflation in between are accompanied by less media coverage. However, after 2013, media coverage peaked during the low inflation phase from 2014 to 2017 and remained elevated afterward. Figure~\ref{fig:News Index}(b) shows that the news index correlates with inflation, with the noticeable exception of the inflation decrease during the Great Recession, which was accompanied by only a moderate decrease in the INI. The low inflation phase from 2014 to 2016, however, was accompanied by a dip in the INI that was lower than during the Great Recession.
 % I use this ration rather than the total number of words related to my topic of interest like most others e.g. (CITE) to take into account the varying number of articles in each year. The number of published articles steadily increased other the years.(CHECK, put that into Appendix?).
-\\
    \begin{figure}[h!]
     \centering
     \setkeys{Gin}{width=\linewidth,height=6cm} %set image parameters
@@ -339,7 +398,7 @@ I relate my news index and the amount of media coverage with the inflation. In g
     \caption{News Inflation Index and Inflation}
     \label{100}
 \end{subfigure}
-\caption{Media Reporting and Inflation. Figure (a) depicts the monthly HICP growth for Germany and the media coverage. Media Coverage is defined as inflation related sentence divided by the total number of sentences to account for the varying number of articles in each year. Figure (b) depics the monthly HICP growth for Germany and the INI.}
+\caption{Media Reporting and Inflation: Figure (a) depicts the monthly HICP growth for Germany and the media coverage. Media coverage is defined as the number of inflation-related sentences divided by the total number of sentences to account for the varying number of articles in each year. Figure (b) depicts the monthly HICP growth for Germany and the INI.}
 \label{fig:News Index}
     \end{figure}
 
@@ -365,7 +424,7 @@ Figure~\ref{fig:ECB Index} depicts the three ECB indezes and corresponding macro
     \caption{ECB Monetary}
     \label{ECB_inf}
 \end{subfigure}
-\caption{ECB Indices. Figure (a) depicts the monthly growth of the industrial production in the Eurzone together with the Ecoonomic Outlook index. Figure (b) depicts the monthly HICP growth for the Eurzone together with the ECB inflation outlook index. Figure (c) depicts the deposit facilitie rates together with the monetary outlook index.}
+\caption{ECB Indices: Figure (a) depicts the monthly growth of industrial production in the Eurozone, alongside the Economic Outlook index. Figure (b) depicts the monthly HICP growth for the Eurozone, in conjunction with the ECB inflation outlook index. Figure (c) depicts the deposit facility rates, along with the monetary outlook index.}
 \label{fig:ECB Index}
     \end{figure}
 \newpage
@@ -487,7 +546,7 @@ $R^2$ & & & & & & \\
 
 \appendix
 
-\section{Quantification of Inflation Expectations}\label{sec:Quantification of Inflation Expectations}
+\section{Quantification of Inflation Expectations}\label{sec:Quantification_of_Inflation_Expectations}
 
 The European Commission's Business and Consumer Survey consumers are asked if they expect prices to fall, stay the same, increase slower than before, increase at the same rate or increase at a higher rate in the coming 12 months and in the last 12 months. 
 \\
@@ -521,6 +580,18 @@ where $w$ is the size of the rolling window. \cite{Lahiri2015} choose $w$ as nin
     \caption{Inflation Expectations: Household inflation expectations are in blue, Professional forecaster inflation expectations are in red}
     \end{figure}
 \label{fig:Inflation Expectations}
+
+\section{Derivative of inflation expectation error}
+
+\begin{equation}
+|(1-\rho_t)(1-\bar{\lambda}_t)\alpha_t + \rho(\pi_t - \Psi_t) |
+\end{equation}
+Define $(1-\rho_t)(1-\bar{\lambda}_t)\alpha_t + \rho(\pi_t - \Psi_t)$ as $G(\lambda_t)$. 
+\begin{equation}
+\frac{\partial B_t}{\partial \bar{\lambda}_t} = -(1-\rho_t)\alpha_t < 0 \quad \alpha_t > 0, \lambda_t \neq 0
+\end{equation}
+
+
 
 \section{Additional Rules for Lexicon Text Classification}\label{sec:Additional Rules for Lexicon Text Classification}
 

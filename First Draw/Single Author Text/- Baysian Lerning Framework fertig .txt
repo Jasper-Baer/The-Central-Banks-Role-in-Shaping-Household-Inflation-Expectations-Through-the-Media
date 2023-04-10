@@ -1,0 +1,52 @@
+Must do:
+- Add words for detechting inflation sentences according to Chat GPT
+- Run the Indizes for PMI and negations (testweise, negations fehlen noch)
+- Negations näher beschreiben
+- Run the index for lambda
+- Plot lambda and describe lambda
+- SUMMER SCHOOL BUCHEN
+- Media Coverage und INI auf ECB Inflation Index regressieren
+- Figure 1 und Figure 2: Change inflation to Germand and Eurzone HICP
+- Figure 1: Recessions grau einfärben
+- Figure 1: Nulllinie wegglassen
+- Figure 1 und Figure 2: Legende unterhalb der Graphen
+- Summer School buchen
+- Measure how close media follows ECB (erste Version fertig, aber muss noch verfeinert werden)
+- Methode fertig schreiben (Lexicon)
+- Descriptiven Teil fertig schreiben (bin mir nicht sicher, was ich noch hinzufügen soll)
+- Economic Framework fertig schreiben
+- Results fertig schreiben 
+
+Easy must do:
+- Warum fängt mein Graph erst bei 2006 an?
+- Datastream E-Mail um zu gucken, ob ich die Daten für Diss verwenden darf
+
+Optional:
+- compare rolling windo approach with michigan consumer survey
+- use quartlery quantitative ECB inflation data to test how results would change
+- Lexicon Based + Word Embedding
+
+- Energiepreispauschale beantragen
+
+- Dienstag: 06.04
+- 9:00: Aufstehen/Wach werden
+- 10:00: Mündliche Prüfung
+- 11:00: Single Author
+- 14:00: 1. Pause
+- 14:30 Single Author
+- 16:00: Bogen
+- 20:00: Single Author
+- 23:00: Schluss
+
+Fertig mit 
+- Einleitung (Literatureteil ausarbeiten)
+- Descriptive Part (fertig, aber nochmal Finja fragen)
+- Economic Framework
+
+Fertig mit
+- Measure for Central Bank (fertig im Groben. Ergebnisse fehlen noch)
+- Results
+
+Offene Stellen schließen
+
+I have two different datasets. One for inflation-related sentences from newspaper articles and one for ECB press conferences. I have 3 categores for the press conferences, monetary which can be either hawkish, doovish or neutral, economic outlook which can be either positive, neutral or negative and inflation outlookc which can be either rising, neutral or declining. For the news sentences I have two categories: inflation sentiment which can be either positve, neutral or negative and inflation directio n which can be either rising, neutral or declining.
