@@ -6,6 +6,7 @@
 \usepackage{subcaption}
 \usepackage{amsmath}
 \usepackage{booktabs}
+\usepackage{float}
 
 
 \usepackage[dvipsnames]{xcolor} % Für Einfärbung von Notizen. Sollte am Ende wieder entfernt werden.
@@ -377,14 +378,16 @@ The (ECB) press conferences, occur eight times a year. To convert the press conf
 
 Dependency parsing is a natural processing techniques that identifies the grammatical structure of a given text. 
 \\
-I use it to identify all sentences in which the ECB or any of its Governing Council members is the subject. This approach is close to \cite{Picaultetal2022}, expect that they use part-of-speech tagging instead of dependency parsing to identify the corresponding subjects.
+I apply the Stanford stanza dependency in python to all sentences in which either the ECB or one of the past or present ecb governing councile members are mentioned. I distinct between sentences where the ECB is directly or indirectly quoted from sentences in which the journalist makes a judgment about the ECB's actions. I only keep the first and discard the later. To achieve this I filter out the sentence with two rules. First, I keep all sentences in which the ECB or one of its governing council members is the main subject. Second, I keep all sentences in which the ECB or one of its governing council is the object and a verb which corresponds to communication like sagen (saysing) or berichten (reporting)\footnote{These words are: sagen (say), sehen (see), gehen (go), berichten (report), meinen (mean), erwarten (expect), vorhersagen (predict), rechnen (calculate)}.
+\\
+This approach is close to \cite{Picaultetal2022}, expect that they use part-of-speech tagging instead of dependency parsing to identify the corresponding sentences.
 %\\
 %\textcolor{red}{I could improve this: (From \cite{Picaultetal2022}) - We remove not only the sentences in which the subject is explicitly the ECB or a member of the Governing
 %Council but also sentences where the subject is a pronoun indirectly referring to the member of the ECB or the ECB itself (as identified by the subject of the previous sentence(s) in that case).}
 \section{Descriptive Analysis} \label{sec:Descriptive Analysis}
 I relate my news index and the amount of media coverage to inflation. In general, inflation-related news is strongly correlated with inflation itself. As Figure~\ref{fig:News Index}(a) shows, the high inflation phases in 2008 and 2011/2012 are both accompanied by a short peak in inflation-related news, while phases of lower inflation in between are accompanied by less media coverage. However, after 2013, media coverage peaked during the low inflation phase from 2014 to 2017 and remained elevated afterward. Figure~\ref{fig:News Index}(b) shows that the news index correlates with inflation, with the noticeable exception of the inflation decrease during the Great Recession, which was accompanied by only a moderate decrease in the INI. The low inflation phase from 2014 to 2016, however, was accompanied by a dip in the INI that was lower than during the Great Recession.
 % I use this ration rather than the total number of words related to my topic of interest like most others e.g. (CITE) to take into account the varying number of articles in each year. The number of published articles steadily increased other the years.(CHECK, put that into Appendix?).
-   \begin{figure}[h!]
+   \begin{figure}[H]
     \centering
     \setkeys{Gin}{width=\linewidth,height=6cm} %set image parameters
 \begin{subfigure}{6cm}
@@ -398,13 +401,13 @@ I relate my news index and the amount of media coverage to inflation. In general
     \caption{News Inflation Index and Inflation}
     \label{100}
 \end{subfigure}
-\caption{Media Reporting and Inflation: Figure (a) depicts the monthly HICP growth for Germany and the media coverage. Media coverage is defined as the number of inflation-related sentences divided by the total number of sentences to account for the varying number of articles in each year. Figure (b) depicts the monthly HICP growth for Germany and the INI.}
+\caption{Media Reporting and Inflation: Figure (a) depicts the monthly HICP growth for Germany in red and the media coverage in blue. Media coverage is defined as the number of inflation-related sentences divided by the total number of sentences to account for the varying number of articles in each year. Figure (b) depicts the monthly HICP growth for Germany in red and the INI in blue.}
 \label{fig:News Index}
     \end{figure}
 
 Figure~\ref{fig:ECB Index} depicts the three ECB indezes and corresponding macroeconomic variables. 
 
-   \begin{figure}[h!]
+   \begin{figure}[H]
     \centering
     \setkeys{Gin}{width=\linewidth,height=6cm} %set image parameters
 \begin{subfigure}{6cm}
@@ -424,10 +427,9 @@ Figure~\ref{fig:ECB Index} depicts the three ECB indezes and corresponding macro
     \caption{ECB Monetary}
     \label{ECB_inf}
 \end{subfigure}
-\caption{ECB Indices: Figure (a) depicts the monthly growth of industrial production in the Eurozone, alongside the Economic Outlook index. Figure (b) depicts the monthly HICP growth for the Eurozone, in conjunction with the ECB inflation outlook index. Figure (c) depicts the deposit facility rates, along with the monetary outlook index.}
+\caption{ECB Indices: Figure (a) depicts the monthly growth of industrial production in the Eurozone in red, alongside the Economic Outlook index in blue. Figure (b) depicts the monthly HICP growth for the Eurozone in red, in conjunction with the ECB inflation outlook index in blue. Figure (c) depicts the deposit facility rates in red, along with the monetary outlook index in blue.}
 \label{fig:ECB Index}
     \end{figure}
-\newpage
 \textcolor{red}{NOTE 1: Professional Forecaster Inflation Expectations are stronger correlated with ECB Inflation Index than with Inflation Expectations. Could be because of the European prof. Inf. Exp.}
 \\
 \textcolor{red}{NOTE 2: The results are quite similar to Picault et. al (2017) and Marozzi (2021), which is reassuring, but I only add 4 more years to the dataset. Therefore, my approach adds little new information regarding the ECB indices.}
@@ -437,8 +439,6 @@ Both the relative and absolute residuals show a strong correlation until 2014. H
 %\cite{Carroll2003} define the inflation expectation error of households as the squared difference between the household inflation expectations and professional inflation expectations. \cite{LamlaLein2014} instead uses the absolute difference. Because I'm not only interested in the absolute size of the inflation gap, but also the direction 
 
 %To measure the error, I use the EU household inflation expectation described in and the professional inflation forecasts for the Eurozone described in (SECTION 2). My interest lies in the deviation between the household inflation expectations from the optimal forecasts. Therefore, I follow Lamla (2014) and calculate the household forecast errors as the difference between the household inflation expectations and professional inflation forecast for the Eurozone in the coming 12 months. I deviate from Lamla (2014) by taking the non-absolute error. (CITE) and (CITE) show that households react differently to news regarding high and low inflation.
-
-\newpage
 
    \begin{figure}[h!]
     \centering
@@ -470,42 +470,18 @@ Both the relative and absolute residuals show a strong correlation until 2014. H
 \label{fig:Expectation Gap}
     \end{figure}
 
-%\section{Model}\label{sec:Model}
-
-%$\pi^i_t$ = information regarding inflation which agents follow \\
-%$\pi^{ECB}_t$ = information regarding inflation from ECB \\
-%$\pi^n_t$ = information regarding inflation from news \\
-%
-%$\epsilon_t$ = normal distributed error with mean zero and variance $\sigma_{ECB,t}$ \\
-%$\gamma_t$ = media bias \\
-%$\lambda_t$ = media bias weight (1 = full bias, 0 bias) \\
-%
-%$\pi^{ECB}_t$ = $\pi^{Eurozone}_t + \epsilon_t$ (assuming that ECB is unbiased and focused on the Eurozone as a whole instead of country specific inflation.) 
-%\\
-%\textcolor{red}{Check if other papers made a difference for Eurozone inflation and country specific inflation.}
-%\\
-%
-%$\pi^n_t$ = $\lambda_t * \pi^{ECB}_t + (1-\lambda_t) * (\gamma_t + \pi_t)$ (News can either follow ECB and just reproduce the ECBs press conferences ($\lambda_t = 1)$ or they could ignore the press conferences completely ($\lambda_t = 0$).) \\
-
-%$\pi^i_t$ = $\alpha_t * \pi^{ECB}_t + (1-\alpha_t) * \pi^n$ \\
-%$\pi^i_t$ = $\alpha_t * (\pi_t + \epsilon_t) + (1-\alpha_t) * (\pi_t + \lambda_t * \pi^{ECB}_t + (1-\lambda_t) * \gamma_t)$ \\
-%$\pi^i_t$ = $\pi_t + \alpha_t * \epsilon_t + (1-\alpha_t) * (\lambda_t * \pi^{ECB}_t + (1-\lambda_t) * \gamma_t)$ \\
-
 \section{Econometric Framework}\label{sec:Econometric Framework}
-To test my hypthesis 
-\textcolor{red}{to close to Erhmann et al. 2017?}
+To test my two hypothesis, I examine the impact of the media bias and media-central bank alignment on the inflation expectation error. To do this, I estimate the following equation
 \\
-$\mathbf{B}_t = \alpha + \beta_1 Media^{count}_t + \beta_2 Media^i_t + \beta_3 Media^{cb}_t +\beta_3 \pi_{t-1} + \epsilon_t$ \\
-where $\alpha$ is a constant, 
+$B_t = \beta_0 + \beta_1 \tilde{V_t} + \beta_2 \tilde{\alpha_t} + \beta_3 \tilde{\lambda_t} +\beta_3 \pi_{t-1} + \beta_4 B_{t-1} + \epsilon_t$ \\
+where $\beta_0$ is a constant, $\tilde{V_t}$ is the share of inflation related sentences in the media divided by the number of all sentences,  $\tilde{\alpha_t}$ is the residual from the linear regression of the ECB inflation index on the INI and media coverage, $\tilde{\lambda_t}$ is the number of sentences in which the ECB is directly or indirectly cited divided by the number of all sentences. The equation is estimated via OLS using Newey-West standard errors.
+%\\
+%To avoid simultaneity issues I follow \cite{LamlaLein2014} In order to obtain media data for a given month, I aggregate the media reports for each month, excluding any articles which are potentially related to the consumer survey results in the month. Specifically, I sum up the media articles until the day before the consumer survey is released. The sentences from the summed up articles are then used to derive the news index and news count for the given month.
+%\\
+%\textcolor{red}{Andere finden die das ähnlich gemacht haben.}
+%\\
 
-%$Media^c_t$ is the news count in period $t$, $Media^i_t$ is the news inflation index and Media^{cb}_t
-
-The equation is estimated via OLS using Newey-West standard errors.
-\\
-To avoid simultaneity issues I follow \cite{LamlaLein2014} In order to obtain media data for a given month, I aggregate the media reports for each month, excluding any articles which are potentially related to the consumer survey results in the month. Specifically, I sum up the media articles until the day before the consumer survey is released. The sentences from the summed up articles are then used to derive the news index and news count for the given month.
-\\
-\textcolor{red}{Andere finden die das ähnlich gemacht haben.}
-\\
+\section{Results}\label{sec:Results}
 
 
 \begin{table}[!h]
@@ -514,27 +490,21 @@ To avoid simultaneity issues I follow \cite{LamlaLein2014} In order to obtain me
   \label{tab:Inflation Expectation Gap}
 \begin{tabular}{l*{6}{c}}   
 \toprule
- & $B^r_t$ & $B^e_t$ & $\pi_{t+1}$ & & & \\ 
+                    & (1) & (2) & (3) & (4) & (5) \\
 \midrule
-$B^r_{t-1}$ & & & & & & \\
-$B^e_{t-1}$ & & & & & & \\
-$NewsInflation_t$ & & & & & & \\
-$ECBInflation_t$ & & & & & & \\
-$ECBMonetary_t$ & & & & & & \\
-$ECBOutlook_t$ & & & & & & \\
-$News ECB Difference_t$ & & & & & & \\
-$\pi_t$ & & & & & & \\
+$B_{t-1}$           &     &  *  &  *  &  *  &  *  \\
+$\pi_{t-1}$         &     &  *  &  *  &  *  &  *  \\
+$\tilde{V_t}$       &  *  &  *  &  *  &  *  &  *  \\
+$\tilde{\alpha_t}$  &     &     &  *  &     &  *  \\
+$\tilde{\lambda_t}$ &     &     &     &  *  &  *  \\
 %$IndustrialProduction_t$ & & & & & & \\
-$Constant$ & & & & & & \\
+$Constant$          &  *  &  *  &  *  &  *  &  *  \\
 \midrule
-$R^2$ & & & & & & \\
+$R^2$               &  *  &  *  &  *  &  *  &  *  \\
 \bottomrule
- \end{tabular} 
+\end{tabular} 
 \end{table}
-
-\section{Results}\label{sec:Results}
-
-
+\parbox{0.8\textwidth}{\centering \small *** p $<$ 0.01, ** p $<$ 0.05, * p $<$ 0.1.}
 
 \section{Conclusions} \label{sec:Conclusions}
 

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (MiKTeX 20.10) (preloaded format=pdflatex 2020.10.27)  6 APR 2023 22:52
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (MiKTeX 20.10) (preloaded format=pdflatex 2020.10.27)  12 APR 2023 16:44
 entering extended mode
 **./First_Draw.tex
 (First_Draw.tex
@@ -359,7 +359,15 @@ Package: booktabs 2020/01/12 v1.61803398 Publication quality tables
 \@thisruleclass=\count293
 \@lastruleclass=\count294
 \@thisrulewidth=\dimen183
-) (C:\Users\Matthis\AppData\Local\Programs\MiKTeX\tex/latex/xcolor\xcolor.sty
+) (C:\Users\Matthis\AppData\Local\Programs\MiKTeX\tex/latex/float\float.sty
+Package: float 2001/11/08 v1.3d Float enhancements (AL)
+\c@float@type=\count295
+\float@exts=\toks24
+\float@box=\box57
+\@float@everytoks=\toks25
+\@floatcapt=\box58
+)
+(C:\Users\Matthis\AppData\Local\Programs\MiKTeX\tex/latex/xcolor\xcolor.sty
 Package: xcolor 2016/05/11 v2.12 LaTeX color extensions (UK)
 
 (C:\Users\Matthis\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg\color.cf
@@ -413,37 +421,37 @@ LaTeX Warning: Label `sub@ECB_inf' multiply defined.
 )
 \openout1 = `First_Draw.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 56.
-LaTeX Font Info:    ... okay on input line 56.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 56.
-LaTeX Font Info:    ... okay on input line 56.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 56.
-LaTeX Font Info:    ... okay on input line 56.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 56.
-LaTeX Font Info:    ... okay on input line 56.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 56.
-LaTeX Font Info:    ... okay on input line 56.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 56.
-LaTeX Font Info:    ... okay on input line 56.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 56.
-LaTeX Font Info:    ... okay on input line 56.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 56.
-LaTeX Font Info:    ... okay on input line 56.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 57.
+LaTeX Font Info:    ... okay on input line 57.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 57.
+LaTeX Font Info:    ... okay on input line 57.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 57.
+LaTeX Font Info:    ... okay on input line 57.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 57.
+LaTeX Font Info:    ... okay on input line 57.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 57.
+LaTeX Font Info:    ... okay on input line 57.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 57.
+LaTeX Font Info:    ... okay on input line 57.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 57.
+LaTeX Font Info:    ... okay on input line 57.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 57.
+LaTeX Font Info:    ... okay on input line 57.
 
 (C:\Users\Matthis\AppData\Local\Programs\MiKTeX\tex/context/base/mkii\supp-pdf.
 mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count295
+\scratchcounter=\count296
 \scratchdimen=\dimen184
-\scratchbox=\box57
-\nofMPsegments=\count296
-\nofMParguments=\count297
-\everyMPshowfont=\toks24
-\MPscratchCnt=\count298
+\scratchbox=\box59
+\nofMPsegments=\count297
+\nofMParguments=\count298
+\everyMPshowfont=\toks26
+\MPscratchCnt=\count299
 \MPscratchDim=\dimen185
-\MPnumerator=\count299
-\makeMPintoPDFobject=\count300
-\everyMPtoPDFconversion=\toks25
+\MPnumerator=\count300
+\makeMPintoPDFobject=\count301
+\everyMPtoPDFconversion=\toks27
 )
 (C:\Users\Matthis\AppData\Local\Programs\MiKTeX\tex/latex/epstopdf-pkg\epstopdf
 -base.sty
@@ -459,7 +467,7 @@ Package grfext Info: Graphics extension search list:
 G,.JBIG2,.JB2,.eps]
 (grfext)             \AppendGraphicsExtensions on input line 504.
 )
-Package hyperref Info: Link coloring OFF on input line 56.
+Package hyperref Info: Link coloring OFF on input line 57.
 
 (C:\Users\Matthis\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\nameref.sty
 Package: nameref 2019/09/16 v2.46 Cross-referencing by name of section
@@ -471,16 +479,17 @@ Package: refcount 2019/12/15 v3.6 Data extraction from label references (HO)
 itlestring.sty
 Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
 )
-\c@section@level=\count301
+\c@section@level=\count302
 )
-LaTeX Info: Redefining \ref on input line 56.
-LaTeX Info: Redefining \pageref on input line 56.
-LaTeX Info: Redefining \nameref on input line 56.
+LaTeX Info: Redefining \ref on input line 57.
+LaTeX Info: Redefining \pageref on input line 57.
+LaTeX Info: Redefining \nameref on input line 57.
  (First_Draw.out) (First_Draw.out)
 \@outlinefile=\write4
 \openout4 = `First_Draw.out'.
 
 Package caption Info: Begin \AtBeginDocument code.
+Package caption Info: float package is loaded.
 Package caption Info: End \AtBeginDocument code.
 
 Overfull \hbox (2.22221pt too wide) has occurred while \output is active
@@ -489,107 +498,99 @@ Overfull \hbox (2.22221pt too wide) has occurred while \output is active
 
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `\<def>-command' on input line 78.
+(hyperref)                removing `\<def>-command' on input line 79.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `\cnotenum' on input line 78.
+(hyperref)                removing `\cnotenum' on input line 79.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `\<def>-command' on input line 78.
+(hyperref)                removing `\<def>-command' on input line 79.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `\@corref' on input line 78.
+(hyperref)                removing `\@corref' on input line 79.
 
 [1
 
 
 {C:/Users/Matthis/AppData/Local/MiKTeX/pdftex/config/pdftex.map}] [2]
 [3] [4] [5] [6]
-Underfull \hbox (badness 10000) in paragraph at lines 249--270
+Underfull \hbox (badness 10000) in paragraph at lines 250--271
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 249--270
+Underfull \hbox (badness 10000) in paragraph at lines 250--271
 
  []
 
 [7]
-Underfull \hbox (badness 10000) in paragraph at lines 276--298
+Underfull \hbox (badness 10000) in paragraph at lines 277--299
 
  []
 
-[8] [9] [10] [11] [12]
-<Inflation_Count.png, id=254, 529.22719pt x 316.93407pt>
+[8] [9] [10] [11] [12] [13]
+<Inflation_Count.png, id=260, 529.22719pt x 316.93407pt>
 File: Inflation_Count.png Graphic file (type png)
 <use Inflation_Count.png>
-Package pdftex.def Info: Inflation_Count.png  used on input line 391.
+Package pdftex.def Info: Inflation_Count.png  used on input line 394.
 (pdftex.def)             Requested size: 170.71281pt x 170.7211pt.
-<Inflation_Sentiment_Direction.png, id=255, 529.22719pt x 316.93407pt>
+<Inflation_Sentiment_Direction.png, id=261, 529.22719pt x 316.93407pt>
 File: Inflation_Sentiment_Direction.png Graphic file (type png)
 <use Inflation_Sentiment_Direction.png>
 Package pdftex.def Info: Inflation_Sentiment_Direction.png  used on input line 
-397.
+400.
 (pdftex.def)             Requested size: 170.71281pt x 170.7211pt.
- [13]
-<ECB_eco_Industrial_prod.png, id=263, 529.22719pt x 316.93407pt>
+ [14]
+<ECB_eco_Industrial_prod.png, id=269, 529.22719pt x 316.93407pt>
 File: ECB_eco_Industrial_prod.png Graphic file (type png)
 <use ECB_eco_Industrial_prod.png>
-Package pdftex.def Info: ECB_eco_Industrial_prod.png  used on input line 411.
+Package pdftex.def Info: ECB_eco_Industrial_prod.png  used on input line 414.
 (pdftex.def)             Requested size: 170.71281pt x 170.7211pt.
-<ECB_inf_inf.png, id=264, 529.22719pt x 316.93407pt>
+<ECB_inf_inf.png, id=270, 529.22719pt x 316.93407pt>
 File: ECB_inf_inf.png Graphic file (type png)
 <use ECB_inf_inf.png>
-Package pdftex.def Info: ECB_inf_inf.png  used on input line 417.
+Package pdftex.def Info: ECB_inf_inf.png  used on input line 420.
 (pdftex.def)             Requested size: 170.71281pt x 170.7211pt.
-<ECB_mon_df.png, id=265, 529.22719pt x 316.93407pt>
+<ECB_mon_df.png, id=271, 529.22719pt x 316.93407pt>
 File: ECB_mon_df.png Graphic file (type png)
 <use ECB_mon_df.png>
-Package pdftex.def Info: ECB_mon_df.png  used on input line 423.
+Package pdftex.def Info: ECB_mon_df.png  used on input line 426.
 (pdftex.def)             Requested size: 170.71281pt x 170.7211pt.
-
-
-LaTeX Warning: `!h' float specifier changed to `!ht'.
-
-[14 <./Inflation_Count.png> <./Inflation_Sentiment_Direction.png>] [15 <./ECB_e
-co_Industrial_prod.png> <./ECB_inf_inf.png> <./ECB_mon_df.png>] [16]
-<abs_exp_res.png, id=284, 528.47438pt x 325.215pt>
+ [15 <./Inflation_Count.png> <./Inflation_Sentiment_Direction.png>] [16 <./ECB_
+eco_Industrial_prod.png> <./ECB_inf_inf.png> <./ECB_mon_df.png>]
+<abs_exp_res.png, id=286, 528.47438pt x 325.215pt>
 File: abs_exp_res.png Graphic file (type png)
 <use abs_exp_res.png>
 Package pdftex.def Info: abs_exp_res.png  used on input line 447.
 (pdftex.def)             Requested size: 170.7119pt x 170.72058pt.
-<rel_exp_res.png, id=285, 528.47438pt x 325.215pt>
+<rel_exp_res.png, id=287, 528.47438pt x 325.215pt>
 File: rel_exp_res.png Graphic file (type png)
 <use rel_exp_res.png>
 Package pdftex.def Info: rel_exp_res.png  used on input line 453.
 (pdftex.def)             Requested size: 170.7119pt x 170.72058pt.
-<rel_exp_res_prev2014.png, id=286, 528.47438pt x 325.215pt>
+<rel_exp_res_prev2014.png, id=288, 528.47438pt x 325.215pt>
 File: rel_exp_res_prev2014.png Graphic file (type png)
 <use rel_exp_res_prev2014.png>
 Package pdftex.def Info: rel_exp_res_prev2014.png  used on input line 459.
 (pdftex.def)             Requested size: 170.7119pt x 170.72058pt.
-<rel_exp_res_aft2014.png, id=287, 528.47438pt x 325.215pt>
+<rel_exp_res_aft2014.png, id=289, 528.47438pt x 325.215pt>
 File: rel_exp_res_aft2014.png Graphic file (type png)
 <use rel_exp_res_aft2014.png>
 Package pdftex.def Info: rel_exp_res_aft2014.png  used on input line 465.
 (pdftex.def)             Requested size: 170.7119pt x 170.72058pt.
-
-Underfull \hbox (badness 10000) in paragraph at lines 503--509
-
- []
-
-[17 <./abs_exp_res.png> <./rel_exp_res.png> <./rel_exp_res_prev2014.png> <./rel
-_exp_res_aft2014.png>] (First_Draw.bbl [18] [19] [20]) [21] [22]
-<household_prof_inf.png, id=344, 528.47438pt x 325.215pt>
+ [17 <./abs_exp_res.png> <./rel_exp_res.png> <./rel_exp_res_prev2014.png> <./re
+l_exp_res_aft2014.png>] (First_Draw.bbl [18] [19] [20])
+[21] [22]
+<household_prof_inf.png, id=346, 528.47438pt x 325.215pt>
 File: household_prof_inf.png Graphic file (type png)
 <use household_prof_inf.png>
-Package pdftex.def Info: household_prof_inf.png  used on input line 579.
+Package pdftex.def Info: household_prof_inf.png  used on input line 549.
 (pdftex.def)             Requested size: 528.47308pt x 325.2142pt.
 
-Overfull \hbox (183.47308pt too wide) in paragraph at lines 579--580
+Overfull \hbox (183.47308pt too wide) in paragraph at lines 549--550
  [][] 
  []
 
@@ -605,35 +606,37 @@ LaTeX Warning: There were multiply-defined labels.
 
  ) 
 Here is how much of TeX's memory you used:
- 9135 strings out of 480236
- 143989 string characters out of 2879607
- 460409 words of memory out of 3000000
- 25441 multiletter control sequences out of 15000+200000
- 540527 words of font info for 48 fonts, out of 3000000 for 9000
+ 9197 strings out of 480236
+ 144835 string characters out of 2879607
+ 461915 words of memory out of 3000000
+ 25493 multiletter control sequences out of 15000+200000
+ 541972 words of font info for 53 fonts, out of 3000000 for 9000
  1141 hyphenation exceptions out of 8191
- 72i,10n,77p,1368b,494s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 72i,11n,77p,1368b,494s stack positions out of 5000i,500n,10000p,200000b,50000s
 <C:/Users/Matthis/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/c
 m/cmbx10.pfb><C:/Users/Matthis/AppData/Local/Programs/MiKTeX/fonts/type1/public
 /amsfonts/cm/cmex10.pfb><C:/Users/Matthis/AppData/Local/Programs/MiKTeX/fonts/t
 ype1/public/amsfonts/cm/cmmi10.pfb><C:/Users/Matthis/AppData/Local/Programs/MiK
 TeX/fonts/type1/public/amsfonts/cm/cmmi5.pfb><C:/Users/Matthis/AppData/Local/Pr
 ograms/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi7.pfb><C:/Users/Matthis/AppDat
-a/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Users/Matt
-his/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/
-Users/Matthis/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr6
+a/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi9.pfb><C:/Users/Matt
+his/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/
+Users/Matthis/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr1
+2.pfb><C:/Users/Matthis/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfon
+ts/cm/cmr6.pfb><C:/Users/Matthis/AppData/Local/Programs/MiKTeX/fonts/type1/publ
+ic/amsfonts/cm/cmr7.pfb><C:/Users/Matthis/AppData/Local/Programs/MiKTeX/fonts/t
+ype1/public/amsfonts/cm/cmr8.pfb><C:/Users/Matthis/AppData/Local/Programs/MiKTe
+X/fonts/type1/public/amsfonts/cm/cmr9.pfb><C:/Users/Matthis/AppData/Local/Progr
+ams/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Users/Matthis/AppData/
+Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy6.pfb><C:/Users/Matthi
+s/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy7.pfb><C:/Us
+ers/Matthis/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmti10
 .pfb><C:/Users/Matthis/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfont
-s/cm/cmr7.pfb><C:/Users/Matthis/AppData/Local/Programs/MiKTeX/fonts/type1/publi
-c/amsfonts/cm/cmr8.pfb><C:/Users/Matthis/AppData/Local/Programs/MiKTeX/fonts/ty
-pe1/public/amsfonts/cm/cmsy10.pfb><C:/Users/Matthis/AppData/Local/Programs/MiKT
-eX/fonts/type1/public/amsfonts/cm/cmsy6.pfb><C:/Users/Matthis/AppData/Local/Pro
-grams/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy7.pfb><C:/Users/Matthis/AppData
-/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmti10.pfb><C:/Users/Matt
-his/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmti8.pfb><C:/
-Users/Matthis/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmtt
-8.pfb>
-Output written on First_Draw.pdf (24 pages, 370595 bytes).
+s/cm/cmti8.pfb><C:/Users/Matthis/AppData/Local/Programs/MiKTeX/fonts/type1/publ
+ic/amsfonts/cm/cmtt8.pfb>
+Output written on First_Draw.pdf (24 pages, 388162 bytes).
 PDF statistics:
- 429 PDF objects out of 1000 (max. 8388607)
- 95 named destinations out of 1000 (max. 500000)
+ 437 PDF objects out of 1000 (max. 8388607)
+ 96 named destinations out of 1000 (max. 500000)
  163 words of extra memory for PDF output out of 10000 (max. 10000000)
 
