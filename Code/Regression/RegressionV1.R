@@ -18,11 +18,13 @@ data1 = data %>% select(German.Absolute.Expectations.Gap,German.Relative.Expecta
                         Eurozone.Inflation, German.Inflation.Year.on.Year, German.Household.Inflation.Expectations,
                         Eurozone.Inflation.Professionell.Forecasts, German.Household.Inflation.Expectations.Balanced,
                         News.Inflation.Sentiment.Index, News.Inflation.Direction.Index)
+
+
 #time = data %>% select(FRED.Graph.Observations)
 
 #data1$ECB.DFR = c(0,diff(data1$ECB.DFR))
 
-lag_order = 12
+lag_order = 1
 nvar = dim(data1)[2]
 
 data_lags = data.frame(matrix(nrow = (dim(data1) - lag_order), ncol = (lag_order*nvar)))
@@ -46,7 +48,7 @@ data1 = cbind(data1, time)
 data1 = data1[(lag_order+1):dim(data1)[1],]
 data1 = cbind(data1, data_lags)
 #data1 = data1[1:95,]
-data1 = data1[24:dim(data1)[1],]
+#data1 = data1[24:dim(data1)[1],]
 step = 3
 
 #time = time[((lag_order+1):(dim(data1)[1]+lag_order)),]
@@ -71,37 +73,10 @@ diff_inflation_exp = normalized_Euro_inflation_prof - normalized_german_inflatio
 # replication of Lamla (2014) (- Teuro), slightly different time frame and Only one news index
 ########################################################
 
-fit = lm(German.Absolute.Expectations.Gap ~ News.Inflation.Count, data1)
-coeftest(fit, vcov.=NeweyWest(fit, prewhite=TRUE, adjust=TRUE, verbose=TRUE))
 
-fit = lm(German.Absolute.Expectations.Gap ~ News.Inflation.Count + German.Absolute.Expectations.Gap.Lag1, data1)
-coeftest(fit, vcov.=NeweyWest(fit, prewhite=TRUE, adjust=TRUE, verbose=TRUE))
-
-fit = lm(German.Absolute.Expectations.Gap ~ News.Inflation.Count + German.Absolute.Expectations.Gap.Lag1 + German.Inflation.Year.on.Year.Lag1, data1)
-coeftest(fit, vcov.=NeweyWest(fit, prewhite=TRUE, adjust=TRUE, verbose=TRUE))
-
-fit = lm(German.Absolute.Expectations.Gap ~ News.Inflation.Index + German.Absolute.Expectations.Gap.Lag1 + German.Inflation.Year.on.Year.Lag1, data1)
-coeftest(fit, vcov.=NeweyWest(fit, lag=0, prewhite=TRUE, adjust=TRUE, verbose=TRUE))
-
-fit = lm(German.Absolute.Expectations.Gap ~ ECB.Inflation.Index + News.Inflation.Index + German.Absolute.Expectations.Gap.Lag1 + German.Inflation.Year.on.Year.Lag1, data1)
-coeftest(fit, vcov.=NeweyWest(fit, lag=0, prewhite=TRUE, adjust=TRUE, verbose=TRUE))
 
 ## same for relative ##
 
-fit = lm(German.Relative.Expectations.Gap ~ News.Inflation.Count, data1)
-coeftest(fit, vcov.=NeweyWest(fit, prewhite=TRUE, adjust=TRUE, verbose=TRUE))
-
-fit = lm(German.Relative.Expectations.Gap ~ News.Inflation.Count + German.Relative.Expectations.Gap.Lag1, data1)
-coeftest(fit, vcov.=NeweyWest(fit, prewhite=TRUE, adjust=TRUE, verbose=TRUE))
-
-fit = lm(German.Relative.Expectations.Gap ~ News.Inflation.Count + German.Relative.Expectations.Gap.Lag1 + German.Inflation.Year.on.Year.Lag1, data1)
-coeftest(fit, vcov.=NeweyWest(fit, prewhite=TRUE, adjust=TRUE, verbose=TRUE))
-
-fit = lm(German.Relative.Expectations.Gap ~ News.Inflation.Index + German.Relative.Expectations.Gap.Lag1 + German.Inflation.Year.on.Year.Lag1, data1)
-coeftest(fit, vcov.=NeweyWest(fit, lag=0, prewhite=TRUE, adjust=TRUE, verbose=TRUE))
-
-fit = lm(German.Relative.Expectations.Gap ~ ECB.Inflation.Index + News.Inflation.Index + German.Relative.Expectations.Gap.Lag1 + German.Inflation.Year.on.Year.Lag1, data1)
-coeftest(fit, vcov.=NeweyWest(fit, lag=0, prewhite=TRUE, adjust=TRUE, verbose=TRUE))
 
 ############################################
 # Residuals - ECB and News Index
@@ -151,7 +126,7 @@ fit = lm(German.Inflation.Year.on.Year ~ News.Inflation.Index, data1)
 German_News_res_inf = fit$residuals
 
 data1$time = as.Date(strptime(data1$time, "%Y-%m-%d"))
-years = as.Date(strptime(c(2005:2019), '%Y'))
+years = as.Date(strptime(c(2000:2019), '%Y'))
 
 ############################################
 # Regressions for Paper
@@ -167,14 +142,21 @@ coeftest(fit, vcov.=NeweyWest(fit, lag=0, prewhite=TRUE, adjust=TRUE, verbose=TR
 # Plots Paper
 ###############################################
 
+recessions <- data.frame(
+  start = as.Date(c("2000-05-01",  "2008-03-01", "2011-07-01", "2017-12-01")),
+  end = as.Date(c("2005-02-28", "2009-06-30", "2015-05-30","2019-01-01")) # "2020-05-30"
+)
+
 coeff = max(data1$News.Inflation.Count)/max(data1$German.Inflation.Year.on.Year)
 
 ggplot(data1, aes(x = time)) + 
+  geom_rect(data = recessions, aes(xmin = start, xmax = end, ymin = -Inf, ymax = Inf),
+            inherit.aes = FALSE, fill = "grey", alpha = 0.3) +
   geom_line(aes(y = News.Inflation.Count.role/coeff), colour="blue", linetype = 1) +
   geom_line(aes(y = German.Inflation.Year.on.Year), colour="red", linetype = 2) +
   geom_hline(yintercept = 0) + 
   scale_y_continuous(name = "German Inflation", sec.axis = sec_axis(~.*coeff*1000, name = "Inflation News Coverage*10^(-3)")) +
-  scale_x_date(date_labels="%Y", breaks = unique(years), name = "") +
+  scale_x_date(date_labels="%Y", breaks = seq(as.Date("2000-01-01"), max(data1$time), by = "1 year"), name = "", limits = c(min(data1$time), max(data1$time))) +
   theme_classic() + 
   theme(axis.text.y.left = element_text(color = "red"),
         axis.text.y.right = element_text(color = "blue"),
@@ -187,11 +169,13 @@ ggplot(data1, aes(x = time)) +
 coeff = max(data1$News.Inflation.Index)/max(data1$German.Inflation.Year.on.Year)*2.4
 
 ggplot(data1, aes(x = time)) + 
+  geom_rect(data = recessions, aes(xmin = start, xmax = end, ymin = -Inf, ymax = Inf),
+            inherit.aes = FALSE, fill = "grey", alpha = 0.3) +
   geom_line(aes(y = News.Inflation.Index.role/coeff*-1), colour="blue", linetype = 1) +
   geom_line(aes(y = German.Inflation.Year.on.Year), colour="red", linetype = 2) +
   geom_hline(yintercept = 0) + 
   scale_y_continuous(name = "German Inflation", sec.axis = sec_axis(~.*coeff, name = "Inflation News Index")) +
-  scale_x_date(date_labels="%Y", breaks = unique(years), name = "") +
+  scale_x_date(date_labels="%Y", breaks = seq(as.Date("2000-01-01"), max(data1$time), by = "1 year"), name = "", limits = c(min(data1$time), max(data1$time))) +
   theme_classic() + 
   theme(axis.text.y.left = element_text(color = "red"),
         axis.text.y.right = element_text(color = "blue"),
@@ -201,14 +185,18 @@ ggplot(data1, aes(x = time)) +
         panel.grid.minor = element_blank(),
         panel.grid.major = element_blank()) 
 
+####################################################################
+
 coeff = max(data1$News.Inflation.Direction.Index)/max(data1$German.Inflation.Year.on.Year)
 
 ggplot(data1, aes(x = time)) + 
+  geom_rect(data = recessions, aes(xmin = start, xmax = end, ymin = -Inf, ymax = Inf),
+            inherit.aes = FALSE, fill = "grey", alpha = 0.3) +
   geom_line(aes(y = News.Inflation.Direction.Index.role/coeff), colour="blue", linetype = 1) +
   geom_line(aes(y = German.Inflation.Year.on.Year), colour="red", linetype = 2) +
   geom_hline(yintercept = 0) + 
   scale_y_continuous(name = "German Inflation", sec.axis = sec_axis(~.*coeff, name = "News Direction Index")) +
-  scale_x_date(date_labels="%Y", breaks = unique(years), name = "") +
+  scale_x_date(date_labels="%Y", breaks = seq(as.Date("2000-01-01"), max(data1$time), by = "1 year"), name = "", limits = c(min(data1$time), max(data1$time))) +
   theme_classic() + 
   theme(axis.text.y.left = element_text(color = "red"),
         axis.text.y.right = element_text(color = "blue"),
@@ -221,11 +209,13 @@ ggplot(data1, aes(x = time)) +
 coeff = max(data1$News.Inflation.Sentiment.Index)/max(data1$German.Inflation.Year.on.Year)
 
 ggplot(data1, aes(x = time)) + 
+  geom_rect(data = recessions, aes(xmin = start, xmax = end, ymin = -Inf, ymax = Inf),
+            inherit.aes = FALSE, fill = "grey", alpha = 0.3) +
   geom_line(aes(y = News.Inflation.Sentiment.Index.role/coeff+0.1/coeff), colour="blue", linetype = 1) +
   geom_line(aes(y = German.Inflation.Year.on.Year), colour="red", linetype = 2) +
   geom_hline(yintercept = 0) + 
   scale_y_continuous(name = "German Inflation", sec.axis = sec_axis(~.*coeff-0.1, name = "News Sentiment Index")) +
-  scale_x_date(date_labels="%Y", breaks = unique(years), name = "") +
+  scale_x_date(date_labels="%Y", breaks = seq(as.Date("2000-01-01"), max(data1$time), by = "1 year"), name = "", limits = c(min(data1$time), max(data1$time))) +
   theme_classic() + 
   theme(axis.text.y.left = element_text(color = "red"),
         axis.text.y.right = element_text(color = "blue"),

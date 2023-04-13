@@ -2,44 +2,9 @@
 """
 Created on Sun Aug 21 19:18:29 2022
 
-@author: Nutzer
+@author: jbaer
 """
 
-import pandas as pd
-from nltk.tokenize import word_tokenize 
-import ast
-from tqdm import tqdm
-
-import nltk
-import stanza
-
-import warnings
-warnings.simplefilter(action='ignore', category=FutureWarning)
-
-#stanza.download('de')
-nlp = stanza.Pipeline(processors= 'lemma,tokenize,pos,depparse', lang = 'de')
-
-data = pd.read_csv('D:\Studium\PhD\Single Author\Data\dpa_sents_v01.csv')
-
-word_list = [
-    'Deflation',
-    'Geldentwertung',
-    'Geldwert',
-    'Hyperinflation',
-    'Inflation',
-    'Inflations',
-    'Inflationsrate',
-    'Kaufkraft',
-    'Lebenshaltungskosten',
-    'Preisanstieg',
-    'Preiserhöhung',
-    'Preisindex',
-    'Preisniveau',
-    'Teuerung',
-    'Verbraucherpreisindex',
-    'Verteuerung',
-    'Warenkorb'
-]
 # word_list_ecb_two_words = [
 #     "Wim Duisenberg",           # President of the ECB (1998-2003)
 #     "Jean-Claude Trichet",      # President of the ECB (2003-2011)
@@ -71,10 +36,56 @@ word_list = [
     
 #     ]
 
+import pandas as pd
+from nltk.tokenize import word_tokenize 
+import ast
+from tqdm import tqdm
+
+#import nltk
+import stanza
+import os
+
+PATH = r"D:\Studium\PhD\Github\Single-Author\Code\Unsupervised"
+
+os.chdir(PATH)
+
+from PR_index_supp import prepare_text
+
+import warnings
+warnings.simplefilter(action='ignore', category=FutureWarning)
+
+#stanza.download('de')
+nlp = stanza.Pipeline(processors= 'lemma,tokenize,pos,depparse', lang = 'de')
+
+data = pd.read_csv('D:\Studium\PhD\Single Author\Data\dpa_sents_v01.csv')
+
+pre_processing = prepare_text(data['sentences']).preproces_text()
+data['tokens'] = pre_processing[0]
+stem_map = pre_processing[1]
+
+word_list = [
+    'Deflation',
+    'Geldentwertung',
+    'Geldwert',
+    'Hyperinflation',
+    'Inflation',
+    'Inflations',
+    'Inflationsrate',
+    'Kaufkraft',
+    'Lebenshaltungskosten',
+    'Preisanstieg',
+    'Preiserhöhung',
+    'Preisindex',
+    'Preisniveau',
+    'Teuerung',
+    'Verbraucherpreisindex',
+    'Verteuerung',
+    'Warenkorb'
+]
+
 word_list_ecb = [
     
     "EZB",
-    "Europäische Zentralbank"
     "EZB-Präsident", 
     "EZB-Präsidentin", 
     "EZB-Vizepräsident",
@@ -91,7 +102,6 @@ word_list_ecb = [
     "Domingo Solans",
     "Issing",
     "González-Páramo",
-    "Stark",
     "Bini Smaghi",
     "Praet",
     "Asmussen",
@@ -105,100 +115,104 @@ word_list_ecb = [
     
 ]
 
-word_list = [word.lower() for word in word_list]
-word_list_ecb = [word.lower() for word in word_list_ecb]
+from nltk.stem.snowball import SnowballStemmer
 
-filtered_lemmas = pd.DataFrame()
+snowball_stemmer = SnowballStemmer('german')
+
+word_list = [snowball_stemmer.stem(word.lower()) for word in word_list]
+word_list_ecb = [snowball_stemmer.stem(word.lower()) for word in word_list_ecb]
+
+inflation_sentences = pd.DataFrame()
 ecb_sentences = pd.DataFrame()
 
-dependency_df= pd.DataFrame()
-
-for idx, art in tqdm(enumerate(data['sentences'])):
+for idx, art in tqdm(enumerate(data['tokens'])):
     
-    art = ast.literal_eval(art)
-    
-    for sent in art:
-        
-        tokens = word_tokenize(sent.lower())
+    for j, tok in enumerate(art):
         
         found_names = set()
         
-        if any(word in word_list for word in tokens):
+        if any(word in word_list for word in tok):
         
-            filtered_lemmas = filtered_lemmas.append({'sentence' : sent, 'index': idx}, ignore_index=True)
+            inflation_sentences = inflation_sentences.append({'tokens' : tok, 'index': idx}, ignore_index=True)
             
-            for i in range(len(tokens) - 1):
+            for i in range(len(tok) - 1):
                 
-                if tokens[i] in word_list_ecb:
+                if tok[i] in word_list_ecb:
                     
-                    found_names.add(tokens[i])
+                    found_names.add(tok[i])
                     
-            
+                elif tok[i] == "europa" and tok[i+1] == "zentralbank":
+                    
+                    found_names.add(tok[i])
                 
-                # if i < len(tokens) - 1:
+                # expection for "Jürgen Stark"
+                elif tok[i] == "jurg" and tok[i+1] == "stark":
                     
-                #     combined_name = f"{tokens[i]} {tokens[i + 1]}"
-                    
-                #     if combined_name in word_list_ecb_two_words:
-                #         found_names.add(combined_name)
-                        
-                #         print(combined_name)
-                        
+                    found_names.add(tok[i])
+                                                       
             if len(found_names) > 0:
                 
-                ecb_sentences = ecb_sentences.append({'sentence' : sent, 'index': idx}, ignore_index=True) 
+                sent = ast.literal_eval(data['sentences'].iloc[idx])[j]
+                
+                ecb_sentences = ecb_sentences.append({'sentence': sent,'tokens' : tok, 'index': idx}, ignore_index=True) 
 
-for ecb_sentence in  ecb_sentences['sentence']:
+inflation_sentences.to_csv('D:\Studium\PhD\Github\Single-Author\Data\newspaper_dpa_inflation_sentences.csv')
+ecb_sentences.to_csv('D:\Studium\PhD\Github\Single-Author\Data\news_dpa_ecb_inflation_sentences.csv')
+                
+def process_sentence(sentence, idx, stem_map):
+    
+        nlp_pars = nlp(sentence)
+        parsed_sentence = nlp_pars.sentences[0]
+        deps = []
 
-    dependencies = []
-    
-    if any(word in word_list_ecb for word in word_tokenize(sent.lower())):
-    
-        nlp_pars = nlp(sent)
-        
-        for sentence in  nlp_pars.sentences:
-        
-            for dep in sentence.dependencies:
-                dependencies.append((dep[2].text, dep[0].id, dep[1], dep[2].id))
+        for dep in  parsed_sentence.dependencies:
             
-            dependency_df = dependency_df.append({'dependencies' : dependencies, 'index': idx}, ignore_index=True)
+            try:
+                dep_word = (stem_map[dep[2].text.lower()], dep[0].id, dep[1], dep[2].id) 
+            except KeyError:
+                dep_word = (dep[2].text, dep[0].id, dep[1], dep[2].id) 
+                
+            deps.append(dep_word)
+                
+        return {'sentence': sentence, 'dependencies': deps, 'index': idx}
+
+dependency_data = [process_sentence(row['sentence'], idx, stem_map) for idx, row in tqdm(ecb_sentences.iterrows())]
+dependency_data = [item for item in dependency_data if item is not None]
+dependency_df = pd.DataFrame(dependency_data)
+
+dependency_df.to_csv(r'D:\Studium\PhD\Single Author\Data\dependencies.csv')
 
 filtered_ecb_sentences = []
-                
-for ecb_sentence in dependency_df.iterrows():
-    
-    deps = ecb_sentence[1]['dependencies']
-    reporting_verbs = ['sagte', 'sehen', 'geht', 'berichtet', 'meinen', 'erwarten', 'vorhergesagt']
-    
-    subj = None
-    root = None
+
+reporting_verbs = ['sagen', 'sehen', 'gehen', 'berichten', 'meinen', 'erwarten', 'vorhergesagen', 'rechnen']
+
+def filter_rows(row):
+    deps = row['dependencies']
     sent_in_ecb = False
-    
+    prev_dep = ""
+
     for dep in deps:
-        
+
         if dep[2] in ["nsubj", "nsubjpass"]:
-            
             subj = dep
-            
-            if subj[0].lower() in word_list_ecb:
-                
+            if subj[0] in word_list_ecb or (prev_dep == "europa" and subj[0] == "zentralbank"):
                 sent_in_ecb = True
-                
+
         elif dep[2] in ['obj', 'iobj']:
-            
-            if dep[0].lower() in word_list_ecb:
-                
+            if dep[0].lower() in word_list_ecb or (prev_dep == "europa" and dep[0] == "zentralbank"):
                 obj_dep = dep[1]
-                
                 if deps[obj_dep] in reporting_verbs:
-                    
                     sent_in_ecb = True
-                
-    if sent_in_ecb == True:
-        
-        filtered_ecb_sentences.append(ecb_sentence)
+                    
+        prev_dep = dep[0]
+
+    if sent_in_ecb:
+        return row
+
+filtered_series = dependency_df.apply(filter_rows, axis=1).dropna()
+filtered_ecb_sentences = pd.DataFrame(filtered_series.tolist(), columns=dependency_df.columns)
               
-ecb_data = data[ data.index.isin(ecb_sentences['index'])]
+ecb_data = data[ data.index.isin(filtered_ecb_sentences['index'])]
 ecb_data['date'] = pd.to_datetime(ecb_data[['year', 'month', 'day']])
 
 news_data_full = data[ data.index.isin(filtered_lemmas['index'])]

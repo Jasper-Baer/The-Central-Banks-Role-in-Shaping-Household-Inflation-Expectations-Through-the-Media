@@ -7,10 +7,12 @@ Created on Sat Nov  5 10:58:02 2022
 
 import re
 import string as st
+import ast
 
 from nltk.tokenize import word_tokenize
+from nltk.tokenize import sent_tokenize
 from nltk.corpus import stopwords
-from nltk.stem import PorterStemmer
+from nltk.stem.snowball import SnowballStemmer
 from collections import Counter
 from tqdm import tqdm
 
@@ -20,66 +22,73 @@ import pandas as pd
 class prepare_text:
     
     def __init__(self, text, language = 'german'):
+
         self.text = text
-        self.langauge = language
+        self.language = language
+
+    def __clean_sentence(self, sentence):
+    
+        # remove numbers
+        sentence = re.sub(r'\d+', '', sentence)
+        
+        # define punctations
+        punct = st.punctuation + ('“”–€–’')
+        
+        # remove punctuations and convert characters to lower case
+        sentence = "".join([char.lower() for char in sentence if char not in punct]) 
+        
+        # replace multiple whitespace with single whitespace and remove leading and trailing whitespaces
+        sentence = re.sub('\s+', ' ', sentence).strip()
+    
+        return (sentence)
 
     def preproces_text(self):
-        
-        def clean_sentence(sentence):
-        
-            # remove numbers
-            sentence = re.sub(r'\d+', '', sentence)
-            
-            # define punctations
-            punct = st.punctuation + ('“”–€–’')
-            
-            # remove punctuations and convert characters to lower case
-            sentence = "".join([char.lower() for char in sentence if char not in punct]) 
-            
-            # replace multiple whitespace with single whitespace and remove leading and trailing whitespaces
-            sentence = re.sub('\s+', ' ', sentence).strip()
-        
-            return (sentence)
     
-        port_stemmer = PorterStemmer()
+        snowball_stemmer = SnowballStemmer(self.language)
         
         preprocessed_text = []
+        token_mapping = {}
+
+        for sentences in tqdm(self.text):
             
-        for sentence in tqdm(self.text):
+            preprocessed_sentence = []
             
-            #text = ' '.join(text)
-            
-            # use clean text function on data
-            sentence = clean_sentence(sentence)
-            
-            # tokenize text
-            tokens = word_tokenize(sentence)
-            
-            # define stopwords
-            
-            if self.langauge == 'german':
+            for sentence in ast.literal_eval(sentences):
                 
-                stop_words = set(stopwords.words('german'))
-                # define words which mark negations
-                negation_words = ['kein', 'keine', 'keinem', 'keinen', 'keiner', 'keines', 'nicht', 'nichts', 'ohne']
-            
-            elif self.langauge == 'english':
+                # Clean text
+                sentence = self.__clean_sentence(sentence)
                 
-                stop_words = set(stopwords.words('english')) 
-                negation_words = []
-            
-            # only keep stopwords which are not negation words
-            for word in negation_words:
+                # Tokenize text
+                tokens = word_tokenize(sentence)
                 
-                stop_words.discard(word)
-            
-            # stem text and delete stopwords from it
-            stem_sentence = [port_stemmer.stem(w) for w in tokens]
-            stem_sentence = [w for w in stem_sentence if not w in stop_words]
-            
-            preprocessed_text.append(stem_sentence)
-            
-        return(preprocessed_text)
+                # Define stopwords based on the input language
+                stop_words = set(stopwords.words(self.language))
+    
+                if self.language == 'german':
+                    negation_words = ['kein', 'keine', 'keinem', 'keinen', 'keiner', 'keines', 'nicht', 'nichts', 'ohne']
+                elif self.language == 'english':
+                    negation_words = ['not']
+    
+                # Only keep stopwords which are not negation words
+                stop_words = stop_words.difference(negation_words)
+                
+                # Stem text and delete stopwords from it
+                stem_sentence = []
+                for w in tokens:
+                     stem_w = snowball_stemmer.stem(w)
+                     if w not in stop_words:
+                         stem_sentence.append(stem_w)
+                         token_mapping[w] = stem_w
+         
+                preprocessed_sentence.append(stem_sentence)
+                
+            preprocessed_text.append(preprocessed_sentence)
+
+        # Return either a list of tokens for a single sentence or a list of lists of tokens for multiple sentences
+        if len(preprocessed_text) == 1:
+            return preprocessed_text[0], token_mapping
+        else:
+            return preprocessed_text, token_mapping
 
 def count_ngrams(data):
     '''

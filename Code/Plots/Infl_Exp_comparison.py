@@ -85,13 +85,14 @@ def scale_ECB_index(ECB_index, date_inf):
 PATH = r'D:\Studium\PhD\Github\Single-Author\Data\Regression'
 
 #inflation_ger_q = pd.read_excel(PATH + '\Consumer Price IndexAll Items Total Total for Germany.xls')[10:]
-inflation_ger_qoq = pd.read_excel(PATH + '\Germany_Inflation_qoq.xls')[10:]
+#inflation_ger_qoq = pd.read_excel(PATH + '\Germany_Inflation_qoq.xls')[10:]
 #data_inf = pd.read_excel(PATH + '\Eurozone_CPI.xls')[10:]
 ecb_dfr = pd.read_excel(PATH + '\ECBDFR.xls')[10:]
 
 fred_monthly = pd.read_excel(PATH + '\Fred_data_monthly.xlsx')[10:]
 ip_ger_m = fred_monthly.iloc[:,0:2]
 ip_ea_m = fred_monthly.iloc[:,6:8]
+#inflation_ger_m = pd.read_excel(PATH + '\Germany_harmonized_inflation.xls')[10:]
 inflation_ger_m = fred_monthly.iloc[:,2:4]
 inflation_ea_m = fred_monthly.iloc[:,4:6]
 
