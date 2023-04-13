@@ -1,24 +1,21 @@
 Must do:
-- Add words for detechting inflation sentences according to Chat GPT
-- Run the Indizes for PMI and negations (testweise, negations fehlen noch)
-- Negations näher beschreiben
 - Run the index for lambda
 - Plot lambda and describe lambda
 - SUMMER SCHOOL BUCHEN
 - Media Coverage und INI auf ECB Inflation Index regressieren
-- Figure 1 und Figure 2: Change inflation to Germand and Eurzone HICP
-- Figure 1: Recessions grau einfärben
-- Figure 1: Nulllinie wegglassen
-- Figure 1 und Figure 2: Legende unterhalb der Graphen
-- Summer School buchen
 - Measure how close media follows ECB (erste Version fertig, aber muss noch verfeinert werden)
-- Methode fertig schreiben (Lexicon)
 - Descriptiven Teil fertig schreiben (bin mir nicht sicher, was ich noch hinzufügen soll)
-- Economic Framework fertig schreiben
+- Aggregate data before publication???
 - Results fertig schreiben 
 
+# Run all for new results
+- Preprocessing (should be fine)
+- Select Sentences with new Inflation Words and get ECB sentences (should be fine)
+- Index for PMI (including negations) (should be fine)
+- Regression for results part (muss verschiedene Regressionen ausprobieren)
+- Lamala 2014 reproduce results for regression
+
 Easy must do:
-- Warum fängt mein Graph erst bei 2006 an?
 - Datastream E-Mail um zu gucken, ob ich die Daten für Diss verwenden darf
 
 Optional:
@@ -28,14 +25,16 @@ Optional:
 
 - Energiepreispauschale beantragen
 
-- Dienstag: 06.04
+- Mittwoch: 12.04
 - 9:00: Aufstehen/Wach werden
-- 10:00: Mündliche Prüfung
-- 11:00: Single Author
+- 10:00: Uni???
+- 12:00: Single Author
 - 14:00: 1. Pause
 - 14:30 Single Author
-- 16:00: Bogen
-- 20:00: Single Author
+- 17:00: 2. Pause
+- 18:00: Single Author
+- 20:00: Einkaufen
+- 21:00: Single Author
 - 23:00: Schluss
 
 Fertig mit 
