@@ -53,7 +53,11 @@ class prepare_text:
             
             preprocessed_sentence = []
             
-            for sentence in ast.literal_eval(sentences):
+            if not isinstance(sentences, list):
+                
+                sentences = ast.literal_eval(sentences) 
+            
+            for sentence in sentences:
                 
                 # Clean text
                 sentence = self.__clean_sentence(sentence)

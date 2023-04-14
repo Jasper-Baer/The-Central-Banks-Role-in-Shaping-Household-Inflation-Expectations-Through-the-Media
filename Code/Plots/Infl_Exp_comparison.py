@@ -85,7 +85,7 @@ def scale_ECB_index(ECB_index, date_inf):
 PATH = r'D:\Studium\PhD\Github\Single-Author\Data\Regression'
 
 #inflation_ger_q = pd.read_excel(PATH + '\Consumer Price IndexAll Items Total Total for Germany.xls')[10:]
-#inflation_ger_qoq = pd.read_excel(PATH + '\Germany_Inflation_qoq.xls')[10:]
+inflation_ger_qoq = pd.read_excel(PATH + '\Germany_Inflation_qoq.xls')[10:]
 #data_inf = pd.read_excel(PATH + '\Eurozone_CPI.xls')[10:]
 ecb_dfr = pd.read_excel(PATH + '\ECBDFR.xls')[10:]
 
@@ -96,23 +96,7 @@ ip_ea_m = fred_monthly.iloc[:,6:8]
 inflation_ger_m = fred_monthly.iloc[:,2:4]
 inflation_ea_m = fred_monthly.iloc[:,4:6]
 
-# Datenmenge zu klein
-# ea_household_inf_exp = pd.read_csv(PATH + '\ecb.CES_data_2022_monthly.csv')
-# ea_household_inf_exp = ea_household_inf_exp[ea_household_inf_exp['a0020'] == 'DE']
-
-
-# data_ECB_sents_inf = pd.read_excel('D:\Studium\PhD\Single Author\Data\ECB\press_sents_full_index_labeled_inf.xlsx')
-# data_ECB_sents_inf = ECB_index(data_ECB_sents_inf)
-
-# fig, ax1 = plt.subplots()
-
-# ax2 = ax1.twinx()
-# ax1.plot(data_ECB_sents_inf['date'][180:220], data_ECB_sents_inf['index'][180:220], color = "blue")
-# ax2.plot(dire_senti[270:].iloc[:,0], dire_senti[270:].iloc[:,1]*-1, color = "red")
-
-# fig.legend(loc = 'lower left')
-
-# plt.show()
+monthly_ecb_count = pd.read_csv(PATH + '\monthly_ecb_counts.csv')
 
 data_ECB_index_inf1 = pd.read_csv(PATH + '\PR_ecb_inflation_results.csv')[['date', 'index']]
 data_ECB_index_mon1 = pd.read_csv(PATH + '\PR_ecb_monetary_results.csv')[['date', 'index']]
@@ -290,10 +274,8 @@ for years_roll in range(1, 13):
     scaling['German Inflation Expectations'] = np.array(scaling.iloc[:,1]) * np.array(ger_scale_exp[w:].iloc[:,0])
     
     MSE = np.mean((np.array(inflation_ger_m[476:705]['Unnamed: 3']) - np.array(list(scaling[167-w:396-w]['German Inflation Expectations'])))**2)
-    print([MSE, years_roll])
     
 #scaling.index = pd.date_range('1/1/1989', '31/7/2023', freq = 'M').tolist()
-
 #scaling.index = pd.date_range('1/1/1994', '31/7/2022', freq = 'M').tolist()
 
 inflation_ger_m = transform_date(inflation_ger_m)
@@ -384,6 +366,14 @@ count_rel.index = count_rel.iloc[:,0]
 count_rel_q = count_rel.groupby(pd.Grouper(freq="Q")).mean()
 count_rel_m = count_rel.groupby(pd.Grouper(freq="M")).mean()
 
+monthly_ecb_count.iloc[:,0] = pd.to_datetime(monthly_ecb_count.iloc[:,0])
+monthly_ecb_count = monthly_ecb_count[89:]
+
+monthly_ecb_count.index = monthly_ecb_count.iloc[:,0]
+#count_rel.iloc[:,0] = preprocessing.scale(np.float32(count_rel))
+monthly_ecb_count_rel_q = monthly_ecb_count.groupby(pd.Grouper(freq="Q")).mean()
+monthly_ecb_count_rel_m = monthly_ecb_count.groupby(pd.Grouper(freq="M")).mean()
+
 # ger_inf_exp.index = ger_inf_exp.iloc[:,0]
 # ger_inf_exp = ger_inf_exp[179:408]
 # #ger_inf_exp.iloc[:,0] = preprocessing.scale(np.float32(ger_inf_exp))
@@ -467,150 +457,6 @@ data_ECB_index_ec_m = scale_ECB_index(data_ECB_index_ec,date_inf)
 # sum(np.square(inflation_ger_m.iloc[60:,1] - list(data_inf_exp_m)[60:]))
 # sum(np.square(inflation_ger_m.iloc[60:,1] - list(scaling['German Inflation Expectations'][191:360])))
 
-# fig, ax1 = plt.subplots()
-
-# ax2 = ax1.twinx()
-# ax1.plot(inflation_ger_m.iloc[:,0], inflation_ger_m.iloc[:,1], color = 'black', label = 'German Inflation')
-# ax2.plot(count_rel_m, color = 'grey', label = 'ECB Inflation Forecast')
-
-# fig.legend(loc = 'lower left')
-
-# plt.show()
-
-# plt.plot(inflation_ger_m.iloc[:,0], inflation_ger_m.iloc[:,1], color = 'black', label = 'German Inflation')
-# plt.plot(count_rel_m, color = 'grey', label = 'ECB Inflation Forecast')
-# plt.legend(loc = 'lower left', prop={'size': 6})
-# plt.show()
-
-# import matplotlib.pyplot as plt
-# import numpy as np
-# from sklearn.preprocessing import StandardScaler
-
-# # Create a StandardScaler instance
-# scaler = StandardScaler()
-
-# # Standardize the data
-# mean_standardized = scaler.fit_transform(np.array(ea_inf_exp_quant['Mean'][:-10]).reshape(-1, 1)).flatten()
-# median_standardized = scaler.fit_transform(np.array(ea_inf_exp_quant['Median'][:-10]).reshape(-1, 1)).flatten()
-# german_inf_exp_standardized = scaler.fit_transform(np.array(scaling['German Inflation Expectations'][150:]).reshape(-1, 1)).flatten()
-# cons_de_tot_standardized = scaler.fit_transform(np.array(ger_inf_exp_balanced['CONS.DE.TOT.6.B.M'][200:]).reshape(-1, 1)).flatten()
-# data_inf_exp_m_standardized = scaler.fit_transform(np.array(data_inf_exp_m).reshape(-1, 1)).flatten()
-
-# import matplotlib.pyplot as plt
-# import pandas as pd
-
-# # Filter the data by the desired date range
-# start_date = pd.Timestamp('2005-01-01')
-# end_date = pd.Timestamp('2018-12-31')
-
-# mean_filtered = mean_standardized[(ea_inf_exp_quant.index[:-10] >= start_date) & (ea_inf_exp_quant.index[:-10] <= end_date)]
-# median_filtered = median_standardized[(ea_inf_exp_quant.index[:-10] >= start_date) & (ea_inf_exp_quant.index[:-10] <= end_date)]
-# data_inf_exp_m_filtered = data_inf_exp_m_standardized[(data_inf_exp_m.index >= start_date) & (data_inf_exp_m.index <= end_date)]
-# german_inf_exp_filtered = german_inf_exp_standardized[(scaling['date'][150:] >= start_date) & (scaling['date'][150:] <= end_date)]
-# cons_de_tot_filtered = cons_de_tot_standardized[(ger_inf_exp_balanced['TOT'][200:] >= start_date) & (ger_inf_exp_balanced['TOT'][200:] <= end_date)]
-
-# # Create the plot
-# plt.plot(ea_inf_exp_quant.index[(ea_inf_exp_quant.index >= start_date) & (ea_inf_exp_quant.index <= end_date)], mean_filtered, color='black', label='Quantitative Inf Exp Mean')
-# plt.plot(ea_inf_exp_quant.index[(ea_inf_exp_quant.index>= start_date) & (ea_inf_exp_quant.index <= end_date)], median_filtered, color='red', label='Quantitative Inf Exp Median')
-# plt.plot(data_inf_exp_m.index[(data_inf_exp_m.index >= start_date) & (data_inf_exp_m.index <= end_date)], data_inf_exp_m_filtered, color='orange', label='Quantitative Inf Exp Median')
-# plt.plot(scaling['date'][(scaling['date']>= start_date) & (scaling['date'] <= end_date)], german_inf_exp_filtered, color='grey', label='Scaled Inflation Exp')
-# plt.plot(ger_inf_exp_balanced['TOT'][(ger_inf_exp_balanced['TOT']>= start_date) & (ger_inf_exp_balanced['TOT'] <= end_date)], cons_de_tot_filtered, color='blue', label='Balanced Expectations')
-
-# # Uncomment the following line to show the legend
-# plt.legend(loc='lower left', prop={'size': 6})
-
-# # Display the plot
-# plt.show()
-
-# data_inf_exp_m_dates = data_inf_exp_m.index[(data_inf_exp_m.index >= start_date) & (data_inf_exp_m.index <= end_date)]
-# german_inf_exp_dates = scaling['date'][(scaling['date']>= start_date) & (scaling['date'] <= end_date)]
-
-# # Find common dates
-# common_dates = data_inf_exp_m_dates.intersection(german_inf_exp_dates)
-
-# # Filter the data to have the same dates
-# data_inf_exp_m_filtered_same_dates = data_inf_exp_m_standardized[data_inf_exp_m.index.isin(common_dates)]
-# german_inf_exp_filtered_same_dates = german_inf_exp_standardized[scaling['date'][150:].isin(common_dates)]
-
-# # Calculate the difference
-# difference = data_inf_exp_m_filtered_same_dates - german_inf_exp_filtered_same_dates
-
-# plt.plot(common_dates, difference, color='purple', label='Difference (data_inf_exp_m - german_inf_exp)')
-
-# # Uncomment the following line to show the legend
-# plt.legend(loc='lower left', prop={'size': 6})
-
-# # Display the plot
-# plt.show()
-
-# plt.plot(inflation_ger_m.iloc[:,0], inflation_ger_m.iloc[:,1], color = 'black', label = 'German Inflation')
-# plt.plot(data_inf_exp_m.index, list(data_inf_exp_m), color = 'grey', label = 'ECB Inflation Forecast')
-# plt.legend(loc = 'lower left', prop={'size': 6})
-# plt.show()
-
-# plt.plot(inflation_ger_m.iloc[220:,0], inflation_ger_m.iloc[220:,1], color = 'black', label = 'German Inflation')
-# #plt.plot(scaling['date'][108:338], scaling['German Inflation Expectations'][108:338], color = "blue", label = 'rolling window adv. scaling')
-# #plt.plot(data_inf_exp_m.index, list(data_inf_exp_m), color = 'grey', label = 'ECB Inflation Forecast')
-# #plt.plot(exp_inf.index, exp_inf, color = 'red', label = 'Bachmann')
-# plt.plot(exp_inf_berk.index, exp_inf_berk, color = 'green', label = 'Berk')
-# plt.legend(loc = 'lower left', prop={'size': 6})
-# plt.show()
-
-# plt.plot(inflation_ger_m.iloc[:,0], inflation_ger_m.iloc[:,1], color = 'black', label = 'German Inflation')
-# plt.plot(scaling.index[131:360], scaling['German Inflation Expectations'][131:360], color = "blue", label = 'rolling window adv. scaling')
-# plt.plot(data_inf_exp_m.index, list(data_inf_exp_m), color = 'grey', label = 'ECB Inflation Forecast')
-# plt.legend(loc = 'lower left', prop={'size': 6})
-# plt.show()
-
-# plt.plot(scaling.index[131:360], scaling['German Inflation Expectations'][131:360], color = "blue", label = 'rolling window adv. scaling')
-# plt.plot(data_inf_exp_m.index, list(data_inf_exp_m), color = 'grey', label = 'ECB Inflation Forecast')
-# plt.legend(loc = 'lower left', prop={'size': 6})
-# plt.show()
-
-# # 2010-08-31 00:00:00
-
-# plt.plot(scaling['date'][119:300], scaling['German Inflation Expectations'][119:300], color = "blue", label = 'rolling window adv. scaling')
-# plt.plot(data_inf_exp_m[48:], color = 'grey', label = 'ECB Inflation Forecast')
-# plt.legend(loc = 'lower left', prop={'size': 6})
-# plt.show()
-
-# plt.plot(scaling['date'][167:348], scaling['German Inflation Expectations'][167:348], color = "blue", label = 'rolling window adv. scaling')
-# plt.plot(data_inf_exp_m[48:], color = 'grey', label = 'ECB Inflation Forecast')
-# plt.legend(loc = 'lower left', prop={'size': 6})
-# plt.show()
-
-# plt.plot(scaling['date'][59:288], scaling['German Inflation Expectations'][59:288] - list(data_inf_exp_m))
-# plt.plot(scaling['date'][167:288], scaling['German Inflation Expectations'][167:288] - list(data_inf_exp_m[108:]))
-
-# plt.plot(scaling['date'][131:360], scaling['German Inflation Expectations'][131:360] - list(inflation_ger_m.iloc[:,1]))
-
-# plt.plot(scaling['date'][142:242], scaling['German Inflation Expectations'][142:242], color = "blue", label = 'rolling window adv. scaling')
-# plt.plot(ger_scale_exp['date'][:-130], (np.array(ger_scale_exp.iloc[:,0])*np.array(hist_ger_inflation_rollm_m.iloc[:,0]))[:-130], color = "red", label = 'rolling window simp. scaling')
-# plt.plot(ger_scale_exp['date'][:-130], (np.array(ger_scale_exp.iloc[:,0])*np.array(mean_inflation))[:-130], color = 'green', label = 'av. inflation scaling')
-# plt.plot(inflation_ger_m.iloc[:,0][:-130], inflation_ger_m.iloc[:,1][:-130], color = 'black', label = 'German Inflation')
-# plt.plot(data_inf_exp_m.index[4:-134], list(data_inf_exp_m.iloc[:,0])[4:-130], color = 'grey', label = 'ECB Inflation Forecast')
-# plt.legend(loc = 'lower left', prop={'size': 6})
-# plt.show()
-
-# plt.plot(scaling['date'][130:380], scaling['German Inflation Expectations'][130:380], color = "blue", label = 'rolling window adv. scaling')
-# #plt.plot(ger_scale_exp['date'], (np.array(ger_scale_exp.iloc[:,0])*np.array(hist_ger_inflation_rollm_m.iloc[:,0])), color = "red", label = 'rolling window simp. scaling')
-# #plt.plot(ger_scale_exp['date'], (np.array(ger_scale_exp.iloc[:,0])*np.array(mean_inflation)), color = 'green', label = 'av. inflation scaling')
-# #plt.plot(inflation_ger_m.iloc[:,0], inflation_ger_m.iloc[:,1], color = 'black', label = 'German Inflation')
-# plt.plot(data_inf_exp_m.index[:-4], list(data_inf_exp_m.iloc[:,0])[4:], color = 'grey', label = 'ECB Inflation Forecast')
-# plt.legend(loc = 'lower left', prop={'size': 6})
-# plt.show()
-
-# plt.plot(ger_scale.index[:-130], (np.array(ger_scale.iloc[:,0])*np.array(hist_ger_inflation_rollm_m.iloc[:,0]))[:-130], color = "red")
-# plt.plot(ger_oecd_inf_exp_m.index[:-130], (np.array(ger_oecd_inf_exp_m))[:-130], color = "blue" )
-# plt.show()
-
-# plt.plot(ger_scale.index, (np.array(ger_scale.iloc[:,0])*np.array(hist_ger_inflation_rollm_m.iloc[:,0])), color = "red")
-# plt.plot(ger_oecd_inf_exp_m.index, (np.array(ger_oecd_inf_exp_m)), color = "blue" )
-# plt.plot(inflation_ger_m.index[480:-40], (np.array(inflation_ger_m.iloc[:,1]))[480:-40], color = "black" )
-# plt.show()
-
-# plt.plot(ger_scale.index[:-130], (np.array(ger_scale.iloc[:,0])*np.array(mean_inflation))[:-130])
-
 #scaling['date'][134:372], scaling['German Inflation Expectations'][134:372] - list(data_inf_exp_m.iloc[:,0])
 
 # ger_relative_exp_gap_m = ger_inf_exp_m.iloc[:,0] - list(ger_oecd_inf_exp_m)
@@ -640,6 +486,7 @@ Regression_data_m['News Inflation Index'] = list(dire_senti_m.iloc[1:,0])
 Regression_data_m['News Inflation Sentiment Index'] = list(sent_m.iloc[1:,0])
 Regression_data_m['News Inflation Direction Index'] = list(dire_m.iloc[1:,0])
 Regression_data_m['News Inflation Count'] = list(count_rel_m.iloc[1:,0])
+Regression_data_m['News Inflation Count'] = list(monthly_ecb_count_rel_m.iloc[1:,0])
 #Regression_data_m['German Household Inflation Expectations'] = list(scaling['German Inflation Expectations'][180-w:408-w])
 
 ger_relative_exp_gap_m = np.array(scaling['German Inflation Expectations'][179-w:408-w]) - data_inf_exp_m
@@ -723,151 +570,3 @@ Regression_data_m['German Household Inflation Expectations Balanced'] = list(ger
 Regression_data_m.to_excel(r'D:\Studium\PhD\Github\Single-Author\Data\Regression\regression_data_monthly.xlsx')
 
 ##############################################################################
-
-# fig, ax1 = plt.subplots()
-# #ax1.tick_params(axis='y', colors=color)
-
-# ax1.bar(list(count_rel.index), list(count_rel.iloc[:,0]), 50,color = 'grey', label = 'News Relative Count')
-
-# ax2 = ax1.twinx()
-# ax2.plot(dire_senti*-1, color = 'red')
-
-# #ax2.tick_params(axis='y', colors=color)
-
-# #fig.legend(loc = 'lower left')
-
-# plt.show()
-
-# data_ECB_index_inf2_m.iloc[:,1] -= np.mean(data_ECB_index_inf2_m.iloc[:,1])
-# data_ECB_index_inf2_m.iloc[:,1] /= np.std(data_ECB_index_inf2_m.iloc[:,1])
-
-# dire_senti.iloc[:,1] -= np.mean(dire_senti.iloc[:,1])
-# dire_senti.iloc[:,1] /= np.std(dire_senti.iloc[:,1])
-
-# ger_relative_exp_gap_m -= np.mean(ger_relative_exp_gap_m)
-# ger_relative_exp_gap_m /= np.std(ger_relative_exp_gap_m)
-
-# diff_inf_exp = dire_senti.iloc[:,1] - list(data_ECB_index_inf2_m.iloc[:,1])
-
-# fig, ax1 = plt.subplots()
-
-# ax2 = ax1.twinx()
-
-# #ax1.plot(data_ECB_index_inf, color = 'green', label = 'ECB Inflation Index (BERT)')
-# #ax1.plot(data_ECB_index_inf2, color = 'red', label = 'ECB Inflation Index (Lex)')
-# #ax1.plot(dire_senti.index, dire_senti.iloc[:,1]*-1, color = 'cyan', label = 'News Inflation/Sentiment Index (BERT)')
-# ax1.plot(dire_senti.index, dire_senti.iloc[:,1]*-1, color = 'red', label = 'News Inflation/Sentiment Index (BERT)')
-# ax1.plot(diff_inf_exp.index, diff_inf_exp*-1, color = 'cyan', label = 'News ECB Diff Inflation')
-# #ax1.plot(ger_inf_exp_q, color = 'violet', label = 'German Household Inflation Expectations (one-year-ahead)')
-# #ax1.plot(ea_inf_exp_q, color = 'red', label = 'Eurozone Household Inflation Expectations (one-year-ahead)')
-# #ax2.plot(data_inf.iloc[:,0], data_inf.iloc[:,1], color = 'black', label = 'Eurozone Inflation')
-# #ax2.plot(inflation_ger_m.iloc[:,0], inflation_ger_m.iloc[:,1], color = 'yellow', label = 'German Inflation')
-# ax2.plot(ger_relative_exp_gap_m, color = 'blue', label = 'German Household Exp Gap')
-
-# fig.legend(loc = 'upper left')
-
-# plt.show()
-
-# fig, ax1 = plt.subplots()
-
-# ax2 = ax1.twinx()
-
-# ax1.plot(data_ECB_index_inf, color = 'green', label = 'ECB Inflation Index (BERT)')
-# ax1.plot(dire_senti*-1, color = 'cyan', label = 'News Inflation/Sentiment Index (BERT)')
-# ax1.plot(ger_inf_exp_q, color = 'violet', label = 'German Household Inflation Expectations (one-year-ahead)')
-# ax1.plot(ea_inf_exp_q, color = 'red', label = 'Eurozone Household Inflation Expectations (one-year-ahead)')
-# #ax2.plot(data_inf.iloc[:,0], data_inf.iloc[:,1], color = 'black', label = 'Eurozone Inflation')
-# #ax2.plot(inflation_ger_q.iloc[:,0], inflation_ger_q.iloc[:,1], color = 'yellow', label = 'German Inflation')
-# ax2.plot(data_inf_exp[1:-9], color = 'blue', label = 'Forecasters Inflation Expectations Eurozone (one-year-ahead)')
-
-# fig.legend(loc = 'lower left')
-
-# plt.show()
-
-# fig, ax1 = plt.subplots()
-
-# ax2 = ax1.twinx()
-
-# ax1.plot(data_ECB_index_inf2, color = 'green', label = 'ECB Inflation Index (Lex)')
-# ax1.plot(data_ECB_index_inf, color = 'red', label = 'ECB Inflation Index (BERT)')
-# #ax1.plot(dire_senti*-1, color = 'cyan', label = 'News Inflation/Sentiment Index (BERT)')
-# #ax1.plot(ger_inf_exp_q, color = 'violet', label = 'German Household Inflation Expectations (one-year-ahead)')
-# #ax1.plot(ea_inf_exp_q, color = 'red', label = 'Eurozone Household Inflation Expectations (one-year-ahead)')
-# ax2.plot(data_inf.iloc[:,0], data_inf.iloc[:,1], color = 'black', label = 'Eurozone Inflation')
-# #ax2.plot(inflation_ger_q.iloc[:,0], inflation_ger_q.iloc[:,1], color = 'red', label = 'German Inflation (year-on-year)')
-# #ax2.plot(inflation_ger_qoq.iloc[:,0], inflation_ger_qoq.iloc[:,1], color = 'red', label = 'German Inflation (quarter-on-quarter)')
-# #ax2.plot(data_inf_exp[1:-9], color = 'blue', label = 'Forecasters Inflation Expectations Eurozone (one-year-ahead)')
-
-# fig.legend(loc = 'upper left')
-
-# plt.show()
-
-# fig, ax1 = plt.subplots()
-
-# ax2 = ax1.twinx()
-
-# #ax1.plot(data_ECB_index_inf2, color = 'green', label = 'ECB Inflation Index (Lex)')
-# ax1.plot(data_ECB_index_inf, color = 'red', label = 'ECB Inflation Index (BERT)')
-# ax1.plot(dire_senti*-1, color = 'cyan', label = 'News Inflation/Sentiment Index (BERT)')
-# #ax1.plot(ger_inf_exp_q, color = 'violet', label = 'German Household Inflation Expectations (one-year-ahead)')
-# #ax1.plot(ea_inf_exp_q, color = 'red', label = 'Eurozone Household Inflation Expectations (one-year-ahead)')
-# #ax2.plot(relative_exp_gap, color = 'black', label = 'Relative Exp Gap')
-# ax2.plot(abs_exp_gap, color = 'green', label = 'Absolute Exp Gap')
-
-
-# fig.legend(loc = 'upper left')
-
-# plt.show()
-
-# ECB_index_eurozone_inflation_corr = np.corrcoef(np.array(list(data_ECB_index_inf.iloc[:,0])), np.array(list(data_inf.iloc[:,1])))
-# News_index_eurozone_inflation_corr = np.corrcoef(np.array(list(dire_senti.iloc[:,0]*-1)), np.array(list(data_inf.iloc[:,1])))
-
-# ##############################################################################
-# # Proffesional Inflation Expectations
-# ##############################################################################
-
-# import numpy as np
-
-# np.corrcoef(list(dire_q[32:].iloc[:,0]), list(data_inf_exp[:-16].iloc[:,0]))
-# np.corrcoef(list(data_ECB_full[1:-15].iloc[:,0]), list(data_inf_exp[:-16].iloc[:,0]))
-
-# ##############################################################################
-
-# fig, ax1 = plt.subplots()
-
-# ax2 = ax1.twinx()
-# ax1.plot(dire_q[32:], color = 'green', label = 'News Inflation')
-# ax2.plot(data_inf_exp[:-16], color = 'blue', label = 'Forecasters Inflation Expectations')
-
-# fig.legend(loc = 'lower left')
-
-# plt.show()
-
-# ##############################################################################
-
-
-
-# ##############################################################################
-
-# fig, ax1 = plt.subplots()
-
-# ax2 = ax1.twinx()
-# ax1.plot(data_ECB_full[1:-3], color = 'red', label = 'ECB Inflation')
-# ax2.plot(data_inf_exp[:-4], color = 'blue', label = 'Forecasters Inflation Expectations')
-
-# fig.legend(loc = 'lower left')
-
-# plt.show()
-
-# ##############################################################################
-
-# fig, ax1 = plt.subplots()
-
-# ax2 = ax1.twinx()
-# ax1.plot(dire_q, color = 'green', label = 'News Inflation')
-# ax1.plot(data_ECB_full['date'], data_ECB_full['index'], color = 'red', label = 'ECB Inflation')
-# ax2.plot(data_inf_exp[:-8], color = 'blue', label = 'Forecasters Inflation Expectations')
-
-# fig.legend(loc = 'lower left')
-
-# plt.show()

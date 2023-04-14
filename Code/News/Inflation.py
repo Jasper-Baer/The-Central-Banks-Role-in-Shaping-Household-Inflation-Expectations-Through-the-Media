@@ -63,6 +63,9 @@ pre_processing = prepare_text(data['sentences']).preproces_text()
 data['tokens'] = pre_processing[0]
 stem_map = pre_processing[1]
 
+# data.to_csv('D:\Studium\PhD\Single Author\Data\dpa_sents_v01_preprocessed.csv')
+# data.to_csv('D:\Studium\PhD\Single Author\Data\stem_map.csv')
+
 word_list = [
     'Deflation',
     'Geldentwertung',
@@ -156,9 +159,16 @@ for idx, art in tqdm(enumerate(data['tokens'])):
                 
                 ecb_sentences = ecb_sentences.append({'sentence': sent,'tokens' : tok, 'index': idx}, ignore_index=True) 
 
-inflation_sentences.to_csv('D:\Studium\PhD\Github\Single-Author\Data\newspaper_dpa_inflation_sentences.csv')
-ecb_sentences.to_csv('D:\Studium\PhD\Github\Single-Author\Data\news_dpa_ecb_inflation_sentences.csv')
-                
+# inflation_sentences.to_csv(r'D:\Studium\PhD\Github\Single-Author\Data\newspaper_dpa_inflation_sentences.csv')
+# ecb_sentences.to_csv(r'D:\Studium\PhD\Github\Single-Author\Data\news_dpa_ecb_inflation_sentences.csv')
+
+inflation_sentences= pd.read_csv(r'D:\Studium\PhD\Github\Single-Author\Data\newspaper_dpa_inflation_sentences.csv')   
+ecb_sentences = pd.read_csv(r'D:\Studium\PhD\Github\Single-Author\Data\news_dpa_ecb_inflation_sentences.csv')
+
+ecb_sentences_pre = prepare_text(ecb_sentences['sentence']).preproces_text()
+ecb_sentences['sentence'] = ecb_sentences['sentence'].apply(lambda x: x[0])
+stem_map = ecb_sentences_pre[1]
+        
 def process_sentence(sentence, idx, stem_map):
     
         nlp_pars = nlp(sentence)
@@ -180,7 +190,7 @@ dependency_data = [process_sentence(row['sentence'], idx, stem_map) for idx, row
 dependency_data = [item for item in dependency_data if item is not None]
 dependency_df = pd.DataFrame(dependency_data)
 
-dependency_df.to_csv(r'D:\Studium\PhD\Single Author\Data\dependencies.csv')
+#dependency_df.to_csv(r'D:\Studium\PhD\Single Author\Data\dependencies140423.csv')
 
 filtered_ecb_sentences = []
 
@@ -212,10 +222,12 @@ def filter_rows(row):
 filtered_series = dependency_df.apply(filter_rows, axis=1).dropna()
 filtered_ecb_sentences = pd.DataFrame(filtered_series.tolist(), columns=dependency_df.columns)
               
-ecb_data = data[ data.index.isin(filtered_ecb_sentences['index'])]
+ecb_data = ecb_sentences[ecb_sentences.index.isin(filtered_ecb_sentences['index'])]
+ecb_data.index = ecb_data['index']
+ecb_data = data[data.index.isin(ecb_data['index'])]
 ecb_data['date'] = pd.to_datetime(ecb_data[['year', 'month', 'day']])
 
-news_data_full = data[ data.index.isin(filtered_lemmas['index'])]
+news_data_full = data[ data.index.isin(inflation_sentences['index'])]
 news_data_full['date'] = pd.to_datetime(news_data_full[['year', 'month', 'day']])
 
 news_data_full.set_index('date', inplace=True)
@@ -225,47 +237,25 @@ ecb_data.to_csv(r'D:\Studium\PhD\Single Author\Data\ecb_data.csv')
 news_data_full.to_csv(r'D:\Studium\PhD\Single Author\Data\news_data_full_inflation.csv')
 
 import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
 
 # Resample the DataFrame by month and count the number of rows in each month
 monthly_counts_ecb = ecb_data.resample('M').size()
 monthly_counts_full_data = news_data_full.resample('M').size()
 
 monthly_counts = monthly_counts_ecb/monthly_counts_full_data
+monthly_counts = monthly_counts.dropna()
+
+monthly_counts.to_csv(r'D:\Studium\PhD\Github\Single-Author\Data\monthly_ecb_counts.csv')
 
 # Plot the number of rows in each month
-monthly_counts.plot(kind='bar')
-plt.xlabel('Month')
-plt.ylabel('Number of Rows')
-plt.title('Number of Rows per Month')
+fig, ax = plt.subplots()
+monthly_counts.plot(kind='bar', ax=ax)
+
+# Set the x-axis labels to years
+years = mdates.YearLocator()   # Every year
+years_fmt = mdates.DateFormatter('%Y')
+ax.xaxis.set_major_locator(years)
+ax.xaxis.set_major_formatter(years_fmt)
+
 plt.show()
-
-# pd.DataFrame(inflation_lemmas).to_excel('D:\Studium\PhD\Single Author\Data\inflation_lemmas_examplev02.xlsx')    
-
-inflation_lemmas = pd.read_csv('D:\Studium\PhD\Single Author\Data\inflation_lemmas_examplev02.xlsx', encoding= 'unicode_escape')
-
-import os
-
-PATH = r"D:\Studium\PhD\Github\Single-Author\Code\News"
-
-#data_sent = pd.read_csv('D:\Studium\PhD\Single Author\Data\data_sents_dpa_test3.csv')
-#data_sent.reset_index(inplace = True)
-
-os.chdir(PATH)
-
-from dataprep import lemmatize_sentences
-
-lemmas = []
-
-for art in tqdm(data_sent['sentence']):
-    
-    # art = ast.literal_eval(art)
-    art = word_tokenize(art)
-    lemm_art = lemmatize_sentences([art])
-    lemmas.append(lemm_art)
-    
-    # art = [n.strip() for n in art]
-    
-    # lem_sent = [lemmatize_sentences(word_tokenize(sent)) for sent in art]
-
-data_sent['lemmas'] = lemmas
-    
