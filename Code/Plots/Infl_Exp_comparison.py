@@ -486,7 +486,7 @@ Regression_data_m['News Inflation Index'] = list(dire_senti_m.iloc[1:,0])
 Regression_data_m['News Inflation Sentiment Index'] = list(sent_m.iloc[1:,0])
 Regression_data_m['News Inflation Direction Index'] = list(dire_m.iloc[1:,0])
 Regression_data_m['News Inflation Count'] = list(count_rel_m.iloc[1:,0])
-Regression_data_m['News Inflation Count'] = list(monthly_ecb_count_rel_m.iloc[1:,0])
+Regression_data_m['News ECB Count'] = list(monthly_ecb_count_rel_m.iloc[1:,0])
 #Regression_data_m['German Household Inflation Expectations'] = list(scaling['German Inflation Expectations'][180-w:408-w])
 
 ger_relative_exp_gap_m = np.array(scaling['German Inflation Expectations'][179-w:408-w]) - data_inf_exp_m
