@@ -1,16 +1,18 @@
-Must do:
+Must do: 
 - Run the index for lambda
 - Plot lambda and describe lambda
+- Change proff. to Reuters Data
+- ECB Plot Staff Projections einfügen (data is prepared) (Staff projections are now HICP)
 - SUMMER SCHOOL BUCHEN
-- Media Coverage und INI auf ECB Inflation Index regressieren
-- Measure how close media follows ECB (erste Version fertig, aber muss noch verfeinert werden)
 - Descriptiven Teil fertig schreiben (bin mir nicht sicher, was ich noch hinzufügen soll)
 - Aggregate data before publication???
 - Results fertig schreiben 
+- Add figures of sentiment and direction to figure 1
 
 # Run all for new results
-- Preprocessing (should be fine)
-- Select Sentences with new Inflation Words and get ECB sentences (should be fine)
+- Preprocessing (finished)
+- Select Sentences with new Inflation Words and get ECB sentences (finished)
+- Dependency Parsing ECB (running)
 - Index for PMI (including negations) (should be fine)
 - Regression for results part (muss verschiedene Regressionen ausprobieren)
 - Lamala 2014 reproduce results for regression
@@ -20,8 +22,16 @@ Easy must do:
 
 Optional:
 - compare rolling windo approach with michigan consumer survey
+- Make distinction in ECB press conferences between "current" and "future" changes
 - use quartlery quantitative ECB inflation data to test how results would change
 - Lexicon Based + Word Embedding
+
+Große offene Probleme
+- Literaturteil noch zu klein
+- Descriptiver Teil noch zu ungenau
+- Quantifizierung der Inflationswerwartungen führt zu komischen Ergebnissen
+- Results Teil fehlt noch
+- Conclusion fehlt noch
 
 - Energiepreispauschale beantragen
 
