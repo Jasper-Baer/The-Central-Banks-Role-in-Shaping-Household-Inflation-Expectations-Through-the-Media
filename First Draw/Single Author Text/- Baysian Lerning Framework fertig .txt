@@ -1,7 +1,5 @@
 Must do: 
-- Run the index for lambda
 - Plot lambda and describe lambda
-- Change proff. to Reuters Data
 - ECB Plot Staff Projections einfügen (data is prepared) (Staff projections are now HICP)
 - SUMMER SCHOOL BUCHEN
 - Descriptiven Teil fertig schreiben (bin mir nicht sicher, was ich noch hinzufügen soll)
@@ -12,7 +10,7 @@ Must do:
 # Run all for new results
 - Preprocessing (finished)
 - Select Sentences with new Inflation Words and get ECB sentences (finished)
-- Dependency Parsing ECB (running)
+- Dependency Parsing ECB (finished)
 - Index for PMI (including negations) (should be fine)
 - Regression for results part (muss verschiedene Regressionen ausprobieren)
 - Lamala 2014 reproduce results for regression
@@ -27,11 +25,12 @@ Optional:
 - Lexicon Based + Word Embedding
 
 Große offene Probleme
-- Literaturteil noch zu klein
-- Descriptiver Teil noch zu ungenau
-- Quantifizierung der Inflationswerwartungen führt zu komischen Ergebnissen
-- Results Teil fehlt noch
-- Conclusion fehlt noch
+- Change proff. to Reuters Data (Montag)
+- Literaturteil noch zu klein (Montag)
+- Descriptiver Teil noch zu ungenau (Heute)
+- Quantifizierung der Inflationswerwartungen führt zu komischen Ergebnissen (Samstag - Sonntag)
+- Results Teil fehlt noch (Sonntag)
+- Conclusion fehlt noch (erstmal weglassen)
 
 - Energiepreispauschale beantragen
 

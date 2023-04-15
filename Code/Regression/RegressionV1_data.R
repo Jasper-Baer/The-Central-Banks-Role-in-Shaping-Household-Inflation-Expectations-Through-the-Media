@@ -11,6 +11,7 @@ library("openxlsx")
 #####################################################################################
 
 data = read_excel('D:/Studium/PhD/Github/Single-Author/Data/Regression/regression_data_monthly.xlsx')
+data = read_excel('D:/Single Author/Github/Single-Author/Data/Regression/regression_data_monthly.xlsx')
 data = data.frame(data)
 
 data1 = data %>% select(German.Absolute.Expectations.Gap,German.Relative.Expectations.Gap,
@@ -79,4 +80,5 @@ data1 = data1[step:dim(data1)[1],]
 
 data1$time = as.Date(strptime(data1$time, "%Y-%m-%d"))
 
-write.xlsx(data1, 'D:/Studium/PhD/Github/Single-Author/Code/Regression/Regession_data.xlsx')
+#write.xlsx(data1, 'D:/Studium/PhD/Github/Single-Author/Code/Regression/Regession_data.xlsx')
+write.xlsx(data1, 'D:/Single Author/Github/Single-Author/Data/Regression/regression_data_monthly.xlsx')
