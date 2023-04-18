@@ -227,17 +227,16 @@ ecb_data.index = ecb_data['index']
 ecb_data = data[data.index.isin(ecb_data['index'])]
 ecb_data['date'] = pd.to_datetime(ecb_data[['year', 'month', 'day']])
 
-news_data_full = data[ data.index.isin(inflation_sentences['index'])]
+news_data_full = data.iloc[data.index[list(inflation_sentences['index'])]]
 news_data_full['date'] = pd.to_datetime(news_data_full[['year', 'month', 'day']])
+news_data_full = news_data_full.reset_index(drop = True)
+news_data_full['tokens'] = inflation_sentences['tokens']
 
 news_data_full.set_index('date', inplace=True)
 ecb_data.set_index('date', inplace=True)
 
 ecb_data.to_csv(r'D:\Studium\PhD\Single Author\Data\ecb_data.csv')
 news_data_full.to_csv(r'D:\Studium\PhD\Single Author\Data\news_data_full_inflation.csv')
-
-import matplotlib.pyplot as plt
-import matplotlib.dates as mdates
 
 # Resample the DataFrame by month and count the number of rows in each month
 monthly_counts_ecb = ecb_data.resample('M').size()
@@ -247,15 +246,3 @@ monthly_counts = monthly_counts_ecb/monthly_counts_full_data
 monthly_counts = monthly_counts.dropna()
 
 monthly_counts.to_csv(r'D:\Studium\PhD\Github\Single-Author\Data\monthly_ecb_counts.csv')
-
-# Plot the number of rows in each month
-fig, ax = plt.subplots()
-monthly_counts.plot(kind='bar', ax=ax)
-
-# Set the x-axis labels to years
-years = mdates.YearLocator()   # Every year
-years_fmt = mdates.DateFormatter('%Y')
-ax.xaxis.set_major_locator(years)
-ax.xaxis.set_major_formatter(years_fmt)
-
-plt.show()
