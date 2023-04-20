@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (MiKTeX 20.10) (preloaded format=pdflatex 2020.10.27)  14 APR 2023 19:45
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (MiKTeX 20.10) (preloaded format=pdflatex 2020.10.27)  20 APR 2023 10:47
 entering extended mode
 **./First_Draw.tex
 (First_Draw.tex
@@ -496,19 +496,19 @@ Package hyperref Warning: Token not allowed in a PDF string (Unicode):
 
 {C:/Users/Matthis/AppData/Local/MiKTeX/pdftex/config/pdftex.map}] [2]
 [3] [4] [5] [6] [7] [8] [9] [10] [11] [12]
-<Inflation_Count.png, id=259, 529.22719pt x 316.93407pt>
+<Inflation_Count.png, id=258, 529.22719pt x 316.93407pt>
 File: Inflation_Count.png Graphic file (type png)
 <use Inflation_Count.png>
 Package pdftex.def Info: Inflation_Count.png  used on input line 386.
 (pdftex.def)             Requested size: 170.71281pt x 170.7211pt.
-<Inflation_Sentiment_Direction.png, id=260, 529.22719pt x 316.93407pt>
+<Inflation_Sentiment_Direction.png, id=259, 529.22719pt x 316.93407pt>
 File: Inflation_Sentiment_Direction.png Graphic file (type png)
 <use Inflation_Sentiment_Direction.png>
 Package pdftex.def Info: Inflation_Sentiment_Direction.png  used on input line 
 392.
 (pdftex.def)             Requested size: 170.71281pt x 170.7211pt.
  [13]
-<ECB_inf_inf.png, id=268, 529.22719pt x 316.93407pt>
+<ECB_inf_inf.png, id=267, 529.22719pt x 316.93407pt>
 File: ECB_inf_inf.png Graphic file (type png)
 <use ECB_inf_inf.png>
 Package pdftex.def Info: ECB_inf_inf.png  used on input line 413.
@@ -567,7 +567,7 @@ ers/Matthis/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmti10
 .pfb><C:/Users/Matthis/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfont
 s/cm/cmti8.pfb><C:/Users/Matthis/AppData/Local/Programs/MiKTeX/fonts/type1/publ
 ic/amsfonts/cm/cmtt8.pfb>
-Output written on First_Draw.pdf (22 pages, 348870 bytes).
+Output written on First_Draw.pdf (22 pages, 349063 bytes).
 PDF statistics:
  423 PDF objects out of 1000 (max. 8388607)
  94 named destinations out of 1000 (max. 500000)

@@ -76,38 +76,42 @@ def transform_quantiles(inf_exp_inc_rap,
     inf_per_inc_same,
     inf_per_inc_slow,
     inf_per_same,
-    inf_per_fall):
+    inf_per_fall,
+    inf_exp_miss, 
+    inf_per_miss):
 
-    P1 = inf_exp_inc_rap
-    P2 = inf_exp_inc_same
-    P3 = inf_exp_inc_slow
-    P4 = inf_exp_same
-    P5 = inf_exp_fall
+    P1 = inf_exp_inc_rap.iloc[:,1]/100/(1- (inf_exp_miss.iloc[:,1]/100))
+    P2 = inf_exp_inc_same.iloc[:,1]/100/(1- (inf_exp_miss.iloc[:,1]/100))
+    P3 = inf_exp_inc_slow.iloc[:,1]/100/(1- (inf_exp_miss.iloc[:,1]/100))
+    P4 = inf_exp_same.iloc[:,1]/100/(1- (inf_exp_miss.iloc[:,1]/100))
+    P5 = inf_exp_fall.iloc[:,1]/100/(1- (inf_exp_miss.iloc[:,1]/100))
     
-    P1_prime = inf_per_inc_rap
-    P2_prime = inf_per_inc_same
-    P3_prime = inf_per_inc_slow
-    P4_prime = inf_per_same
-    P5_prime = inf_per_fall
+    P1_prime = inf_per_inc_rap.iloc[:,1]/100/(1- (inf_per_miss.iloc[:,1]/100))
+    P2_prime = inf_per_inc_same.iloc[:,1]/100/(1- (inf_per_miss.iloc[:,1]/100))
+    P3_prime = inf_per_inc_slow.iloc[:,1]/100/(1- (inf_per_miss.iloc[:,1]/100))
+    P4_prime = inf_per_same.iloc[:,1]/100/(1- (inf_per_miss.iloc[:,1]/100))
+    P5_prime = inf_per_fall.iloc[:,1]/100/(1- (inf_per_miss.iloc[:,1]/100))
     
-    Z1 = scipy.stats.norm.ppf(list(1-P1.iloc[:,1]/100), loc=0, scale=1)
-    Z2 = scipy.stats.norm.ppf(list(1-P1.iloc[:,1]/100-P2.iloc[:,1]/100), loc=0, scale=1)
-    Z3 = scipy.stats.norm.ppf(list(1-P1.iloc[:,1]/100-P2.iloc[:,1]/100-P3.iloc[:,1]/100), loc=0, scale=1)
-    Z4 = scipy.stats.norm.ppf(list(P5.iloc[:,1]/100), loc=0, scale=1)
+    Z1 = scipy.stats.norm.ppf(list(1- P1), loc=0, scale=1)
+    Z2 = scipy.stats.norm.ppf(list(1- P1 - P2), loc=0, scale=1)
+    Z3 = scipy.stats.norm.ppf(list(1- P1 - P2 - P3), loc=0, scale=1)
+    Z4 = scipy.stats.norm.ppf(list(P5), loc=0, scale=1)
     
-    Z1_prime = scipy.stats.norm.ppf(list(1-P1_prime.iloc[:,1]/100), loc=0, scale=1)
-    Z2_prime = scipy.stats.norm.ppf(list(1-P1_prime.iloc[:,1]/100-P2_prime.iloc[:,1]/100), loc=0, scale=1)
-    Z3_prime = scipy.stats.norm.ppf(list(1-P1_prime.iloc[:,1]/100-P2_prime.iloc[:,1]/100-P3_prime.iloc[:,1]/100), loc=0, scale=1)
-    Z4_prime = scipy.stats.norm.ppf(list(P5_prime.iloc[:,1]/100), loc=0, scale=1)
+    # 1-P1.iloc[:,1]/100-P2.iloc[:,1]/100-P3.iloc[:,1]/100 - P5.iloc[:,1]/100
     
-    perc_weight = (- Z3_prime - Z4_prime)/(Z1_prime + Z2_prime - Z3_prime - Z4_prime)
-    exp_weight = (- Z3 - Z4)/(Z1 + Z2 - Z3 - Z4)
+    Z1_prime = scipy.stats.norm.ppf(list(1-P1_prime), loc=0, scale=1)
+    Z2_prime = scipy.stats.norm.ppf(list(1-P1_prime-P2_prime), loc=0, scale=1)
+    Z3_prime = scipy.stats.norm.ppf(list(1-P1_prime-P2_prime-P3_prime), loc=0, scale=1)
+    Z4_prime = scipy.stats.norm.ppf(list(P5_prime), loc=0, scale=1)
+    
+    perc_weight = - (Z3_prime + Z4_prime)/(Z1_prime + Z2_prime - Z3_prime - Z4_prime)
+    exp_weight = - (Z3 + Z4)/(Z1 + Z2 - Z3 - Z4)
     
     exp_weight = pd.Series(exp_weight).fillna(1).tolist()
     perc_weight = pd.Series(perc_weight).fillna(1).tolist()
     
     scale = np.array(perc_weight)*np.array(exp_weight)
-    scale = pd.DataFrame({'date': P1['TOT'], 'scale': scale, 'perc_weight': perc_weight, 'exp_weight': exp_weight})
+    scale = pd.DataFrame({'date': inf_exp_inc_rap['TOT'], 'scale': scale, 'perc_weight': perc_weight, 'exp_weight': exp_weight})
     scale.reset_index(drop = True, inplace = True)
 
     return(scale)
@@ -122,6 +126,8 @@ def rolling_quant(inf_exp_inc_rap,
     inf_per_inc_slow,
     inf_per_same,
     inf_per_fall,
+    inf_exp_miss, 
+    inf_per_miss,
     inflation_m, 
     years_roll):
     
@@ -134,7 +140,9 @@ def rolling_quant(inf_exp_inc_rap,
         inf_per_inc_same,
         inf_per_inc_slow,
         inf_per_same,
-        inf_per_fall)
+        inf_per_fall,
+        inf_exp_miss, 
+        inf_per_miss)
 
     # Lahiri and Zhao (2014)
     w = years_roll*12
@@ -164,8 +172,8 @@ def rolling_quant(inf_exp_inc_rap,
        scaling = scaling.append({'date': date, 'lambda': lambda_t}, ignore_index=True)
 
     scaling['German Inflation Expectations'] = np.array(scaling.iloc[:,1]) * np.array(scale['exp_weight'][w:])
-    scaling['exp_weight'] = scale['exp_weight']
-    scaling['perc_weight'] = scale['perc_weight']
+    scaling['exp_weight'] = list(scale['exp_weight'][w:])
+    scaling['perc_weight'] = list(scale['perc_weight'][w:])
     
     return(scaling)
     #MSE = np.mean((np.array(inflation_ger_m[476:705]['Unnamed: 3']) - np.array(list(scaling[167-w:396-w]['German Inflation Expectations'])))**2)

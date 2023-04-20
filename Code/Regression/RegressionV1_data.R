@@ -6,12 +6,13 @@ library("sandwich")
 library("stats")
 library("zoo")
 library("ggplot2")
-library("openxlsx")
+#library("openxlsx")
+library("writexl") 
 
 #####################################################################################
 
-data = read_excel('D:/Studium/PhD/Github/Single-Author/Data/Regression/regression_data_monthly_2.xlsx')
-#data = read_excel('D:/Single Author/Github/Single-Author/Data/Regression/regression_data_monthly.xlsx')
+#data = read_excel('D:/Studium/PhD/Github/Single-Author/Data/Regression/regression_data_monthly_2.xlsx')
+data = read_excel('D:/Single Author/Github/Single-Author/Data/Regression/regression_data_monthly_2.xlsx')
 data = data.frame(data)
 
 data1 = data %>% select(Eurozone.Industrial.Production,
@@ -105,5 +106,5 @@ data1 = data1[step:dim(data1)[1],]
 
 data1$time = as.Date(strptime(data1$time, "%Y-%m-%d"))
 
-write.xlsx(data1, 'D:/Studium/PhD/Github/Single-Author/Code/Regression/Regession_data_2.xlsx')
-#write.xlsx(data1, 'D:/Single Author/Github/Single-Author/Data/Regression/regression_data_monthly.xlsx')
+#write_xlsx(data1, 'D:/Studium/PhD/Github/Single-Author/Code/Regression/Regession_data_monthly_2_processed.xlsx')
+write_xlsx(data1, 'D:/Single Author/Github/Single-Author/Data/Regression/Regession_data_monthly_2_processed.xlsx')

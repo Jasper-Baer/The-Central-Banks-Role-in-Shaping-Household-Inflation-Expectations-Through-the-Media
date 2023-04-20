@@ -9,14 +9,15 @@ library("ggplot2")
 
 #####################################################################################
 
-data = read_excel('D:/Studium/PhD/Github/Single-Author/Code/Regression/Regession_data_2.xlsx')
+#data = read_excel('D:/Studium/PhD/Github/Single-Author/Code/Regression/Regession_data_2_processed.xlsx')
+data = read_excel('D:/Single Author/Github/Single-Author/Data/Regression/Regession_data_monthly_2_processed.xlsx')
 data = data.frame(data)
 #data = data[9:dim(data)[1],]
-data = data[45:dim(data)[1],]
+data = data[9:dim(data)[1],]
 
 data$time = as.Date(strptime(data$time, "%Y-%m-%d"))
 #years = as.Date(strptime(c(2002:2019), '%Y'))
-years = as.Date(strptime(c(2005:2019), '%Y'))
+years = as.Date(strptime(c(2002:2019), '%Y'))
 
 ###############################################
 # Plots Paper
@@ -39,7 +40,7 @@ ggplot(data, aes(x = time)) +
   geom_line(aes(y = German.Inflation.Year.on.Year), colour="red", linetype = 2, size = 1) +
   geom_hline(yintercept = 0) + 
   scale_y_continuous(name = "German Inflation", sec.axis = sec_axis(~.*coeff*1000, name = "Inflation News Coverage*10^(-3)")) +
-  scale_x_date(date_labels="%Y", breaks = seq(as.Date("2000-01-01"), max(data$time), by = "1 year"), name = "", limits = c(min(data$time), max(data$time))) +
+  scale_x_date(date_labels="%Y", breaks = seq(as.Date("2002-01-01"), max(data$time), by = "1 year"), name = "", limits = c(min(data$time), max(data$time))) +
   theme_classic() + 
   theme(axis.text.y.left = element_text(color = "red"),
         axis.text.y.right = element_text(color = "blue"),
@@ -51,12 +52,12 @@ ggplot(data, aes(x = time)) +
 
 ##### INI
 
-coeff = max(data$News.Inflation.Index)/max(data$German.Inflation.Year.on.Year)*4
+coeff = max(data$News.Inflation.Index)/max(data$German.Inflation.Year.on.Year)*3
 
 ggplot(data, aes(x = time)) + 
   geom_rect(data = recessions, aes(xmin = start, xmax = end, ymin = -Inf, ymax = Inf),
             inherit.aes = FALSE, fill = "grey", alpha = 0.5) +
-  geom_line(aes(y = News.Inflation.Index.role/coeff*-1 + 0/coeff), colour="blue", linetype = 1) +
+  geom_line(aes(y = News.Inflation.Index.role/coeff*-1 + 0.005/coeff), colour="blue", linetype = 1) +
   geom_line(aes(y = German.Inflation.Year.on.Year), colour="red", linetype = 2) +
   geom_hline(yintercept = 0) + 
   scale_y_continuous(name = "German Inflation", sec.axis = sec_axis(~.*coeff, name = "Inflation News Index")) +
@@ -72,7 +73,7 @@ ggplot(data, aes(x = time)) +
 
 ##### Inflation Direction
 
-coeff = max(data$News.Inflation.Direction.Index)/max(data$German.Inflation.Year.on.Year)
+coeff = max(data$News.Inflation.Direction.Index)/max(data$German.Inflation.Year.on.Year)*1.1
 
 ggplot(data, aes(x = time)) + 
   geom_rect(data = recessions, aes(xmin = start, xmax = end, ymin = -Inf, ymax = Inf),
@@ -98,10 +99,10 @@ coeff = max(data$News.Inflation.Sentiment.Index)/max(data$German.Inflation.Year.
 ggplot(data, aes(x = time)) + 
   geom_rect(data = recessions, aes(xmin = start, xmax = end, ymin = -Inf, ymax = Inf),
             inherit.aes = FALSE, fill = "grey", alpha = 0.3) +
-  geom_line(aes(y = News.Inflation.Sentiment.Index.role/coeff+0.09/coeff), colour="blue", linetype = 1) +
+  geom_line(aes(y = News.Inflation.Sentiment.Index.role/coeff+0.12/coeff), colour="blue", linetype = 1) +
   geom_line(aes(y = German.Inflation.Year.on.Year), colour="red", linetype = 2) +
   geom_hline(yintercept = 0) + 
-  scale_y_continuous(name = "German Inflation", sec.axis = sec_axis(~.*coeff-0.1, name = "News Sentiment Index")) +
+  scale_y_continuous(name = "German Inflation", sec.axis = sec_axis(~.*coeff-0.12/coeff, name = "News Sentiment Index")) +
   scale_x_date(date_labels="%Y", breaks = seq(as.Date("2000-01-01"), max(data$time), by = "1 year"), name = "", limits = c(min(data$time), max(data$time))) +
   theme_classic() + 
   theme(axis.text.y.left = element_text(color = "red"),
@@ -304,7 +305,7 @@ ggplot(data, aes(x = time)) +
   geom_hline(yintercept = 0) + 
   geom_line(aes(y = ECB_News_res_inf_1.role/coeff+0.05/coeff), colour="blue", linetype = 1) +
   geom_line(aes(y = German.ECB.Absolute.Expectations.Gap.Role.role), colour="red", linetype = 2) +
-  scale_y_continuous(name = "Absolute Expectation Gap", sec.axis = sec_axis(~.*coeff-0.015, name = "Residuals from ECB Index on News Index")) +
+  scale_y_continuous(name = "ECB Role Absolute Expectation Gap", sec.axis = sec_axis(~.*coeff-0.015, name = "Residuals from ECB Index on News Index")) +
   scale_x_date(date_labels="%Y", breaks = unique(years), name = "") +
   theme_classic() + 
   theme(axis.text.y.left = element_text(color = "red"),
@@ -315,9 +316,28 @@ ggplot(data, aes(x = time)) +
         panel.grid.minor = element_blank(),
         panel.grid.major = element_blank()) 
 
+###
 
+coeff = max(data$ECB_News_res_inf_1)/max(data$German.ECB.Absolute.Expectations.Gap.Role)*2
 
-##
+ggplot(data, aes(x = time)) + 
+  geom_hline(yintercept = 0) + 
+  geom_line(aes(y = ECB_News_res_inf_1.role/coeff+0.05/coeff), colour="blue", linetype = 1, size = 0.9) +
+  geom_line(aes(y = German.ECB.Absolute.Expectations.Gap.Role.role), colour="red", linetype = 2, size = 0.9) +
+  geom_line(aes(y = German.Absolute.Expectations.Gap.Role.role), colour="darkgreen", linetype = 3, size = 0.9) +
+  geom_line(aes(y = German.Absolute.Real.Inflation.Expectations.Gap.Role.role), colour="black", linetype = 4, size = 0.9) +
+  scale_y_continuous(name = "ECB Role Absolute Expectation Gap", sec.axis = sec_axis(~.*coeff-0.015, name = "Residuals from ECB Index on News Index")) +
+  scale_x_date(date_labels="%Y", breaks = unique(years), name = "") +
+  theme_classic() + 
+  theme(axis.text.y.left = element_text(color = "red"),
+        axis.text.y.right = element_text(color = "blue"),
+        axis.title.y = element_text(color = "red"),
+        axis.title.y.right = element_text(color = "blue", vjust = 2),
+        axis.text.x = element_text(angle = 45, vjust = 0.5, size = 11),
+        panel.grid.minor = element_blank(),
+        panel.grid.major = element_blank()) 
+
+###
 
 data$German.Absolute.Expectations.Gap[is.na(data$German.Absolute.Expectations.Gap)] <- 0
 
