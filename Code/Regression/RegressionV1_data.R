@@ -10,29 +10,61 @@ library("openxlsx")
 
 #####################################################################################
 
-data = read_excel('D:/Studium/PhD/Github/Single-Author/Data/Regression/regression_data_monthly.xlsx')
+data = read_excel('D:/Studium/PhD/Github/Single-Author/Data/Regression/regression_data_monthly_2.xlsx')
 #data = read_excel('D:/Single Author/Github/Single-Author/Data/Regression/regression_data_monthly.xlsx')
 data = data.frame(data)
 
-data1 = data %>% select(German.Absolute.Expectations.Gap.Berk,German.Relative.Expectations.Gap.Berk,German.Absolute.Expectations.Gap.Role,German.Relative.Expectations.Gap.Role,
-                        ECB.DFR ,Eurozone.Industrial.Production, German.Industrial.Production, News.Inflation.Index, News.Inflation.Count, 
-                        ECB.Inflation.Index, ECB.Monetary.Index, ECB.Economic.Index, News.ECB.Count, Germany.Inflation.Professionell.Forecasts, 
-                        Eurozone.Inflation, German.Inflation.Year.on.Year, German.Household.Inflation.Expectations, German.Household.Inflation.Expectations.Berk,
-                        Eurozone.Inflation.Professionell.Forecasts, German.Household.Inflation.Expectations.Balanced,
-                        News.Inflation.Sentiment.Index, News.Inflation.Direction.Index)
+data1 = data %>% select(Eurozone.Industrial.Production,
+                        Eurozone.Inflation, 
+                        German.Industrial.Production, 
+                        German.Inflation.Year.on.Year, 
+                        ECB.DFR,
+                        News.Inflation.Index, 
+                        News.Inflation.Sentiment.Index, 
+                        News.Inflation.Direction.Index,
+                        News.Inflation.Count, 
+                        News.ECB.Count, 
+                        ECB.Inflation.Index, 
+                        ECB.Monetary.Index, 
+                        ECB.Economic.Index, 
+                        German.Household.Inflation.Expectations.Berk,
+                        German.Household.Inflation.Expectations.Role,
+                        Eurozone.Inflation.Professionell.Forecasts, 
+                        Germany.Inflation.Professionell.Forecasts, 
+                        German.Absolute.Expectations.Gap.Role,
+                        German.Relative.Expectations.Gap.Role,
+                        German.ECB.Absolute.Expectations.Gap.Role,
+                        German.ECB.Relative.Expectations.Gap.Role,
+                        German.Absolute.Real.Inflation.Expectations.Gap.Role,
+                        German.Relative.Real.Inflation.Expectations.Gap.Role,
+                        German.Absolute.Expectations.Gap.Berk,
+                        German.Relative.Expectations.Gap.Berk,
+                        German.ECB.Absolute.Expectations.Gap.Berk,
+                        German.ECB.Relative.Expectations.Gap.Berk,
+                        German.Absolute.Real.Inflation.Expectations.Gap.Berk,
+                        German.Relative.Real.Inflation.Expectations.Gap.Berk)
 
 ############################################
 # Residuals - ECB and News Index
 ############################################
 
-fit = lm(ECB.Inflation.Index ~ News.Inflation.Index + News.Inflation.Count, data1)
+stand_ECB = scale(data$ECB.Inflation.Index)
+stand_news = scale(data$News.Inflation.Index)
+
+fit = lm(ECB.Inflation.Index ~ News.Inflation.Index, data1)
 ECB_News_res_inf_1 = fit$residuals
 
-fit = lm(News.Inflation.Index ~ Germany.Inflation.Professionell.Forecasts, data1)
-ECB_News_res_inf_2 = fit$residuals
+#ECB_News_res_inf_1 = stand_ECB - stand_news
+
+fit = lm(News.Inflation.Index*-1 ~ Germany.Inflation.Professionell.Forecasts, data1)
+ECB_News_res_inf_2_ger = fit$residuals
+
+fit = lm(News.Inflation.Index*-1 ~ Eurozone.Inflation.Professionell.Forecasts, data1)
+ECB_News_res_inf_2_eu = fit$residuals
 
 data1 = cbind(data1, ECB_News_res_inf_1)
-data1 = cbind(data1, ECB_News_res_inf_2)
+data1 = cbind(data1, ECB_News_res_inf_2_ger)
+data1 = cbind(data1, ECB_News_res_inf_2_eu)
 
 ###### Lags
 
@@ -71,12 +103,7 @@ for (col in colnames(data1)){
 
 data1 = data1[step:dim(data1)[1],]
 
-fit = lm(ECB.Inflation.Index.role ~ News.Inflation.Index + News.Inflation.Count, data1)
-ECB_News_res_inf_3 = fit$residuals
-
-data1 = cbind(data1, ECB_News_res_inf_3)
-
 data1$time = as.Date(strptime(data1$time, "%Y-%m-%d"))
 
-write.xlsx(data1, 'D:/Studium/PhD/Github/Single-Author/Code/Regression/Regession_data.xlsx')
+write.xlsx(data1, 'D:/Studium/PhD/Github/Single-Author/Code/Regression/Regession_data_2.xlsx')
 #write.xlsx(data1, 'D:/Single Author/Github/Single-Author/Data/Regression/regression_data_monthly.xlsx')
