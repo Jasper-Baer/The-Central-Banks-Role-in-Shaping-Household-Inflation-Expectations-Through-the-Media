@@ -11,8 +11,8 @@ library("writexl")
 
 #####################################################################################
 
-#data = read_excel('D:/Studium/PhD/Github/Single-Author/Data/Regression/regression_data_monthly_2.xlsx')
-data = read_excel('D:/Single Author/Github/Single-Author/Data/Regression/regression_data_monthly_2.xlsx')
+data = read_excel('D:/Studium/PhD/Github/Single-Author/Data/Regression/regression_data_monthly_2.xlsx')
+#data = read_excel('D:/Single Author/Github/Single-Author/Data/Regression/regression_data_monthly_2.xlsx')
 data = data.frame(data)
 
 data1 = data %>% select(Eurozone.Industrial.Production,
@@ -28,7 +28,8 @@ data1 = data %>% select(Eurozone.Industrial.Production,
                         ECB.Inflation.Index, 
                         ECB.Monetary.Index, 
                         ECB.Economic.Index, 
-                        German.Household.Inflation.Expectations.Berk,
+                        German.Household.Inflation.Expectations.Berk.1,
+                        German.Household.Inflation.Expectations.Berk.5,
                         German.Household.Inflation.Expectations.Role,
                         Eurozone.Inflation.Professionell.Forecasts, 
                         Germany.Inflation.Professionell.Forecasts, 
@@ -38,12 +39,18 @@ data1 = data %>% select(Eurozone.Industrial.Production,
                         German.ECB.Relative.Expectations.Gap.Role,
                         German.Absolute.Real.Inflation.Expectations.Gap.Role,
                         German.Relative.Real.Inflation.Expectations.Gap.Role,
-                        German.Absolute.Expectations.Gap.Berk,
-                        German.Relative.Expectations.Gap.Berk,
-                        German.ECB.Absolute.Expectations.Gap.Berk,
-                        German.ECB.Relative.Expectations.Gap.Berk,
-                        German.Absolute.Real.Inflation.Expectations.Gap.Berk,
-                        German.Relative.Real.Inflation.Expectations.Gap.Berk)
+                        German.Absolute.Expectations.Gap.Berk.1,
+                        German.Relative.Expectations.Gap.Berk.1,
+                        German.ECB.Absolute.Expectations.Gap.Berk.1,
+                        German.ECB.Relative.Expectations.Gap.Berk.1,
+                        German.Absolute.Real.Inflation.Expectations.Gap.Berk.1,
+                        German.Relative.Real.Inflation.Expectations.Gap.Berk.1,
+                        German.Absolute.Expectations.Gap.Berk.5,
+                        German.Relative.Expectations.Gap.Berk.5,
+                        German.ECB.Absolute.Expectations.Gap.Berk.5,
+                        German.ECB.Relative.Expectations.Gap.Berk.5,
+                        German.Absolute.Real.Inflation.Expectations.Gap.Berk.5,
+                        German.Relative.Real.Inflation.Expectations.Gap.Berk.5)
 
 ############################################
 # Residuals - ECB and News Index
@@ -57,15 +64,39 @@ ECB_News_res_inf_1 = fit$residuals
 
 #ECB_News_res_inf_1 = stand_ECB - stand_news
 
+fit = lm(News.Inflation.Count ~ Germany.Inflation.Professionell.Forecasts, data1)
+ECB_News_res_inf_0_ger = fit$residuals
+
+fit = lm(News.Inflation.Count ~ Eurozone.Inflation.Professionell.Forecasts, data1)
+ECB_News_res_inf_0_eu = fit$residuals
+
 fit = lm(News.Inflation.Index*-1 ~ Germany.Inflation.Professionell.Forecasts, data1)
 ECB_News_res_inf_2_ger = fit$residuals
 
 fit = lm(News.Inflation.Index*-1 ~ Eurozone.Inflation.Professionell.Forecasts, data1)
 ECB_News_res_inf_2_eu = fit$residuals
 
+fit = lm(News.Inflation.Sentiment.Index*-1 ~ Germany.Inflation.Professionell.Forecasts, data1)
+ECB_News_res_inf_3_ger = fit$residuals
+
+fit = lm(News.Inflation.Sentiment.Index*-1 ~ Eurozone.Inflation.Professionell.Forecasts, data1)
+ECB_News_res_inf_3_eu = fit$residuals
+
+fit = lm(News.Inflation.Direction.Index*-1 ~ Germany.Inflation.Professionell.Forecasts, data1)
+ECB_News_res_inf_4_ger = fit$residuals
+
+fit = lm(News.Inflation.Direction.Index*-1 ~ Eurozone.Inflation.Professionell.Forecasts, data1)
+ECB_News_res_inf_4_eu = fit$residuals
+
+data1 = cbind(data1, ECB_News_res_inf_0_ger)
+data1 = cbind(data1, ECB_News_res_inf_0_eu)
 data1 = cbind(data1, ECB_News_res_inf_1)
 data1 = cbind(data1, ECB_News_res_inf_2_ger)
 data1 = cbind(data1, ECB_News_res_inf_2_eu)
+data1 = cbind(data1, ECB_News_res_inf_3_ger)
+data1 = cbind(data1, ECB_News_res_inf_3_eu)
+data1 = cbind(data1, ECB_News_res_inf_4_ger)
+data1 = cbind(data1, ECB_News_res_inf_4_eu)
 
 ###### Lags
 
@@ -106,5 +137,5 @@ data1 = data1[step:dim(data1)[1],]
 
 data1$time = as.Date(strptime(data1$time, "%Y-%m-%d"))
 
-#write_xlsx(data1, 'D:/Studium/PhD/Github/Single-Author/Code/Regression/Regession_data_monthly_2_processed.xlsx')
-write_xlsx(data1, 'D:/Single Author/Github/Single-Author/Data/Regression/Regession_data_monthly_2_processed.xlsx')
+write_xlsx(data1, 'D:/Studium/PhD/Github/Single-Author/Code/Regression/Regession_data_monthly_2_processed.xlsx')
+#write_xlsx(data1, 'D:/Single Author/Github/Single-Author/Data/Regression/Regession_data_monthly_2_processed.xlsx')

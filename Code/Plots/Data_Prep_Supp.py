@@ -10,6 +10,7 @@ import pandas as pd
 import numpy as np
 
 from dateutil.relativedelta import relativedelta
+from datetime import timedelta
 
 def ECB_index(ECB_data):
     
@@ -79,7 +80,7 @@ def transform_quantiles(inf_exp_inc_rap,
     inf_per_fall,
     inf_exp_miss, 
     inf_per_miss):
-
+    
     P1 = inf_exp_inc_rap.iloc[:,1]/100/(1- (inf_exp_miss.iloc[:,1]/100))
     P2 = inf_exp_inc_same.iloc[:,1]/100/(1- (inf_exp_miss.iloc[:,1]/100))
     P3 = inf_exp_inc_slow.iloc[:,1]/100/(1- (inf_exp_miss.iloc[:,1]/100))
@@ -96,8 +97,6 @@ def transform_quantiles(inf_exp_inc_rap,
     Z2 = scipy.stats.norm.ppf(list(1- P1 - P2), loc=0, scale=1)
     Z3 = scipy.stats.norm.ppf(list(1- P1 - P2 - P3), loc=0, scale=1)
     Z4 = scipy.stats.norm.ppf(list(P5), loc=0, scale=1)
-    
-    # 1-P1.iloc[:,1]/100-P2.iloc[:,1]/100-P3.iloc[:,1]/100 - P5.iloc[:,1]/100
     
     Z1_prime = scipy.stats.norm.ppf(list(1-P1_prime), loc=0, scale=1)
     Z2_prime = scipy.stats.norm.ppf(list(1-P1_prime-P2_prime), loc=0, scale=1)
@@ -143,15 +142,19 @@ def rolling_quant(inf_exp_inc_rap,
         inf_per_fall,
         inf_exp_miss, 
         inf_per_miss)
-
-    # Lahiri and Zhao (2014)
-    w = years_roll*12
-    scaling = pd.DataFrame()
     
     inflation_m.iloc[:,0] = pd.to_datetime(inflation_m.iloc[:,0])
     inflation_m.iloc[:,1] = pd.to_numeric(inflation_m.iloc[:,1])
+    
+    inflation_m = inflation_m[(inflation_m.iloc[:,0] >= scale['date'][0]) & (inflation_m.iloc[:,0] <= (scale['date'][len(scale)-1]+ timedelta(days=1)))]
 
-    #for years_roll in range(1, 13):
+    # MSEs = pd.DataFrame()
+
+    # for years_roll in range(1, 13):
+        
+    # Lahiri and Zhao (2014)
+    w = years_roll*12
+    scaling = pd.DataFrame()
         
     for date in scale['date'][w:]:
         
@@ -170,10 +173,13 @@ def rolling_quant(inf_exp_inc_rap,
        lambda_t =  window_inf_sum/windows_sq_sum   
     
        scaling = scaling.append({'date': date, 'lambda': lambda_t}, ignore_index=True)
-
+    
     scaling['German Inflation Expectations'] = np.array(scaling.iloc[:,1]) * np.array(scale['exp_weight'][w:])
     scaling['exp_weight'] = list(scale['exp_weight'][w:])
-    scaling['perc_weight'] = list(scale['perc_weight'][w:])
+    scaling['perc_weight'] = list(scale['perc_weight'][w:])                        
+                            
+    # MSE = np.mean((inflation_m['Unnamed: 3'][w:] - np.array(list(scaling['German Inflation Expectations'])))**2)
+    
+    # MSEs = MSEs.append({'MSE': MSE, 'year': years_roll}, ignore_index = True)
     
     return(scaling)
-    #MSE = np.mean((np.array(inflation_ger_m[476:705]['Unnamed: 3']) - np.array(list(scaling[167-w:396-w]['German Inflation Expectations'])))**2)

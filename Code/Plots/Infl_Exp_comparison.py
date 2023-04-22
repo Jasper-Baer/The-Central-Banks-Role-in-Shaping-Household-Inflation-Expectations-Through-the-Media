@@ -14,8 +14,8 @@ import os
 from dateutil.relativedelta import relativedelta
 
 warnings.simplefilter(action='ignore', category=FutureWarning)
-#PATH = r"D:\Studium\PhD\Github\Single-Author\Code\Plots"
-PATH = r"D:\Single Author\Github\Single-Author\Code\Plots"
+PATH = r"D:\Studium\PhD\Github\Single-Author\Code\Plots"
+#PATH = r"D:\Single Author\Github\Single-Author\Code\Plots"
 os.chdir(PATH)
 
 from Data_Prep_Supp import transform_date, scale_ECB_index, rolling_quant
@@ -29,13 +29,19 @@ end_date = '2019-01-01'
 # Inflation
 ##############################################################################
 
-PATH = r'D:\Single Author\Github\Single-Author\Data\Regression'
+PATH = r'D:\Studium\PhD\Github\Single-Author\Data\Regression'
+#PATH = r'D:\Single Author\Github\Single-Author\Data\Regression'
 
 #inflation_ger_q = pd.read_excel(PATH + '\Consumer Price IndexAll Items Total Total for Germany.xls')[10:]
 #inflation_ger_m = pd.read_excel(PATH + '\Germany_harmonized_inflation.xls')[10:]
 
 iwh_inflation = pd.read_excel(PATH + '\Forecast_Inflation_IWH.xls')
 iwh_inflation = iwh_inflation[iwh_inflation['Institute'] == 'GD']
+
+institue_forecasts = pd.read_excel(PATH + '\German_Institutes_Forecast_First_Quarter.xlsx')
+#institue_forecasts_IFW = institue_forecasts[institue_forecasts['Institute'] == 'IfW']
+#institue_forecasts_IWH = institue_forecasts[institue_forecasts['Institute'] == 'IWH']
+institue_forecasts_RWI = institue_forecasts[institue_forecasts['Institute'] == 'RWI']
 
 inflation_ger_qoq = pd.read_excel(PATH + '\Germany_Inflation_qoq.xls')[10:]
 inflation_ger_y = pd.read_excel(PATH + '\Germany CPI Yearly.xls')[10:]
@@ -96,7 +102,8 @@ inf_per_inc_same = inf_per_surv[["TOT", "CONS." + cont + ".TOT.5.P.M"]]
 inf_per_inc_rap = inf_per_surv[["TOT", "CONS." + cont + ".TOT.5.PP.M"]]
 inf_per_miss = inf_per_surv[["TOT", "CONS." + cont + ".TOT.5.N.M"]]
 
-scaling = rolling_quant(inf_exp_inc_rap,
+scaling = rolling_quant(
+ inf_exp_inc_rap,
  inf_exp_inc_same,
  inf_exp_inc_slow,
  inf_exp_same,
@@ -106,21 +113,66 @@ scaling = rolling_quant(inf_exp_inc_rap,
  inf_per_inc_slow,
  inf_per_same,
  inf_per_fall,
- inflation_ger_m,
  inf_exp_miss, 
  inf_per_miss,
+ inflation_ger_m,
  9)
 
 scaling = scaling.loc[(scaling['date'] >= start_date) & (scaling['date'] <= end_date)]
 
 ###############################################################################
 
-start_date_hist = '1994-09-30'
+import pandas as pd
+
+# Assuming you have a DataFrame named 'df' with datetime index and a column named 'values'
+# Create an empty column 'recursive_mean' to store the results
+
+# Initialize the recursive_mean column with zeros
+inflation_ger_m['recursive_mean'] = 0.0
+
+def average(a):
+    def helper(a, n):
+        if n == 0:
+            return a[0]
+        else:
+            return (a[n] + n * helper(a, n - 1)) / (n + 1)
+
+    return helper(a, len(a) - 1)
+
+rec_mean = average(list(inflation_ger_m['Unnamed: 3']))
+
+# Iterate through the DataFrame, updating the mean and storing it in 'recursive_mean' column
+for i in range(1, len(inflation_ger_m)):
+    previous_mean = inflation_ger_m['recursive_mean'].iloc[i - 1]
+    current_value = inflation_ger_m['Unnamed: 3'].iloc[i]
+    updated_mean = ((i * previous_mean) + current_value) / (i + 1)
+    
+    inflation_ger_m['recursive_mean'].iloc[i] = updated_mean
+
+# inflation_ger_m['recursive_mean'] = inflation_ger_m['Unnamed: 3'].expanding().mean()
+
+# inflation_ger_m['recursive_mean'] = 0.0
+
+# # Initialize the mean value
+# mean_value = inflation_ger_m['Unnamed: 3'].iloc[0]
+
+# # Iterate through the DataFrame, updating the mean and storing it in 'recursive_mean' column
+# for i in range(len(inflation_ger_m)):
+#     if i == 0:
+#         inflation_ger_m['recursive_mean'].iloc[i] = mean_value
+#     else:
+#         mean_value = mean_value + (inflation_ger_m['Unnamed: 3'].iloc[i] - mean_value) / (i + 1)
+#         inflation_ger_m['recursive_mean'].iloc[i] = mean_value
+
+###############################################################################
+
+#start_date_hist = '1998-10-31'
+start_date_hist = '1995-12-31'
 
 inflation_ger_m = transform_date(inflation_ger_m)
 
 hist_ger_inflation_m = inflation_ger_m.loc[(inflation_ger_m.index >= start_date_hist) & (inflation_ger_m.index <= end_date)]
-hist_ger_inflation_rollm_m = hist_ger_inflation_m.rolling(61).mean().shift(3)[63:]
+hist_ger_inflation_rollm_m = hist_ger_inflation_m.rolling(12).mean().shift(3)[14:]
 #mean()[60:-3]
 hist_ger_inflation_m.iloc[:,1] = pd.to_numeric(hist_ger_inflation_m.iloc[:,1])
 hist_ger_inflation_m_mean = hist_ger_inflation_m.iloc[:,1].mean()
@@ -128,6 +180,102 @@ hist_ger_inflation_m_mean = hist_ger_inflation_m.iloc[:,1].mean()
 inflation_ger_m = inflation_ger_m.loc[(inflation_ger_m.index >= start_date) & (inflation_ger_m.index <= end_date)]
 inflation_ger_m.iloc[:,1] = pd.to_numeric(inflation_ger_m.iloc[:,1])
 mean_inflation = inflation_ger_m.mean()
+
+###############################################################################
+
+def scale_data(data):
+    return (data - np.mean(data)) / np.std(data)
+
+# Scale the input data
+scaled_perc_weight = scale_data(scaling['perc_weight'])
+scaled_st = scale_data(hist_ger_inflation_rollm_m_tran['Unnamed: 3'])
+scaled_pi_t = scale_data(inflation_ger_m['Unnamed: 3'])
+
+# Use better initial parameters (if you have any idea about their values)
+#initial_params = [1, 1, 1, 1]
+
+result = least_squares(objective_function, initial_params, args=(scaled_perc_weight, scaled_st, scaled_pi_t))
+
+
+###
+
+hist_ger_inflation_rollm_m_tran = hist_ger_inflation_m.rolling(48).mean()[48:]
+
+from scipy.optimize import least_squares
+from scipy.optimize import minimize
+
+def stm_function(params, perc_weight, st):
+    phi, phi_prime, gamma, c_threshold = params
+    G = logistic_transition_function(st, gamma, c_threshold)
+    return phi * perc_weight + phi_prime * G * perc_weight
+
+def logistic_transition_function(st, gamma, c_threshold):
+    return (1 + np.exp(-gamma * (st - c_threshold))) ** -1
+
+def objective_function(params, perc_weight, st, pi_t):
+    pi_t_hat = stm_function(params, perc_weight, st)
+    #return np.sum((pi_t - pi_t_hat) ** 2)
+    return pi_t - pi_t_hat
+
+#initial_params = [1, 1, 1, 1] # Initial guess for phi, phi_prime, gamma, and c_threshold
+initial_params = [2.15, 3.23, 4.56, 1.62]
+#initial_params = [2, 3, 4, 1.5] 
+result = minimize(objective_function, initial_params, args=(np.array(scaling['perc_weight']), np.array(hist_ger_inflation_rollm_m_tran['Unnamed: 3']), np.array(inflation_ger_m['Unnamed: 3'])))
+result = least_squares(objective_function, initial_params, args=(np.array(scaling['perc_weight']), np.array(hist_ger_inflation_rollm_m_tran['Unnamed: 3']), np.array(inflation_ger_m['Unnamed: 3'])))
+
+
+from scipy.optimize import differential_evolution
+
+bounds = [(0, 10), (0, 10), (0, 10), (0, 10)] # Set reasonable bounds for the parameters
+
+result = differential_evolution(objective_function, bounds, args=(scaled_perc_weight, scaled_st, scaled_pi_t))
+estimated_params = result.x
+
+estimated_params = initial_params
+
+stm_lam = stm_function(estimated_params, np.array(np.array(scaling['perc_weight'])), np.array(hist_ger_inflation_rollm_m_tran['Unnamed: 3']))
+stm_lam = pd.DataFrame(stm_lam)
+stm_lam.index = inflation_ger_m.index
+
+stm_lam['exp_inf'] = np.array(scaling['exp_weight'])*np.array(stm_lam)[0]
+
+###############################################################################
+
+# from pykalman import KalmanFilter
+
+# # Load your data
+# # Assuming that the data is stored in a DataFrame called inflation_df
+
+# # Define the matrices and vectors for the state-space model
+# # Replace a, b, and c with the appropriate values in your dataset
+# F = np.array([[1]])  # Transition matrix
+# H = np.array([[scaling['exp_weight']]])  # Observation matrix
+# Q = np.array([[0.1]])  # Process noise covariance matrix (initial guess for γσ^2)
+# R = np.array([[1]])  # Measurement noise covariance matrix (initial guess for (1-γ)σ^2)
+# initial_state_mean = np.array([0])  # Initial state mean
+# initial_state_covariance = np.array([[1]])  # Initial state covariance
+
+# # Initialize the Kalman filter
+# kf = KalmanFilter(transition_matrices=F, observation_matrices=H,
+#                   initial_state_mean=initial_state_mean, initial_state_covariance=initial_state_covariance,
+#                   transition_covariance=Q, observation_covariance=R)
+
+# # Fit the Kalman filter to the observed data (inflation rates)
+# observed_inflation = inflation_ger_m['Unnamed: 3'].values
+# kf = kf.em(observed_inflation)
+
+# # Apply the Kalman filter to obtain the filtered and smoothed state estimates
+# filtered_state_means, filtered_state_covariances = kf.filter(observed_inflation)
+# smoothed_state_means, smoothed_state_covariances = kf.smooth(observed_inflation)
+
+# # Add the filtered and smoothed estimates of λ to the DataFrame
+# inflation_df['filtered_lambda'] = filtered_state_means.squeeze()
+# inflation_df['smoothed_lambda'] = smoothed_state_means.squeeze()
+
+# # Display the DataFrame
+# print(inflation_df)
+
+###############################################################################
 
 ip_ger_m = transform_date(ip_ger_m)
 ip_ger_m = ip_ger_m.loc[(ip_ger_m.index >= start_date) & (ip_ger_m.index <= end_date)]
@@ -151,6 +299,15 @@ iwh_inflation['Vintage'] = pd.to_datetime(iwh_inflation['Vintage'])
 iwh_inflation.index = iwh_inflation['Vintage']
 iwh_inflation_m = iwh_inflation.groupby(pd.Grouper(freq="M")).mean().fillna(method = 'ffill')
 iwh_inflation_m = iwh_inflation_m.loc[(iwh_inflation_m.index >= start_date) & (iwh_inflation_m.index <= end_date)]
+
+institue_forecasts_RWI['Vintage'] = pd.to_datetime(institue_forecasts_RWI['Vintage'])
+institue_forecasts_RWI.index = institue_forecasts_RWI['Vintage']
+institue_forecasts_RWI_m = institue_forecasts_RWI.groupby(pd.Grouper(freq="M")).mean().fillna(method = 'ffill')
+institue_forecasts_RWI_m = institue_forecasts_RWI_m.loc[(institue_forecasts_RWI_m.index >= start_date) & (institue_forecasts_RWI_m.index <= end_date)]
+
+institue_forecasts_RWI_m.loc[pd.to_datetime('2000-01-01')] = {'One-Year-Ahead': 0}
+institue_forecasts_RWI_m.loc[pd.to_datetime('2000-02-01')] = {'One-Year-Ahead': 0}
+institue_forecasts_RWI_m = institue_forecasts_RWI_m.sort_index()
 
 data_inf_exp_eu = data_inf_exp_eu.loc[(data_inf_exp_eu.index >= start_date) & (data_inf_exp_eu.index <= end_date)]
 data_inf_exp_eu = data_inf_exp_eu.groupby(pd.Grouper(freq="M")).mean().fillna(method = 'ffill')
@@ -226,6 +383,8 @@ data_ECB_index_ec_m = scale_ECB_index(data_ECB_index_ec,date_inf)
 ###
 ###############################################################################
 
+iwh_inflation_m = institue_forecasts_RWI_m
+
 # ger_relative_exp_gap_m = np.array(scaling['German Inflation Expectations']) - data_inf_exp_m
 #ger_relative_exp_gap_m_role = np.array(scaling['German Inflation Expectations']) - iwh_inflation_m['Value']
 ger_relative_exp_gap_m_role = np.array(scaling['German Inflation Expectations']) - iwh_inflation_m['One-Year-Ahead']
@@ -240,19 +399,38 @@ ger_abslolute_inf_gap_m_role = abs(ger_relative_inf_gap_m_role)
 #exp_inf_berk = np.array(inflation_ger_m['Unnamed: 3'])*np.array(scaling['exp_weight'])
 #exp_inf_berk = np.array(hist_ger_inflation_m_mean)*np.array(scaling['exp_weight'])
 
-exp_inf_berk = np.array(hist_ger_inflation_rollm_m['Unnamed: 3'])*np.array(scaling['exp_weight'])
-exp_inf_berk = pd.DataFrame(exp_inf_berk)
-exp_inf_berk.index = inflation_ger_m.iloc[:,0]
+exp_inf_berk_1 = np.array(hist_ger_inflation_rollm_m['Unnamed: 3'])*np.array(scaling['exp_weight'])
+#exp_inf_berk_1 = np.array(1)*np.array(scaling['exp_weight'])
+exp_inf_berk_1 = pd.DataFrame(exp_inf_berk_1)
+exp_inf_berk_1.index = inflation_ger_m.iloc[:,0]
 
 #ger_relative_exp_gap_m_berk = np.array(exp_inf_berk.iloc[:,0]) -  np.array(iwh_inflation_m['Value'])
-ger_relative_exp_gap_m_berk = np.array(exp_inf_berk.iloc[:,0]) -  np.array(iwh_inflation_m['One-Year-Ahead'])
-ger_abslolute_exp_gap_m_berk = abs(ger_relative_exp_gap_m_berk)
+ger_relative_exp_gap_m_berk_1 = np.array(exp_inf_berk_1.iloc[:,0]) -  np.array(iwh_inflation_m['One-Year-Ahead'])
+ger_abslolute_exp_gap_m_berk_1 = abs(ger_relative_exp_gap_m_berk_1)
 
-ger_eu_relative_exp_gap_m_berk = np.array(exp_inf_berk.iloc[:,0]) - np.array(data_inf_exp_eu.iloc[:,0])
-ger_eu_abslolute_exp_gap_m_berk = abs(ger_eu_relative_exp_gap_m_berk)
+ger_eu_relative_exp_gap_m_berk_1 = np.array(exp_inf_berk_1.iloc[:,0]) - np.array(data_inf_exp_eu.iloc[:,0])
+ger_eu_abslolute_exp_gap_m_berk_1 = abs(ger_eu_relative_exp_gap_m_berk_1)
 
-ger_relative_inf_gap_m_berk = np.array(exp_inf_berk.iloc[:,0]) - inflation_ger_m.iloc[:,1]
-ger_abslolute_inf_gap_m_berk = abs(ger_relative_inf_gap_m_berk)
+ger_relative_inf_gap_m_berk_1 = np.array(exp_inf_berk_1.iloc[:,0]) - inflation_ger_m.iloc[:,1]
+ger_abslolute_inf_gap_m_berk_1 = abs(ger_relative_inf_gap_m_berk_1)
+
+###############################################################################
+
+#exp_inf_berk_5 = np.array(inflation_ger_m['recursive_mean'])*np.array(scaling['exp_weight'])
+exp_inf_berk_5 = np.array(rec_mean)*np.array(scaling['exp_weight'])
+exp_inf_berk_5 = pd.DataFrame(exp_inf_berk_5)
+exp_inf_berk_5.index = inflation_ger_m.iloc[:,0]
+
+ger_relative_exp_gap_m_berk_5 = np.array(exp_inf_berk_5.iloc[:,0]) -  np.array(iwh_inflation_m['One-Year-Ahead'])
+ger_abslolute_exp_gap_m_berk_5 = abs(ger_relative_exp_gap_m_berk_5)
+
+ger_eu_relative_exp_gap_m_berk_5 = np.array(exp_inf_berk_5.iloc[:,0]) - np.array(data_inf_exp_eu.iloc[:,0])
+ger_eu_abslolute_exp_gap_m_berk_5 = abs(ger_eu_relative_exp_gap_m_berk_5)
+
+ger_relative_inf_gap_m_berk_5 = np.array(exp_inf_berk_5.iloc[:,0]) - inflation_ger_m.iloc[:,1]
+ger_abslolute_inf_gap_m_berk_5 = abs(ger_relative_inf_gap_m_berk_5)
+
+###############################################################################
 
 Regression_data_m = pd.DataFrame()
 Regression_data_m['Eurozone Industrial Production'] = ip_ea_m.iloc[:,1]
@@ -268,7 +446,8 @@ Regression_data_m['News ECB Count'] = list(monthly_ecb_count.iloc[:,1])
 Regression_data_m['ECB Inflation Index'] = list(data_ECB_index_inf_m.iloc[:,1])
 Regression_data_m['ECB Monetary Index'] = list(data_ECB_index_mon_m.iloc[:,1])
 Regression_data_m['ECB Economic Index'] = list(data_ECB_index_ec_m.iloc[:,1])
-Regression_data_m['German Household Inflation Expectations Berk'] = list(exp_inf_berk.iloc[:,0])
+Regression_data_m['German Household Inflation Expectations Berk 1'] = list(exp_inf_berk_1.iloc[:,0])
+Regression_data_m['German Household Inflation Expectations Berk 5'] = list(exp_inf_berk_5.iloc[:,0])
 Regression_data_m['German Household Inflation Expectations Role'] = list(scaling['German Inflation Expectations'])
 Regression_data_m['Eurozone Inflation Professionell Forecasts'] = list(data_inf_exp_eu.iloc[:,0])
 #Regression_data_m['Germany Inflation Professionell Forecasts'] = list(iwh_inflation_m['Value'])
@@ -279,12 +458,18 @@ Regression_data_m['German ECB Absolute Expectations Gap Role'] = list(ger_eu_abs
 Regression_data_m['German ECB Relative Expectations Gap Role'] = list(ger_eu_relative_exp_gap_m_role)
 Regression_data_m['German Absolute Real Inflation Expectations Gap Role'] = list(ger_abslolute_inf_gap_m_role)
 Regression_data_m['German Relative Real Inflation Expectations Gap Role'] = list(ger_relative_inf_gap_m_role)
-Regression_data_m['German Absolute Expectations Gap Berk'] = list(ger_abslolute_exp_gap_m_berk) 
-Regression_data_m['German Relative Expectations Gap Berk'] = list(ger_relative_exp_gap_m_berk)
-Regression_data_m['German ECB Absolute Expectations Gap Berk'] = list(ger_eu_abslolute_exp_gap_m_berk)
-Regression_data_m['German ECB Relative Expectations Gap Berk'] = list(ger_eu_relative_exp_gap_m_berk)
-Regression_data_m['German Absolute Real Inflation Expectations Gap Berk'] = list(ger_abslolute_inf_gap_m_berk)
-Regression_data_m['German Relative Real Inflation Expectations Gap Berk'] = list(ger_relative_inf_gap_m_berk)
+Regression_data_m['German Absolute Expectations Gap Berk 1'] = list(ger_abslolute_exp_gap_m_berk_1) 
+Regression_data_m['German Relative Expectations Gap Berk 1'] = list(ger_relative_exp_gap_m_berk_1)
+Regression_data_m['German ECB Absolute Expectations Gap Berk 1'] = list(ger_eu_abslolute_exp_gap_m_berk_1)
+Regression_data_m['German ECB Relative Expectations Gap Berk 1'] = list(ger_eu_relative_exp_gap_m_berk_1)
+Regression_data_m['German Absolute Real Inflation Expectations Gap Berk 1'] = list(ger_abslolute_inf_gap_m_berk_1)
+Regression_data_m['German Relative Real Inflation Expectations Gap Berk 1'] = list(ger_relative_inf_gap_m_berk_1)
+Regression_data_m['German Absolute Expectations Gap Berk 5'] = list(ger_abslolute_exp_gap_m_berk_5) 
+Regression_data_m['German Relative Expectations Gap Berk 5'] = list(ger_relative_exp_gap_m_berk_5)
+Regression_data_m['German ECB Absolute Expectations Gap Berk 5'] = list(ger_eu_abslolute_exp_gap_m_berk_5)
+Regression_data_m['German ECB Relative Expectations Gap Berk 5'] = list(ger_eu_relative_exp_gap_m_berk_5)
+Regression_data_m['German Absolute Real Inflation Expectations Gap Berk 5'] = list(ger_abslolute_inf_gap_m_berk_5)
+Regression_data_m['German Relative Real Inflation Expectations Gap Berk 5'] = list(ger_relative_inf_gap_m_berk_5)
 
 #Regression_data_m['German Household Inflation Expectations Balanced'] = list(inf_exp_balanced.iloc[:,1])
 # Regression_data_m['German Household Inflation Expectations'] = list(scaling['German Inflation Expectations'][180-w:408-w])
@@ -299,15 +484,36 @@ Regression_data_m.to_excel(PATH + '\\regression_data_monthly_2.xlsx')
 
 ###############################################################################
 
+###############################################################################
+
 import pylab as plt
 
 plt.plot(scaling['date'], scaling['German Inflation Expectations'])
-plt.plot(exp_inf_berk[:-140])
+plt.plot(stm_lam.index, stm_lam['exp_inf'])
+plt.plot(inflation_ger_m.index, inflation_ger_m.iloc[:,1])
+#plt.plot(inflation_ger_m.index, inflation_ger_m.iloc[:,1])
+plt.show()
 
+plt.plot(exp_inf_berk_5)
+
+plt.plot(inflation_ger_m.index[:-150], inflation_ger_m.iloc[:,1][:-150])
+plt.plot((exp_inf_berk_1+1)[:-150])
 plt.show()
 
 plt.plot(iwh_inflation_m['One-Year-Ahead'])
-plt.plot()
+
+
+plt.plot(iwh_inflation_m['One-Year-Ahead'])
+plt.plot(institue_forecasts_RWI_m['One-Year-Ahead'])
+plt.plot(data_inf_exp_eu)
+plt.show()
+
+plt.plot(inflation_ger_m.index, inflation_ger_m.iloc[:,1])
+plt.plot(exp_inf_berk_5)
+plt.plot(exp_inf_berk_1)
+plt.plot(stm_inf.index, stm_inf.iloc[:,0])
+plt.plot(scaling['date'], scaling['German Inflation Expectations'])
+plt.show()
 
 # plt.plot(data_ECB_index_inf_m['date'], data_ECB_index_inf_m['index'])
 # #plt.plot(data_ECB_index_inf_2['date'], data_ECB_index_inf_2['index'])
