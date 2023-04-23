@@ -13,7 +13,7 @@ data = read_excel('D:/Studium/PhD/Github/Single-Author/Code/Regression/Regession
 #data = read_excel('D:/Single Author/Github/Single-Author/Data/Regression/Regession_data_monthly_2_processed.xlsx')
 data = data.frame(data)
 #data = data[9:dim(data)[1],]
-data = data[9:dim(data)[1],]
+#data = data[9:dim(data)[1],]
 
 data$time = as.Date(strptime(data$time, "%Y-%m-%d"))
 #years = as.Date(strptime(c(2002:2019), '%Y'))
@@ -195,11 +195,11 @@ coeff = 1
 ggplot(data, aes(x = time)) + 
   labs(y = "Inflation Expecation") +
   #geom_line(aes(y = German.Household.Inflation.Expectations), colour="blue", linetype = 1) +
-  geom_line(aes(y = Germany.Inflation.Professionell.Forecasts), colour="red", linetype = 2) +
-  geom_line(aes(y = Eurozone.Inflation.Professionell.Forecasts), colour="blue", linetype = 2) +
-  geom_line(aes(y = German.Household.Inflation.Expectations.Berk), colour="black", linetype = 3) +
-  geom_line(aes(y = German.Household.Inflation.Expectations.Role), colour="green", linetype = 4) +
-  geom_line(aes(y = German.Inflation.Year.on.Year), colour="orange", linetype = 5) +
+  #geom_line(aes(y = Germany.Inflation.Professionell.Forecasts), colour="red", linetype = 2) +
+  #geom_line(aes(y = Eurozone.Inflation.Professionell.Forecasts), colour="blue", linetype = 2) +
+  geom_line(aes(y = German.Household.Inflation.Expectations.Berk.1), colour="black", linetype = 1) +
+  geom_line(aes(y = German.Household.Inflation.Expectations.Role), colour="green", linetype = 2) +
+  geom_line(aes(y = German.Inflation.Year.on.Year), colour="orange", linetype = 3) +
   scale_x_date(date_labels="%Y", breaks = unique(years), name = "") +
   theme_classic() + 
   theme(axis.text.x = element_text(angle = 45, vjust = 0.5, size = 11),
@@ -210,12 +210,12 @@ ggplot(data, aes(x = time)) +
 
 #data$German.Absolute.Expectations.Gap.Role[is.na(data$German.Absolute.Expectations.Gap.Role)] <- 0
 
-coeff = max(data$News.ECB.Count)/max(data$German.Absolute.Expectations.Gap.Role)
+coeff = max(data$News.ECB.Count)/max(German.Absolute.Real.Inflation.Expectations.Gap.Role)
 
 ggplot(data, aes(x = time)) + 
   geom_hline(yintercept = 0) + 
   geom_line(aes(y = News.ECB.Count.role/coeff+0.0/coeff), colour="blue", linetype = 1) +
-  geom_line(aes(y = German.Absolute.Expectations.Gap.Role.role), colour="red", linetype = 2) +
+  geom_line(aes(y = German.Absolute.Real.Inflation.Expectations.Gap.Role.role), colour="red", linetype = 2) +
   scale_y_continuous(name = "Absolute Expectation Gap", sec.axis = sec_axis(~.*coeff-0.0, name = "News ECB Count")) +
   scale_x_date(date_labels="%Y", breaks = unique(years), name = "") +
   theme_classic() + 
@@ -243,6 +243,66 @@ ggplot(data, aes(x = time)) +
         axis.text.x = element_text(angle = 45, vjust = 0.5, size = 11),
         panel.grid.minor = element_blank(),
         panel.grid.major = element_blank()) 
+
+##########################################################
+
+coeff = 1
+
+ggplot(data, aes(x = time)) + 
+  geom_hline(yintercept = 0) + 
+  geom_line(aes(y = German.Absolute.Expectations.Gap.Stm.RWI.role/coeff+0.0/coeff), colour="blue", linetype = 1) +
+  geom_line(aes(y = German.Absolute.Expectations.Gap.Stm.GD.role), colour="red", linetype = 2) +
+  geom_line(aes(y = German.ECB.Absolute.Expectations.Gap.Stm.role), colour="dark green", linetype = 3, size = 0.9) +
+  scale_y_continuous(name = "Absolute Expectation Gap", sec.axis = sec_axis(~.*coeff-0.0, name = "News ECB Count")) +
+  scale_x_date(date_labels="%Y", breaks = unique(years), name = "") +
+  theme_classic() + 
+  theme(axis.text.y.left = element_text(color = "red"),
+        axis.text.y.right = element_text(color = "blue"),
+        axis.title.y = element_text(color = "red"),
+        axis.title.y.right = element_text(color = "blue", vjust = 2),
+        axis.text.x = element_text(angle = 45, vjust = 0.5, size = 11),
+        panel.grid.minor = element_blank(),
+        panel.grid.major = element_blank()) 
+
+coeff = 1
+
+ggplot(data, aes(x = time)) + 
+  geom_hline(yintercept = 0) + 
+  geom_line(aes(y = German.Absolute.Expectations.Gap.Berk.1.RWI.role/coeff+0.0/coeff), colour="blue", linetype = 1) +
+  geom_line(aes(y = German.Absolute.Expectations.Gap.Berk.1.GD.role), colour="red", linetype = 2) +
+  geom_line(aes(y = German.ECB.Absolute.Expectations.Gap.Berk.1.role), colour="dark green", linetype = 3, size = 0.9) +
+  scale_y_continuous(name = "Absolute Expectation Gap", sec.axis = sec_axis(~.*coeff-0.0, name = "News ECB Count")) +
+  scale_x_date(date_labels="%Y", breaks = unique(years), name = "") +
+  theme_classic() + 
+  theme(axis.text.y.left = element_text(color = "red"),
+        axis.text.y.right = element_text(color = "blue"),
+        axis.title.y = element_text(color = "red"),
+        axis.title.y.right = element_text(color = "blue", vjust = 2),
+        axis.text.x = element_text(angle = 45, vjust = 0.5, size = 11),
+        panel.grid.minor = element_blank(),
+        panel.grid.major = element_blank()) 
+
+#####################################################
+
+#coeff = max(data$ECB_News_res_inf_1)/max(data$German.ECB.Absolute.Expectations.Gap.Berk)*2
+coeff = 1
+
+ggplot(data, aes(x = time)) + 
+  geom_hline(yintercept = 0) + 
+  geom_line(aes(y = ECB_News_res_inf_2_RWI.role/coeff+0.015/coeff), colour="blue", linetype = 1) +
+  geom_line(aes(y = ECB_News_res_inf_2_GD.role), colour="red", linetype = 2) +
+  geom_line(aes(y = ECB_News_res_inf_2_eu.role), colour="red", linetype = 2) +
+  scale_y_continuous(name = "Absolute Expectation Gap", sec.axis = sec_axis(~.*coeff-0.015, name = "Residuals from ECB Index on News Index")) +
+  scale_x_date(date_labels="%Y", breaks = unique(years), name = "") +
+  theme_classic() + 
+  theme(axis.text.y.left = element_text(color = "red"),
+        axis.text.y.right = element_text(color = "blue"),
+        axis.title.y = element_text(color = "red"),
+        axis.title.y.right = element_text(color = "blue", vjust = 2),
+        axis.text.x = element_text(angle = 45, vjust = 0.5, size = 11),
+        panel.grid.minor = element_blank(),
+        panel.grid.major = element_blank()) 
+
 
 ##### Absolute Inflation Expectations - Residuals_1
 

@@ -15,6 +15,9 @@ data = read_excel('D:/Studium/PhD/Github/Single-Author/Data/Regression/regressio
 #data = read_excel('D:/Single Author/Github/Single-Author/Data/Regression/regression_data_monthly_2.xlsx')
 data = data.frame(data)
 
+#data = data[9:dim(data)[1],]
+data = data[21:dim(data)[1],]
+
 data1 = data %>% select(Eurozone.Industrial.Production,
                         Eurozone.Inflation, 
                         German.Industrial.Production, 
@@ -32,25 +35,48 @@ data1 = data %>% select(Eurozone.Industrial.Production,
                         German.Household.Inflation.Expectations.Berk.5,
                         German.Household.Inflation.Expectations.Role,
                         Eurozone.Inflation.Professionell.Forecasts, 
-                        Germany.Inflation.Professionell.Forecasts, 
-                        German.Absolute.Expectations.Gap.Role,
-                        German.Relative.Expectations.Gap.Role,
+                        Germany.Inflation.Professionell.Forecasts.GD, 
+                        Germany.Inflation.Professionell.Forecasts.RWI, 
+                        German.Absolute.Expectations.Gap.Role.GD,
+                        German.Relative.Expectations.Gap.Role.GD,
+                        German.Absolute.Expectations.Gap.Role.RWI,
+                        German.Relative.Expectations.Gap.Role.RWI,
                         German.ECB.Absolute.Expectations.Gap.Role,
                         German.ECB.Relative.Expectations.Gap.Role,
                         German.Absolute.Real.Inflation.Expectations.Gap.Role,
                         German.Relative.Real.Inflation.Expectations.Gap.Role,
-                        German.Absolute.Expectations.Gap.Berk.1,
-                        German.Relative.Expectations.Gap.Berk.1,
+                        German.Absolute.Expectations.Gap.Berk.1.GD,
+                        German.Relative.Expectations.Gap.Berk.1.GD,
+                        German.Absolute.Expectations.Gap.Berk.1.RWI,
+                        German.Relative.Expectations.Gap.Berk.1.RWI,
                         German.ECB.Absolute.Expectations.Gap.Berk.1,
                         German.ECB.Relative.Expectations.Gap.Berk.1,
                         German.Absolute.Real.Inflation.Expectations.Gap.Berk.1,
                         German.Relative.Real.Inflation.Expectations.Gap.Berk.1,
-                        German.Absolute.Expectations.Gap.Berk.5,
-                        German.Relative.Expectations.Gap.Berk.5,
+                        German.Absolute.Expectations.Gap.Berk.5.GD,
+                        German.Relative.Expectations.Gap.Berk.5.GD,
+                        German.Absolute.Expectations.Gap.Berk.5.RWI,
+                        German.Relative.Expectations.Gap.Berk.5.RWI,
                         German.ECB.Absolute.Expectations.Gap.Berk.5,
                         German.ECB.Relative.Expectations.Gap.Berk.5,
                         German.Absolute.Real.Inflation.Expectations.Gap.Berk.5,
-                        German.Relative.Real.Inflation.Expectations.Gap.Berk.5)
+                        German.Relative.Real.Inflation.Expectations.Gap.Berk.5,
+                        German.Absolute.Expectations.Gap.Stm.GD,
+                        German.Relative.Expectations.Gap.Stm.GD,
+                        German.Absolute.Expectations.Gap.Stm.RWI,
+                        German.Relative.Expectations.Gap.Stm.RWI,
+                        German.ECB.Absolute.Expectations.Gap.Stm,
+                        German.ECB.Relative.Expectations.Gap.Stm,
+                        German.Absolute.Real.Inflation.Expectations.Gap.Quant,
+                        German.Relative.Real.Inflation.Expectations.Gap.Quant,
+                        German.Absolute.Expectations.Gap.Quant.GD,
+                        German.Relative.Expectations.Gap.Quant.GD,
+                        German.Absolute.Expectations.Gap.Quant.RWI,
+                        German.Relative.Expectations.Gap.Quant.RWI,
+                        German.ECB.Absolute.Expectations.Gap.Quant,
+                        German.ECB.Relative.Expectations.Gap.Quant,
+                        German.Absolute.Real.Inflation.Expectations.Gap.Quant,
+                        German.Relative.Real.Inflation.Expectations.Gap.Quant)
 
 ############################################
 # Residuals - ECB and News Index
@@ -64,38 +90,54 @@ ECB_News_res_inf_1 = fit$residuals
 
 #ECB_News_res_inf_1 = stand_ECB - stand_news
 
-fit = lm(News.Inflation.Count ~ Germany.Inflation.Professionell.Forecasts, data1)
-ECB_News_res_inf_0_ger = fit$residuals
+fit = lm(News.Inflation.Count ~ Germany.Inflation.Professionell.Forecasts.RWI, data1)
+ECB_News_res_inf_0_RWI = fit$residuals
+
+fit = lm(News.Inflation.Count ~ Germany.Inflation.Professionell.Forecasts.GD, data1)
+ECB_News_res_inf_0_GD = fit$residuals
 
 fit = lm(News.Inflation.Count ~ Eurozone.Inflation.Professionell.Forecasts, data1)
 ECB_News_res_inf_0_eu = fit$residuals
 
-fit = lm(News.Inflation.Index*-1 ~ Germany.Inflation.Professionell.Forecasts, data1)
-ECB_News_res_inf_2_ger = fit$residuals
+fit = lm(News.Inflation.Index*-1 ~ Germany.Inflation.Professionell.Forecasts.RWI, data1)
+ECB_News_res_inf_2_RWI = fit$residuals
+
+fit = lm(News.Inflation.Index*-1 ~ Germany.Inflation.Professionell.Forecasts.GD, data1)
+ECB_News_res_inf_2_GD = fit$residuals
 
 fit = lm(News.Inflation.Index*-1 ~ Eurozone.Inflation.Professionell.Forecasts, data1)
 ECB_News_res_inf_2_eu = fit$residuals
 
-fit = lm(News.Inflation.Sentiment.Index*-1 ~ Germany.Inflation.Professionell.Forecasts, data1)
-ECB_News_res_inf_3_ger = fit$residuals
+fit = lm(News.Inflation.Sentiment.Index*-1 ~ Germany.Inflation.Professionell.Forecasts.RWI, data1)
+ECB_News_res_inf_3_RWI = fit$residuals
+
+fit = lm(News.Inflation.Sentiment.Index*-1 ~ Germany.Inflation.Professionell.Forecasts.GD, data1)
+ECB_News_res_inf_3_GD = fit$residuals
 
 fit = lm(News.Inflation.Sentiment.Index*-1 ~ Eurozone.Inflation.Professionell.Forecasts, data1)
 ECB_News_res_inf_3_eu = fit$residuals
 
-fit = lm(News.Inflation.Direction.Index*-1 ~ Germany.Inflation.Professionell.Forecasts, data1)
-ECB_News_res_inf_4_ger = fit$residuals
+fit = lm(News.Inflation.Direction.Index*-1 ~ Germany.Inflation.Professionell.Forecasts.RWI, data1)
+ECB_News_res_inf_4_RWI = fit$residuals
+
+fit = lm(News.Inflation.Direction.Index*-1 ~ Germany.Inflation.Professionell.Forecasts.GD, data1)
+ECB_News_res_inf_4_GD = fit$residuals
 
 fit = lm(News.Inflation.Direction.Index*-1 ~ Eurozone.Inflation.Professionell.Forecasts, data1)
 ECB_News_res_inf_4_eu = fit$residuals
 
-data1 = cbind(data1, ECB_News_res_inf_0_ger)
+data1 = cbind(data1, ECB_News_res_inf_0_RWI)
+data1 = cbind(data1, ECB_News_res_inf_0_GD)
 data1 = cbind(data1, ECB_News_res_inf_0_eu)
 data1 = cbind(data1, ECB_News_res_inf_1)
-data1 = cbind(data1, ECB_News_res_inf_2_ger)
+data1 = cbind(data1, ECB_News_res_inf_2_RWI)
+data1 = cbind(data1, ECB_News_res_inf_2_GD)
 data1 = cbind(data1, ECB_News_res_inf_2_eu)
-data1 = cbind(data1, ECB_News_res_inf_3_ger)
+data1 = cbind(data1, ECB_News_res_inf_3_RWI)
+data1 = cbind(data1, ECB_News_res_inf_3_GD)
 data1 = cbind(data1, ECB_News_res_inf_3_eu)
-data1 = cbind(data1, ECB_News_res_inf_4_ger)
+data1 = cbind(data1, ECB_News_res_inf_4_RWI)
+data1 = cbind(data1, ECB_News_res_inf_4_GD)
 data1 = cbind(data1, ECB_News_res_inf_4_eu)
 
 ###### Lags
@@ -120,7 +162,7 @@ names(time) = "Date"
 data1 = cbind(data1, time)
 data1 = data1[(lag_order+1):dim(data1)[1],]
 data1 = cbind(data1, data_lags)
-step = 3
+step = 5
 
 ###### Rolling average
 

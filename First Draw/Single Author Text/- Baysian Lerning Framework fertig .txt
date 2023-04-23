@@ -7,12 +7,14 @@ Must do:
 - Results fertig schreiben 
 - Add figures of sentiment and direction to figure 1
 
+- Results (vorläufig):
+Ergebnisse für ECB (Stm, Rolling, Berk 1 und Berk5)
+Ergebnisse für GD und RWI (Stm, Rolling, Berk 1 und Berk5)
++ Ergebnisse für residuen auf jeweiligen (GD, STM , ECB)
+Plots für Stm, Rolling, Berk 1 und Berk5
+Plots für Absolute Errors (RWI, GD und ECB mit Stm und Berk1)
+
 # Run all for new results
-- Preprocessing (finished)
-- Select Sentences with new Inflation Words and get ECB sentences (finished)
-- Dependency Parsing ECB (finished)
-- Index for PMI (including negations) (should be fine)
-- Regression for results part (muss verschiedene Regressionen ausprobieren)
 - Lamala 2014 reproduce results for regression
 
 Easy must do:
