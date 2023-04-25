@@ -17,7 +17,7 @@ Compare Bundesbank Inf Exp with my Quantifications
 Tabellen erstellen und einfügen?
 
 # Run all for new results
-- Lamala 2014 reproduce results for regression
+- Lamala 2014 reproduce results for regression (Reproduce Indixes like (Badrising))
 
 Easy must do:
 - Datastream E-Mail um zu gucken, ob ich die Daten für Diss verwenden darf
@@ -25,7 +25,6 @@ Easy must do:
 Optional:
 - compare rolling windo approach with michigan consumer survey
 - Make distinction in ECB press conferences between "current" and "future" changes
-- use quartlery quantitative ECB inflation data to test how results would change
 - Lexicon Based + Word Embedding
 
 Große offene Probleme
