@@ -7,15 +7,15 @@ library("stats")
 library("zoo")
 library("ggplot2")
 
-library(lmtest)
-library(sandwich)
-library(stargazer)
+library("lmtest")
+library("sandwich")
+library("stargazer")
 
 
 #####################################################################################
 
-data = read_excel('D:/Studium/PhD/Github/Single-Author/Code/Regression/Regession_data_monthly_2_processed.xlsx')
-#data = read_excel('D:/Single Author/Github/Single-Author/Data/Regression/Regession_data_monthly_2_processed.xlsx')
+#data = read_excel('D:/Studium/PhD/Github/Single-Author/Code/Regression/Regession_data_monthly_2_processed.xlsx')
+data = read_excel('D:/Single Author/Github/Single-Author/Data/Regression/Regession_data_monthly_2_processed.xlsx')
 data = data.frame(data)
 
 data$time = as.Date(strptime(data$time, "%Y-%m-%d"))
@@ -64,6 +64,21 @@ stargazer(fit1, fit2, fit3, fit4, fit5, type = "text", title = "RWI - Berk 1", s
                                                                                          coeftest(fit4, vcov.=NeweyWest(fit4, lag=0, prewhite=TRUE, adjust=TRUE, verbose=TRUE))[,"Std. Error"],
                                                                                          coeftest(fit5, vcov.=NeweyWest(fit5, lag=0, prewhite=TRUE, adjust=TRUE, verbose=TRUE))[,"Std. Error"]))
 
+# RWI - Berk 5
+fit1 <- lm(German.Absolute.Expectations.Gap.Berk.5.RWI ~ ECB_News_res_inf_0_RWI, data)
+fit2 <- lm(German.Absolute.Expectations.Gap.Berk.5.RWI ~ ECB_News_res_inf_0_RWI + German.Absolute.Expectations.Gap.Berk.5.RWI.Lag1 + German.Inflation.Year.on.Year.Lag1, data)
+fit3 <- lm(German.Absolute.Expectations.Gap.Berk.5.RWI ~ ECB_News_res_inf_0_RWI + ECB_News_res_inf_1 + German.Absolute.Expectations.Gap.Berk.5.RWI.Lag1 + German.Inflation.Year.on.Year.Lag1, data)
+fit4 <- lm(German.Absolute.Expectations.Gap.Berk.5.RWI ~ ECB_News_res_inf_0_RWI + News.ECB.Count + German.Absolute.Expectations.Gap.Berk.5.RWI.Lag1 + German.Inflation.Year.on.Year.Lag1, data)
+fit5 <- lm(German.Absolute.Expectations.Gap.Berk.5.RWI ~ ECB_News_res_inf_0_RWI + ECB_News_res_inf_1 + News.ECB.Count + German.Absolute.Expectations.Gap.Berk.5.RWI.Lag1 + German.Inflation.Year.on.Year.Lag1, data)
+
+stargazer(fit1, fit2, fit3, fit4, fit5, type = "text", title = "RWI - Berk 5", se = list(coeftest(fit1, vcov.=NeweyWest(fit1, lag=0, prewhite=TRUE, adjust=TRUE, verbose=TRUE))[,"Std. Error"],
+                                                                                         coeftest(fit2, vcov.=NeweyWest(fit2, lag=0, prewhite=TRUE, adjust=TRUE, verbose=TRUE))[,"Std. Error"],
+                                                                                         coeftest(fit3, vcov.=NeweyWest(fit3, lag=0, prewhite=TRUE, adjust=TRUE, verbose=TRUE))[,"Std. Error"],
+                                                                                         coeftest(fit4, vcov.=NeweyWest(fit4, lag=0, prewhite=TRUE, adjust=TRUE, verbose=TRUE))[,"Std. Error"],
+                                                                                         coeftest(fit5, vcov.=NeweyWest(fit5, lag=0, prewhite=TRUE, adjust=TRUE, verbose=TRUE))[,"Std. Error"]))
+
+#####################
+
 # GD - Stm
 fit6 <- lm(German.Absolute.Expectations.Gap.Stm.GD ~ ECB_News_res_inf_0_GD, data)
 fit7 <- lm(German.Absolute.Expectations.Gap.Stm.GD ~ ECB_News_res_inf_0_GD + German.Absolute.Expectations.Gap.Stm.GD.Lag1 + German.Inflation.Year.on.Year.Lag1, data)
@@ -78,17 +93,31 @@ stargazer(fit6, fit7, fit8, fit9, fit10, type = "text", title = "GD - Stm", se =
                                                                                      coeftest(fit10, vcov.=NeweyWest(fit10, lag=0, prewhite=TRUE, adjust=TRUE, verbose=TRUE))[,"Std. Error"]))
 ### GD - Berk 1
 
-fit11 <- lm(German.Absolute.Expectations.Gap.Berk.1.GD ~ ECB_News_res_inf_0_GD, data)
-fit12 <- lm(German.Absolute.Expectations.Gap.Berk.1.GD ~ ECB_News_res_inf_0_GD + German.Absolute.Expectations.Gap.Berk.1.GD.Lag1 + German.Inflation.Year.on.Year.Lag1, data)
-fit13 <- lm(German.Absolute.Expectations.Gap.Berk.1.GD ~ ECB_News_res_inf_0_GD + ECB_News_res_inf_1 + German.Absolute.Expectations.Gap.Berk.1.GD.Lag1 + German.Inflation.Year.on.Year.Lag1, data)
-fit14 <- lm(German.Absolute.Expectations.Gap.Berk.1.GD ~ ECB_News_res_inf_0_GD + News.ECB.Count + German.Absolute.Expectations.Gap.Berk.1.GD.Lag1 + German.Inflation.Year.on.Year.Lag1, data)
-fit15 <- lm(German.Absolute.Expectations.Gap.Berk.1.GD ~ ECB_News_res_inf_0_GD + ECB_News_res_inf_1 + News.ECB.Count + German.Absolute.Expectations.Gap.Berk.1.GD.Lag1 + German.Inflation.Year.on.Year.Lag1, data)
+fit1 <- lm(German.Absolute.Expectations.Gap.Berk.1.GD ~ ECB_News_res_inf_0_GD, data)
+fit2 <- lm(German.Absolute.Expectations.Gap.Berk.1.GD ~ ECB_News_res_inf_0_GD + German.Absolute.Expectations.Gap.Berk.1.GD.Lag1 + German.Inflation.Year.on.Year.Lag1, data)
+fit3 <- lm(German.Absolute.Expectations.Gap.Berk.1.GD ~ ECB_News_res_inf_0_GD + ECB_News_res_inf_1 + German.Absolute.Expectations.Gap.Berk.1.GD.Lag1 + German.Inflation.Year.on.Year.Lag1, data)
+fit4 <- lm(German.Absolute.Expectations.Gap.Berk.1.GD ~ ECB_News_res_inf_0_GD + News.ECB.Count + German.Absolute.Expectations.Gap.Berk.1.GD.Lag1 + German.Inflation.Year.on.Year.Lag1, data)
+fit5 <- lm(German.Absolute.Expectations.Gap.Berk.1.GD ~ ECB_News_res_inf_0_GD + ECB_News_res_inf_1 + News.ECB.Count + German.Absolute.Expectations.Gap.Berk.1.GD.Lag1 + German.Inflation.Year.on.Year.Lag1, data)
 
-stargazer(fit11, fit12, fit13, fit14, fit15, type = "text", title = "GD - Berk 1", se = list(coeftest(fit11, vcov.=NeweyWest(fit11, lag=0, prewhite=TRUE, adjust=TRUE, verbose=TRUE))[,"Std.Error"],
-                                                                                             coeftest(fit12, vcov.=NeweyWest(fit12, lag=0, prewhite=TRUE, adjust=TRUE, verbose=TRUE))[,"Std. Error"],
-                                                                                             coeftest(fit13, vcov.=NeweyWest(fit13, lag=0, prewhite=TRUE, adjust=TRUE, verbose=TRUE))[,"Std. Error"],
-                                                                                             coeftest(fit14, vcov.=NeweyWest(fit14, lag=0, prewhite=TRUE, adjust=TRUE, verbose=TRUE))[,"Std. Error"],
-                                                                                             coeftest(fit15, vcov.=NeweyWest(fit15, lag=0, prewhite=TRUE, adjust=TRUE, verbose=TRUE))[,"Std. Error"]))
+stargazer(fit1, fit2, fit3, fit4, fit5, type = "text", title = "GD - Berk 1", se = list(coeftest(fit1, vcov.=NeweyWest(fit1, lag=0, prewhite=TRUE, adjust=TRUE, verbose=TRUE))[,"Std. Error"],
+                                                                                         coeftest(fit2, vcov.=NeweyWest(fit2, lag=0, prewhite=TRUE, adjust=TRUE, verbose=TRUE))[,"Std. Error"],
+                                                                                         coeftest(fit3, vcov.=NeweyWest(fit3, lag=0, prewhite=TRUE, adjust=TRUE, verbose=TRUE))[,"Std. Error"],
+                                                                                         coeftest(fit4, vcov.=NeweyWest(fit4, lag=0, prewhite=TRUE, adjust=TRUE, verbose=TRUE))[,"Std. Error"],
+                                                                                         coeftest(fit5, vcov.=NeweyWest(fit5, lag=0, prewhite=TRUE, adjust=TRUE, verbose=TRUE))[,"Std. Error"]))
+### GD - Berk 5
+
+fit1 <- lm(German.Absolute.Expectations.Gap.Berk.5.GD ~ ECB_News_res_inf_0_GD, data)
+fit2 <- lm(German.Absolute.Expectations.Gap.Berk.5.GD ~ ECB_News_res_inf_0_GD + German.Absolute.Expectations.Gap.Berk.5.GD.Lag1 + German.Inflation.Year.on.Year.Lag1, data)
+fit3 <- lm(German.Absolute.Expectations.Gap.Berk.5.GD ~ ECB_News_res_inf_0_GD + ECB_News_res_inf_1 + German.Absolute.Expectations.Gap.Berk.5.GD.Lag1 + German.Inflation.Year.on.Year.Lag1, data)
+fit4 <- lm(German.Absolute.Expectations.Gap.Berk.5.GD ~ ECB_News_res_inf_0_GD + News.ECB.Count + German.Absolute.Expectations.Gap.Berk.5.GD.Lag1 + German.Inflation.Year.on.Year.Lag1, data)
+fit5 <- lm(German.Absolute.Expectations.Gap.Berk.5.GD ~ ECB_News_res_inf_0_GD + ECB_News_res_inf_1 + News.ECB.Count + German.Absolute.Expectations.Gap.Berk.5.GD.Lag1 + German.Inflation.Year.on.Year.Lag1, data)
+
+stargazer(fit1, fit2, fit3, fit4, fit5, type = "text", title = "GD - Berk 5", se = list(coeftest(fit1, vcov.=NeweyWest(fit1, lag=0, prewhite=TRUE, adjust=TRUE, verbose=TRUE))[,"Std. Error"],
+                                                                                        coeftest(fit2, vcov.=NeweyWest(fit2, lag=0, prewhite=TRUE, adjust=TRUE, verbose=TRUE))[,"Std. Error"],
+                                                                                        coeftest(fit3, vcov.=NeweyWest(fit3, lag=0, prewhite=TRUE, adjust=TRUE, verbose=TRUE))[,"Std. Error"],
+                                                                                        coeftest(fit4, vcov.=NeweyWest(fit4, lag=0, prewhite=TRUE, adjust=TRUE, verbose=TRUE))[,"Std. Error"],
+                                                                                        coeftest(fit5, vcov.=NeweyWest(fit5, lag=0, prewhite=TRUE, adjust=TRUE, verbose=TRUE))[,"Std. Error"]))
+
 
 ### ECB - Stm
 
@@ -103,6 +132,21 @@ stargazer(fit16, fit17, fit18, fit19, fit20, type = "text", title = "ECB - Stm",
                                                                                            coeftest(fit18, vcov.=NeweyWest(fit18, lag=0, prewhite=TRUE, adjust=TRUE, verbose=TRUE))[,"Std. Error"],
                                                                                            coeftest(fit19, vcov.=NeweyWest(fit19, lag=0, prewhite=TRUE, adjust=TRUE, verbose=TRUE))[,"Std. Error"],
                                                                                            coeftest(fit20, vcov.=NeweyWest(fit20, lag=0, prewhite=TRUE, adjust=TRUE, verbose=TRUE))[,"Std. Error"]))
+
+### ECB - Quant
+
+fit16 <- lm(German.ECB.Absolute.Expectations.Gap.Quant ~ ECB_News_res_inf_0_eu, data)
+fit17 <- lm(German.ECB.Absolute.Expectations.Gap.Quant ~ ECB_News_res_inf_0_eu + German.ECB.Absolute.Expectations.Gap.Quant.Lag1 + German.Inflation.Year.on.Year.Lag1, data)
+fit18 <- lm(German.ECB.Absolute.Expectations.Gap.Quant ~ ECB_News_res_inf_0_eu + ECB_News_res_inf_1 + German.ECB.Absolute.Expectations.Gap.Quant.Lag1 + German.Inflation.Year.on.Year.Lag1, data)
+fit19 <- lm(German.ECB.Absolute.Expectations.Gap.Quant ~ ECB_News_res_inf_0_eu + News.ECB.Count + German.ECB.Absolute.Expectations.Gap.Quant.Lag1 + German.Inflation.Year.on.Year.Lag1, data)
+fit20 <- lm(German.ECB.Absolute.Expectations.Gap.Quant ~ ECB_News_res_inf_0_eu + ECB_News_res_inf_1 + News.ECB.Count + German.ECB.Absolute.Expectations.Gap.Quant.Lag1 + German.Inflation.Year.on.Year.Lag1, data)
+
+stargazer(fit16, fit17, fit18, fit19, fit20, type = "text", title = "ECB - Quant", se = list(coeftest(fit16, vcov.=NeweyWest(fit16, lag=0, prewhite=TRUE, adjust=TRUE, verbose=TRUE))[,"Std. Error"],
+                                                                                           coeftest(fit17, vcov.=NeweyWest(fit17, lag=0, prewhite=TRUE, adjust=TRUE, verbose=TRUE))[,"Std. Error"],
+                                                                                           coeftest(fit18, vcov.=NeweyWest(fit18, lag=0, prewhite=TRUE, adjust=TRUE, verbose=TRUE))[,"Std. Error"],
+                                                                                           coeftest(fit19, vcov.=NeweyWest(fit19, lag=0, prewhite=TRUE, adjust=TRUE, verbose=TRUE))[,"Std. Error"],
+                                                                                           coeftest(fit20, vcov.=NeweyWest(fit20, lag=0, prewhite=TRUE, adjust=TRUE, verbose=TRUE))[,"Std. Error"]))
+
 
 ### ECB - Berk 1
 
@@ -126,7 +170,7 @@ fit28 <- lm(German.ECB.Absolute.Expectations.Gap.Berk.5 ~ ECB_News_res_inf_0_eu 
 fit29 <- lm(German.ECB.Absolute.Expectations.Gap.Berk.5 ~ ECB_News_res_inf_0_eu + News.ECB.Count + German.ECB.Absolute.Expectations.Gap.Berk.5.Lag1 + German.Inflation.Year.on.Year.Lag1, data)
 fit30 <- lm(German.ECB.Absolute.Expectations.Gap.Berk.5 ~ ECB_News_res_inf_0_eu + ECB_News_res_inf_1 + News.ECB.Count + German.ECB.Absolute.Expectations.Gap.Berk.5.Lag1 + German.Inflation.Year.on.Year.Lag1, data)
 
-stargazer(fit26, fit27, fit28, fit29, fit30, type = "text", title = "ECB - Berk 1", se = list(coeftest(fit26, vcov.=NeweyWest(fit26, lag=0, prewhite=TRUE, adjust=TRUE, verbose=TRUE))[,"Std. Error"],
+stargazer(fit26, fit27, fit28, fit29, fit30, type = "text", title = "ECB - Berk 5", se = list(coeftest(fit26, vcov.=NeweyWest(fit26, lag=0, prewhite=TRUE, adjust=TRUE, verbose=TRUE))[,"Std. Error"],
                                                                                               coeftest(fit27, vcov.=NeweyWest(fit27, lag=0, prewhite=TRUE, adjust=TRUE, verbose=TRUE))[,"Std. Error"],
                                                                                               coeftest(fit28, vcov.=NeweyWest(fit28, lag=0, prewhite=TRUE, adjust=TRUE, verbose=TRUE))[,"Std. Error"],
                                                                                               coeftest(fit29, vcov.=NeweyWest(fit29, lag=0, prewhite=TRUE, adjust=TRUE, verbose=TRUE))[,"Std. Error"],

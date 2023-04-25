@@ -9,8 +9,8 @@ library("ggplot2")
 
 #####################################################################################
 
-data = read_excel('D:/Studium/PhD/Github/Single-Author/Code/Regression/Regession_data_monthly_2_processed.xlsx')
-#data = read_excel('D:/Single Author/Github/Single-Author/Data/Regression/Regession_data_monthly_2_processed.xlsx')
+#data = read_excel('D:/Studium/PhD/Github/Single-Author/Code/Regression/Regession_data_monthly_2_processed.xlsx')
+data = read_excel('D:/Single Author/Github/Single-Author/Data/Regression/Regession_data_monthly_2_processed.xlsx')
 data = data.frame(data)
 #data = data[9:dim(data)[1],]
 #data = data[9:dim(data)[1],]
@@ -197,12 +197,13 @@ ggplot(data, aes(x = time)) +
   geom_line(aes(y = German.Household.Inflation.Expectations.Role, colour = "Role", linetype = "Role")) +
   geom_line(aes(y = Eurozone.Inflation.Professionell.Forecasts, colour = "ECB", linetype = "ECB")) +
   geom_line(aes(y = German.Household.Inflation.Expectations.Berk.5, colour = "Berk.5", linetype = "Berk.5")) +
+  geom_line(aes(y = German.Household.Inflation.Expectations.Berk.1, colour = "Berk.1", linetype = "Berk.1")) +
   geom_line(aes(y = German.Household.Inflation.Expectations.Stm, colour = "Stm", linetype = "Stm")) +
   #geom_line(aes(y = German.Household.Inflation.Expectations.EU.Median-3, colour = "EU Median", linetype = "EU Median")) +
   geom_line(aes(y = German.Inflation.Year.on.Year, colour = "Germany Inflation", linetype = "Germany Inflation"), size = 1) +
   scale_x_date(date_labels="%Y", breaks = unique(years), name = "") +
-  scale_color_manual("Legend", values = c("Role" = "red", "ECB" = "blue", "Berk.5" = "black", "Stm" = "darkgreen", "Germany Inflation" = "darkorange", "EU Median" = "violet")) +
-  scale_linetype_manual("Legend", values = c("Role" = 1, "ECB" = 1, "Berk.5" = 1, "Stm" = 1, "EU Median" = 1, "Germany Inflation" = 3)) +
+  scale_color_manual("Legend", values = c("Role" = "red", "ECB" = "blue", "Berk.5" = "black", "Berk.1" = "darkred","Stm" = "darkgreen", "EU Median" = "violet", "Germany Inflation" = "darkorange")) +
+  scale_linetype_manual("Legend", values = c("Role" = 1, "ECB" = 1, "Berk.5" = 1, "Berk.1" = 1, "Stm" = 1, "EU Median" = 1, "Germany Inflation" = 3)) +
   theme_classic() + 
   theme(axis.text.x = element_text(angle = 45, vjust = 0.5, size = 11),
         panel.grid.minor = element_blank(),
