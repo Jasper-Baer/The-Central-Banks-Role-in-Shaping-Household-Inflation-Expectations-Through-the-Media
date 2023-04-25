@@ -8,11 +8,13 @@ Must do:
 - Add figures of sentiment and direction to figure 1
 
 - Results (vorläufig):
-Ergebnisse für ECB (Stm, Rolling, Berk 1 und Berk5)
-Ergebnisse für GD und RWI (Stm, Rolling, Berk 1 und Berk5)
-+ Ergebnisse für residuen auf jeweiligen (GD, STM , ECB)
-Plots für Stm, Rolling, Berk 1 und Berk5
-Plots für Absolute Errors (RWI, GD und ECB mit Stm und Berk1)
+Ergebnisse für ECB (Stm, Rolling, Berk 1 und Berk5) - fertig
+Ergebnisse für GD und RWI (Stm, Rolling, Berk 1 und Berk5) - fertig
++ Ergebnisse für residuen auf jeweiligen (GD, STM , ECB) - fertig
+Plots für Stm, Rolling, Berk 1 und Berk5 - fertig
+Plots für Absolute Errors (RWI, GD und ECB mit Stm und Berk5) - fertig
+Compare Bundesbank Inf Exp with my Quantifications
+Tabellen erstellen und einfügen?
 
 # Run all for new results
 - Lamala 2014 reproduce results for regression
