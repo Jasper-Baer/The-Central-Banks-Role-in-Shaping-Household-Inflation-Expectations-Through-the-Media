@@ -9,38 +9,38 @@ library("ggplot2")
 
 #####################################################################################
 
-data = read_excel('D:/Studium/PhD/Github/Single-Author/Code/Regression/Regession_data_monthly_2_processed.xlsx')
-#data = read_excel('D:/Single Author/Github/Single-Author/Data/Regression/Regession_data_monthly_2_processed.xlsx')
+#data = read_excel('D:/Studium/PhD/Github/Single-Author/Code/Regression/Regession_data_monthly_2_processed.xlsx')
+data = read_excel('D:/Single Author/Github/Single-Author/Data/Regression/Regession_data_monthly_2_processed.xlsx')
 data = data.frame(data)
 #data = data[24:dim(data)[1],]
 #data = data[9:dim(data)[1],]
 
 data$time = as.Date(strptime(data$time, "%Y-%m-%d"))
 #years = as.Date(strptime(c(2002:2019), '%Y'))
-years = as.Date(strptime(c(2002:2019), '%Y'))
+years = as.Date(strptime(c(2003:2019), '%Y'))
 
 ###############################################
 # Plots Paper
 ###############################################
 
 recessions <- data.frame(
-  start = as.Date(c("2002-01-01",  "2008-03-01", "2011-07-01", "2017-12-01")),
+  start = as.Date(c("2003-01-01",  "2008-03-01", "2011-07-01", "2017-12-01")),
   end = as.Date(c("2005-02-28", "2009-06-30", "2015-05-30","2019-01-01")) # "2020-05-30"
 )
 
 ##### Inflation Count
 
-coeff = max(data$News.Inflation.Count)/max(data$German.Inflation.Year.on.Year)*0.8
+coeff = max(data$News.Inflation.Count)/max(data$German.Inflation.Year.on.Year.Harmonised)*0.8
 
 ggplot(data, aes(x = time)) + 
   geom_rect(data = recessions, aes(xmin = start, xmax = end, ymin = -Inf, ymax = Inf),
             inherit.aes = FALSE, fill = "grey", alpha = 0.5) +
   #geom_line(aes(y = News.Inflation.Count.role/coeff), colour="blue", linetype = 1) +
   geom_bar(aes(y = News.Inflation.Count.role / coeff), stat = "identity", fill = "blue", width = 10) +
-  geom_line(aes(y = German.Inflation.Year.on.Year), colour="red", linetype = 2, size = 0.75) +
+  geom_line(aes(y = German.Inflation.Year.on.Year.Harmonised), colour="red", linetype = 2, size = 0.75) +
   geom_hline(yintercept = 0) + 
-  scale_y_continuous(name = "German Inflation", sec.axis = sec_axis(~.*coeff*1000, name = "Inflation News Coverage*10^(-3)")) +
-  scale_x_date(date_labels="%Y", breaks = seq(as.Date("2002-01-01"), max(data$time), by = "1 year"), name = "", limits = c(min(data$time), max(data$time))) +
+  scale_y_continuous(name = "Germany HCPI", sec.axis = sec_axis(~.*coeff*1000, name = "Inflation News Coverage*10^(-3)")) +
+  scale_x_date(date_labels="%Y", breaks = seq(as.Date("2003-01-01"), max(data$time), by = "1 year"), name = "", limits = c(min(data$time), max(data$time))) +
   theme_classic() + 
   theme(axis.text.y.left = element_text(color = "red"),
         axis.text.y.right = element_text(color = "blue"),
@@ -52,15 +52,15 @@ ggplot(data, aes(x = time)) +
 
 ##### INI
 
-coeff = max(data$News.Inflation.Index)/max(data$German.Inflation.Year.on.Year)*3
+coeff = max(data$News.Inflation.Index.role*-1)/max(data$German.Inflation.Year.on.Year)
 
 ggplot(data, aes(x = time)) + 
   geom_rect(data = recessions, aes(xmin = start, xmax = end, ymin = -Inf, ymax = Inf),
             inherit.aes = FALSE, fill = "grey", alpha = 0.5) +
-  geom_line(aes(y = News.Inflation.Index.role/coeff*-1 + 0.005/coeff), colour="blue", linetype = 1) +
+  geom_line(aes(y = News.Inflation.Index.role*-1/coeff + 0.000/coeff), colour="blue", linetype = 1) +
   geom_line(aes(y = German.Inflation.Year.on.Year), colour="red", linetype = 2) +
   geom_hline(yintercept = 0) + 
-  scale_y_continuous(name = "German Inflation", sec.axis = sec_axis(~.*coeff, name = "Inflation News Index")) +
+  scale_y_continuous(name = "Germany HCPI", sec.axis = sec_axis(~.*coeff - 0.000*coeff, name = "Inflation News Index")) +
   scale_x_date(date_labels="%Y", breaks = seq(as.Date("2000-01-01"), max(data$time), by = "1 year"), name = "", limits = c(min(data$time), max(data$time))) +
   theme_classic() + 
   theme(axis.text.y.left = element_text(color = "red"),
@@ -73,7 +73,7 @@ ggplot(data, aes(x = time)) +
 
 ##### Inflation Direction
 
-coeff = max(data$News.Inflation.Direction.Index)/max(data$German.Inflation.Year.on.Year)*1.1
+coeff = max(data$News.Inflation.Direction.Index.role)/max(data$German.Inflation.Year.on.Year)
 
 ggplot(data, aes(x = time)) + 
   geom_rect(data = recessions, aes(xmin = start, xmax = end, ymin = -Inf, ymax = Inf),
@@ -81,7 +81,7 @@ ggplot(data, aes(x = time)) +
   geom_line(aes(y = News.Inflation.Direction.Index.role/coeff), colour="blue", linetype = 1) +
   geom_line(aes(y = German.Inflation.Year.on.Year), colour="red", linetype = 2) +
   geom_hline(yintercept = 0) + 
-  scale_y_continuous(name = "German Inflation", sec.axis = sec_axis(~.*coeff, name = "News Direction Index")) +
+  scale_y_continuous(name = "Germany HCPI", sec.axis = sec_axis(~.*coeff, name = "News Direction Index")) +
   scale_x_date(date_labels="%Y", breaks = seq(as.Date("2000-01-01"), max(data$time), by = "1 year"), name = "", limits = c(min(data$time), max(data$time))) +
   theme_classic() + 
   theme(axis.text.y.left = element_text(color = "red"),
@@ -94,15 +94,15 @@ ggplot(data, aes(x = time)) +
 
 ##### Inflation Sentiment
 
-coeff = max(data$News.Inflation.Sentiment.Index)/max(data$German.Inflation.Year.on.Year)*0.8
+coeff = max(data$News.Inflation.Sentiment.Index.role*-1)/max(data$German.Inflation.Year.on.Year)*0.5
 
 ggplot(data, aes(x = time)) + 
   geom_rect(data = recessions, aes(xmin = start, xmax = end, ymin = -Inf, ymax = Inf),
             inherit.aes = FALSE, fill = "grey", alpha = 0.3) +
-  geom_line(aes(y = News.Inflation.Sentiment.Index.role/coeff+0.12/coeff), colour="blue", linetype = 1) +
+  geom_line(aes(y = News.Inflation.Sentiment.Index.role*-1/coeff-0.10/coeff), colour="blue", linetype = 1) +
   geom_line(aes(y = German.Inflation.Year.on.Year), colour="red", linetype = 2) +
   geom_hline(yintercept = 0) + 
-  scale_y_continuous(name = "German Inflation", sec.axis = sec_axis(~.*coeff-0.12/coeff, name = "News Sentiment Index")) +
+  scale_y_continuous(name = "Germany HCPI", sec.axis = sec_axis(~.*coeff + 0.1, name = "News Sentiment Index")) +
   scale_x_date(date_labels="%Y", breaks = seq(as.Date("2000-01-01"), max(data$time), by = "1 year"), name = "", limits = c(min(data$time), max(data$time))) +
   theme_classic() + 
   theme(axis.text.y.left = element_text(color = "red"),
@@ -117,12 +117,12 @@ ggplot(data, aes(x = time)) +
 
 # Ini und ECB Index
 
-coeff = max(data$News.Inflation.Index)/max(data$ECB.Inflation.Index)*3
+coeff = max(data$News.Inflation.Index.role*-1)/max(data$ECB.Inflation.Index.role)
 
 ggplot(data, aes(x = time)) + 
   geom_rect(data = recessions, aes(xmin = start, xmax = end, ymin = -Inf, ymax = Inf),
             inherit.aes = FALSE, fill = "grey", alpha = 0.5) +
-  geom_line(aes(y = News.Inflation.Index.role*-1/coeff - 0.01/coeff), colour="blue", linetype = 1) +
+  geom_line(aes(y = News.Inflation.Index.role*-1/coeff - 0.00/coeff), colour="blue", linetype = 1) +
   geom_line(aes(y = ECB.Inflation.Index.role), colour="red", linetype = 2) +
   geom_hline(yintercept = 0) + 
   scale_y_continuous(name = "ECB Inflation Index", sec.axis = sec_axis(~.*coeff, name = "News Inflation Index")) +
@@ -149,14 +149,14 @@ cor(data$ECB.Inflation.Index, data$Eurozone.Inflation, method = c("pearson"))
 
 ##### ECB Inflation Index
 
-coeff = max(data$ECB.Inflation.Index)/max(data$Eurozone.Inflation) * 0.9
+coeff = max(data$ECB.Inflation.Index.role)/max(data$Eurozone.Inflation) 
 
 ggplot(data, aes(x = time)) + 
   geom_hline(yintercept = 0) + 
   geom_line(aes(y = (ECB.Inflation.Index.role)/coeff+0.00/coeff), colour="blue", linetype = 1) +
-  #geom_line(aes(y = Eurozone.Inflation), colour="red", linetype = 2) +
+  geom_line(aes(y = Eurozone.Inflation), colour="red", linetype = 2) +
   geom_line(aes(y = German.Inflation.Year.on.Year), colour="darkorange", linetype = 2) +
-  scale_y_continuous(name = "German Inflation", sec.axis = sec_axis(~.*coeff+0.04, name = "ECB Inflation Index")) +
+  scale_y_continuous(name = "Inflation", sec.axis = sec_axis(~.*coeff+0.00, name = "ECB Inflation Index")) +
   scale_x_date(date_labels="%Y", breaks = unique(years), name = "") +
   theme_classic() + 
   theme(axis.text.y.left = element_text(color = "red"),
@@ -167,14 +167,42 @@ ggplot(data, aes(x = time)) +
         panel.grid.minor = element_blank(),
         panel.grid.major = element_blank()) 
 
+coeff = max(data$ECB.Inflation.Index.role)/max(data$Eurozone.Inflation) 
+
+ggplot(data, aes(x = time)) + 
+  geom_hline(yintercept = 0) + 
+  geom_line(aes(y = (ECB.Inflation.Index.role)/coeff+0.00/coeff, color="ECB Inflation Index"), linetype = 1) +
+  geom_line(aes(y = Eurozone.Inflation, color="Eurozone Inflation"), linetype = 2) +
+  geom_line(aes(y = German.Inflation.Year.on.Year, color="German Inflation"), linetype = 2) +
+  scale_y_continuous(name = "Inflation", sec.axis = sec_axis(~.*coeff+0.00, name = "ECB Inflation Index")) +
+  scale_x_date(date_labels="%Y", breaks = unique(years), name = "") +
+  scale_color_manual(values=c("ECB Inflation Index"="blue", "Eurozone Inflation"="red", "German Inflation"="darkorange"),
+                     name="Legend",
+                     labels=c("ECB Inflation Index", "Eurozone Inflation", "German Inflation")) +
+  theme_classic() + 
+  theme(axis.text.y.left = element_text(color = "red"),
+        axis.text.y.right = element_text(color = "blue"),
+        axis.title.y = element_text(color = "red"),
+        axis.title.y.right = element_text(color = "blue", vjust = 2),
+        axis.text.x = element_text(angle = 45, vjust = 0.5, size = 11),
+        panel.grid.minor = element_blank(),
+        panel.grid.major = element_blank(),
+        legend.position = c(0.98, 0.98),
+        legend.justification = c("right", "top"),
+        legend.box.just = "right",
+        legend.margin = margin(6, 6, 6, 6),
+        legend.box.background = element_rect(color = "white", size = 0.5, linetype = "solid"),
+        legend.text = element_text(size = 10)) +
+  guides(color = guide_legend(nrow = 1, byrow = TRUE, title = NULL))
+
 ##### ECB Lambda
 
-coeff = max(data$News.ECB.Count)/max(data$German.Inflation.Year.on.Year)
+coeff = max(data$News.ECB.Count.role)/max(data$German.Inflation.Year.on.Year)
 
 ggplot(data, aes(x = time)) + 
   geom_rect(data = recessions, aes(xmin = start, xmax = end, ymin = -Inf, ymax = Inf),
             inherit.aes = FALSE, fill = "grey", alpha = 0.3) +
-  geom_line(aes(y = News.ECB.Count.role/coeff+0.0/coeff), colour="blue", linetype = 1) +
+  geom_bar(aes(y = News.ECB.Count.role/coeff+0.0/coeff), stat = "identity", fill = "blue", width = 10) +
   geom_line(aes(y = German.Inflation.Year.on.Year), colour="red", linetype = 2) +
   geom_hline(yintercept = 0) + 
   scale_y_continuous(name = "German Inflation", sec.axis = sec_axis(~.*coeff-0.0, name = "ECB Lambda")) +
@@ -190,10 +218,6 @@ ggplot(data, aes(x = time)) +
 
 ########################################################################
 
-#coeff = 1
-
-#data$German.Household.Inflation.Expectations[is.na(data$German.Household.Inflation.Expectations)] <- 0
-
 coeff = max(data$German.Household.Inflation.Expectations.EU.Median, na.rm = TRUE)/max(data$German.Household.Inflation.Expectations.Stm)
 
 ggplot(data, aes(x = time)) + 
@@ -202,11 +226,36 @@ ggplot(data, aes(x = time)) +
   geom_line(aes(y = German.Household.Inflation.Expectations.Berk.5, colour = "Berk.5", linetype = "Berk.5")) +
   geom_line(aes(y = German.Household.Inflation.Expectations.Berk.1, colour = "Berk.1", linetype = "Berk.1")) +
   geom_line(aes(y = German.Household.Inflation.Expectations.Stm, colour = "Stm", linetype = "Stm")) +
-  geom_line(aes(y = German.Household.Inflation.Expectations.EU.Median/coeff, colour = "EU Median (scaled)", linetype = "EU Median (scaled)")) +
-  geom_line(aes(y = German.Inflation.Year.on.Year, colour = "Germany Inflation", linetype = "Germany Inflation"), size = 1) +
+  geom_line(aes(y = German.Household.Inflation.Expectations.EU.Median/coeff, colour = "EU Median (Scaled Stm)", linetype = "EU Median (Scaled Stm)")) +
+  geom_line(aes(y = German.Inflation.Year.on.Year, colour = "Germany Inflation", linetype = "Germany Inflation"), linewidth = 1) +
   scale_x_date(date_labels="%Y", breaks = unique(years), name = "") +
-  scale_color_manual(values = c("Role" = "red", "ECB" = "blue", "Berk.5" = "black", "Berk.1" = "darkred","Stm" = "darkgreen", "EU Median (scaled)" = "violet", "Germany Inflation" = "darkorange")) +
-  scale_linetype_manual(values = c("Role" = 1, "ECB" = 1, "Berk.5" = 1, "Berk.1" = 1, "Stm" = 1, "EU Median (scaled)" = 1, "Germany Inflation" = 3)) +
+  scale_color_manual(values = c("Role" = "red", "ECB" = "blue", "Berk.5" = "black", "Berk.1" = "darkred","Stm" = "darkgreen", "EU Median (Scaled Stm)" = "violet", "Germany Inflation" = "darkorange")) +
+  scale_linetype_manual(values = c("Role" = 1, "ECB" = 1, "Berk.5" = 1, "Berk.1" = 1, "Stm" = 1, "EU Median (Scaled Stm)" = 1, "Germany Inflation" = 3)) +
+  theme_classic() + 
+  theme(axis.text.x = element_text(angle = 45, vjust = 0.5, size = 11),
+        panel.grid.minor = element_blank(),
+        panel.grid.major = element_blank(),
+        legend.position = c(0.98, 0.98),
+        legend.justification = c("right", "top"),
+        legend.box.just = "right",
+        legend.margin = margin(6, 6, 6, 6),
+        legend.box.background = element_rect(color = "white", size = 0.5, linetype = "solid"),
+        legend.text = element_text(size = 10)) +
+  guides(color = guide_legend(nrow = 2, byrow = TRUE, title = NULL), linetype = guide_legend(nrow = 2, byrow = TRUE, title = NULL))
+
+########################################################################
+
+ggplot(data, aes(x = time)) + 
+  labs(y = "Inflation Expectation") +
+  geom_line(aes(y = Germany.Inflation.Professionell.Forecasts.GD, colour = "GD", linetype = "GD")) +
+  geom_line(aes(y = Germany.Inflation.Professionell.Forecasts.RWI, colour = "RWI", linetype = "RWI")) +
+  geom_line(aes(y = Eurozone.Inflation.Professionell.Forecasts, colour = "ECB Survey", linetype = "ECB Survey")) +
+  geom_line(aes(y = German.Inflation.Year.on.Year.Harmonised, colour = "Germany Inflation", linetype = "Germany Inflation"), linewidth = 1) +
+  geom_line(aes(y = German.Household.Inflation.Expectations.Stm, colour = "Stm", linetype = "Stm"), linewidth = 1) +
+ #geom_line(aes(y = Eurozone.Inflation, colour = "Eurozone Inflation", linetype = "Eurozone Inflation"), linewidth = 1) +
+  scale_x_date(date_labels="%Y", breaks = unique(years), name = "") +
+  scale_color_manual(values = c("GD" = "red", "RWI" = "blue", "ECB Survey" = "black", "Germany Inflation" = "darkorange", "Stm" = "darkred", "Eurozone Inflation" = "green")) +
+  scale_linetype_manual(values = c("GD" = 1, "RWI" = 1, "ECB Survey" = 1, "Germany Inflation" = 3, "Stm" = 3,  "Eurozone Inflation" = 2)) +
   theme_classic() + 
   theme(axis.text.x = element_text(angle = 45, vjust = 0.5, size = 11),
         panel.grid.minor = element_blank(),
@@ -241,7 +290,14 @@ ggplot(data, aes(x = time)) +
         axis.title.y.right = element_text(color = "blue", vjust = 2),
         axis.text.x = element_text(angle = 45, vjust = 0.5, size = 11),
         panel.grid.minor = element_blank(),
-        panel.grid.major = element_blank())
+        panel.grid.major = element_blank(),
+        legend.position = c(0.98, 0.98),
+        legend.justification = c("right", "top"),
+        legend.box.just = "right",
+        legend.margin = margin(6, 6, 6, 6),
+        legend.box.background = element_rect(color = "white", size = 0.5, linetype = "solid"),
+        legend.text = element_text(size = 10)) +
+  guides(color = guide_legend(nrow = 1, byrow = TRUE, title = NULL))
 
 ##### Residuals - GD
 
@@ -265,7 +321,14 @@ ggplot(data, aes(x = time)) +
         axis.title.y.right = element_text(color = "blue", vjust = 2),
         axis.text.x = element_text(angle = 45, vjust = 0.5, size = 11),
         panel.grid.minor = element_blank(),
-        panel.grid.major = element_blank())
+        panel.grid.major = element_blank(),
+        legend.position = c(0.98, 0.98),
+        legend.justification = c("right", "top"),
+        legend.box.just = "right",
+        legend.margin = margin(6, 6, 6, 6),
+        legend.box.background = element_rect(color = "white", size = 0.5, linetype = "solid"),
+        legend.text = element_text(size = 10)) +
+  guides(color = guide_legend(nrow = 1, byrow = TRUE, title = NULL))
 
 ##### Residuals - RWI
 
@@ -347,7 +410,7 @@ ggplot(data, aes(x = time)) +
   geom_hline(yintercept = 0) + 
   geom_line(aes(y = ECB_News_res_inf_0_eu.role/coeff+0/coeff), colour="blue", linetype = 1) +
   geom_line(aes(y = German.ECB.Absolute.Expectations.Gap.Stm.role), colour="red", linetype = 2) +
-  scale_y_continuous(name = "Absolute Expectation Gap", sec.axis = sec_axis(~.*coeff-0.0, name = "News ECB Count")) +
+  scale_y_continuous(name = "Absolute Expectation Gap (EU - Stm)", sec.axis = sec_axis(~.*coeff-0.0, name = "News Coverage Residuals")) +
   scale_x_date(date_labels="%Y", breaks = unique(years), name = "") +
   theme_classic() + 
   theme(axis.text.y.left = element_text(color = "red"),
@@ -360,13 +423,51 @@ ggplot(data, aes(x = time)) +
 
 ###################
 
-coeff = max(data$ECB_News_res_inf_2_eu)/max(data$German.ECB.Absolute.Expectations.Gap.Stm)
+coeff = max(data$ECB_News_res_inf_1.role)/max(data$German.ECB.Absolute.Expectations.Gap.Stm.role)
+
+ggplot(data, aes(x = time)) + 
+  geom_hline(yintercept = 0) + 
+  geom_line(aes(y = ECB_News_res_inf_1.role/coeff+0/coeff), colour="blue", linetype = 1) +
+  geom_line(aes(y = German.ECB.Absolute.Expectations.Gap.Stm.role), colour="red", linetype = 2) +
+  scale_y_continuous(name = "Absolute Expectation Gap (EU - Stm)", sec.axis = sec_axis(~.*coeff-0.0, name = "News Index Residuals")) +
+  scale_x_date(date_labels="%Y", breaks = unique(years), name = "") +
+  theme_classic() + 
+  theme(axis.text.y.left = element_text(color = "red"),
+        axis.text.y.right = element_text(color = "blue"),
+        axis.title.y = element_text(color = "red"),
+        axis.title.y.right = element_text(color = "blue", vjust = 2),
+        axis.text.x = element_text(angle = 45, vjust = 0.5, size = 11),
+        panel.grid.minor = element_blank(),
+        panel.grid.major = element_blank()) 
+
+data = data[36:dim(data)[1],]
+
+coeff = max(data$ECB_News_res_inf_1.role)/max(data$German.ECB.Absolute.Expectations.Gap.Role.role)
+
+ggplot(data, aes(x = time)) + 
+  geom_hline(yintercept = 0) + 
+  geom_line(aes(y = ECB_News_res_inf_1.role/coeff+0/coeff), colour="blue", linetype = 1) +
+  geom_line(aes(y = German.ECB.Absolute.Expectations.Gap.Berk.5.role), colour="red", linetype = 2) +
+  scale_y_continuous(name = "Absolute Expectation Gap (EU - Stm)", sec.axis = sec_axis(~.*coeff-0.0, name = "News Index Residuals")) +
+  scale_x_date(date_labels="%Y", breaks = unique(years), name = "") +
+  theme_classic() + 
+  theme(axis.text.y.left = element_text(color = "red"),
+        axis.text.y.right = element_text(color = "blue"),
+        axis.title.y = element_text(color = "red"),
+        axis.title.y.right = element_text(color = "blue", vjust = 2),
+        axis.text.x = element_text(angle = 45, vjust = 0.5, size = 11),
+        panel.grid.minor = element_blank(),
+        panel.grid.major = element_blank()) 
+
+###################
+
+coeff = max(data$ECB_News_res_inf_2_eu.role)/max(data$German.ECB.Absolute.Expectations.Gap.Stm.role)
 
 ggplot(data, aes(x = time)) + 
   geom_hline(yintercept = 0) + 
   geom_line(aes(y = ECB_News_res_inf_2_eu.role/coeff+0/coeff), colour="blue", linetype = 1) +
   geom_line(aes(y = German.ECB.Absolute.Expectations.Gap.Stm.role), colour="red", linetype = 2) +
-  scale_y_continuous(name = "Absolute Expectation Gap", sec.axis = sec_axis(~.*coeff-0.0, name = "News ECB Count")) +
+  scale_y_continuous(name = "Absolute Expectation Gap (EU - Stm)", sec.axis = sec_axis(~.*coeff-0.0, name = "News Index Residuals")) +
   scale_x_date(date_labels="%Y", breaks = unique(years), name = "") +
   theme_classic() + 
   theme(axis.text.y.left = element_text(color = "red"),

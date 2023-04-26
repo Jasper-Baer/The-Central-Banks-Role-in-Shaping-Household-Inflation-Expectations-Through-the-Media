@@ -11,8 +11,8 @@ library("writexl")
 
 #####################################################################################
 
-data = read_excel('D:/Studium/PhD/Github/Single-Author/Data/Regression/regression_data_monthly_2.xlsx')
-#data = read_excel('D:/Single Author/Github/Single-Author/Data/Regression/regression_data_monthly_2.xlsx')
+#data = read_excel('D:/Studium/PhD/Github/Single-Author/Data/Regression/regression_data_monthly_2.xlsx')
+data = read_excel('D:/Single Author/Github/Single-Author/Data/Regression/regression_data_monthly_2.xlsx')
 data = data.frame(data)
 
 #data = data[9:dim(data)[1],]
@@ -21,7 +21,8 @@ data = data[21:dim(data)[1],]
 data1 = data %>% select(Eurozone.Industrial.Production,
                         Eurozone.Inflation, 
                         German.Industrial.Production, 
-                        German.Inflation.Year.on.Year, 
+                        German.Inflation.Year.on.Year,
+                        German.Inflation.Year.on.Year.Harmonised, 
                         ECB.DFR,
                         News.Inflation.Index, 
                         News.Inflation.Sentiment.Index, 
@@ -87,7 +88,7 @@ data1 = data %>% select(Eurozone.Industrial.Production,
 stand_ECB = scale(data$ECB.Inflation.Index)
 stand_news = scale(data$News.Inflation.Index)
 
-fit = lm(ECB.Inflation.Index ~ News.Inflation.Index, data1)
+fit = lm(ECB.Inflation.Index ~ News.Inflation.Index*-1, data1)
 ECB_News_res_inf_1 = fit$residuals
 
 #ECB_News_res_inf_1 = stand_ECB - stand_news
@@ -181,5 +182,5 @@ data1 = data1[step:dim(data1)[1],]
 
 data1$time = as.Date(strptime(data1$time, "%Y-%m-%d"))
 
-write_xlsx(data1, 'D:/Studium/PhD/Github/Single-Author/Code/Regression/Regession_data_monthly_2_processed.xlsx')
-#write_xlsx(data1, 'D:/Single Author/Github/Single-Author/Data/Regression/Regession_data_monthly_2_processed.xlsx')
+#write_xlsx(data1, 'D:/Studium/PhD/Github/Single-Author/Code/Regression/Regession_data_monthly_2_processed.xlsx')
+write_xlsx(data1, 'D:/Single Author/Github/Single-Author/Data/Regression/Regession_data_monthly_2_processed.xlsx')

@@ -14,8 +14,8 @@ import os
 from dateutil.relativedelta import relativedelta
 
 warnings.simplefilter(action='ignore', category=FutureWarning)
-PATH = r"D:\Studium\PhD\Github\Single-Author\Code\Plots"
-#PATH = r"D:\Single Author\Github\Single-Author\Code\Plots"
+#PATH = r"D:\Studium\PhD\Github\Single-Author\Code\Plots"
+PATH = r"D:\Single Author\Github\Single-Author\Code\Plots"
 os.chdir(PATH)
 
 from Data_Prep_Supp import transform_date, scale_ECB_index, rolling_quant
@@ -33,8 +33,8 @@ start_date_hist = '1995-12-31'
 # Inflation
 ##############################################################################
 
-PATH = r'D:\Studium\PhD\Github\Single-Author\Data\Regression'
-#PATH = r'D:\Single Author\Github\Single-Author\Data\Regression'
+#PATH = r'D:\Studium\PhD\Github\Single-Author\Data\Regression'
+PATH = r'D:\Single Author\Github\Single-Author\Data\Regression'
 
 #inflation_ger_q = pd.read_excel(PATH + '\Consumer Price IndexAll Items Total Total for Germany.xls')[10:]
 #inflation_ger_m = pd.read_excel(PATH + '\Germany_harmonized_inflation.xls')[10:]
@@ -79,6 +79,8 @@ RWI_inflation_m = pd.concat([zero_series, RWI_inflation_m])
 inflation_ger_qoq = pd.read_excel(PATH + '\Germany_Inflation_qoq.xls')[10:]
 inflation_ger_y = pd.read_excel(PATH + '\Germany CPI Yearly.xls')[10:]
 ecb_dfr = pd.read_excel(PATH + '\ECBDFR.xls')[10:]
+
+germany_harmonised_inflation_m = pd.read_excel(PATH + '\Germany_Harmonised_Inflation.xls')[10:]
 
 fred_monthly = pd.read_excel(PATH + '\Fred_data_monthly.xlsx')[10:]
 ip_ger_m = fred_monthly.iloc[:,0:2]
@@ -150,7 +152,7 @@ scaling = rolling_quant(
  inf_exp_miss, 
  inf_per_miss,
  inflation_ger_m,
- 5)
+ 9)
 
 scaling = scaling.loc[(scaling['date'] >= start_date) & (scaling['date'] <= end_date)]
 
@@ -172,6 +174,11 @@ inflation_ger_m.iloc[:,1] = pd.to_numeric(inflation_ger_m.iloc[:,1])
 mean_inflation = inflation_ger_m.mean()
 
 ###############################################################################
+
+germany_harmonised_inflation_m = transform_date(germany_harmonised_inflation_m)
+
+germany_harmonised_inflation_m = germany_harmonised_inflation_m.loc[(germany_harmonised_inflation_m.index >= start_date) & (germany_harmonised_inflation_m.index <= end_date)]
+germany_harmonised_inflation_m.iloc[:,1] = pd.to_numeric(germany_harmonised_inflation_m.iloc[:,1])
 
 ###
 
@@ -423,6 +430,7 @@ Regression_data_m['Eurozone Industrial Production'] = ip_ea_m.iloc[:,1]
 Regression_data_m['Eurozone Inflation'] = list(inflation_ea_m.iloc[:,1])
 Regression_data_m['German Industrial Production'] = ip_ger_m.iloc[:,1]
 Regression_data_m['German Inflation Year-on-Year'] = list(inflation_ger_m.iloc[:,1])
+Regression_data_m['German Inflation Year-on-Year Harmonised'] = list(germany_harmonised_inflation_m.iloc[:,1])
 Regression_data_m['ECB DFR'] = list(ecb_dfr.iloc[:,1])
 Regression_data_m['News Inflation Index'] = list(dire_senti.iloc[:,1])
 Regression_data_m['News Inflation Sentiment Index'] = list(sent.iloc[:,1])
