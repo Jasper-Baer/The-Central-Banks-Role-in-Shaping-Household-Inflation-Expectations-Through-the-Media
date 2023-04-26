@@ -9,8 +9,8 @@ library("ggplot2")
 
 #####################################################################################
 
-#data = read_excel('D:/Studium/PhD/Github/Single-Author/Code/Regression/Regession_data_monthly_2_processed.xlsx')
-data = read_excel('D:/Single Author/Github/Single-Author/Data/Regression/Regession_data_monthly_2_processed.xlsx')
+data = read_excel('D:/Studium/PhD/Github/Single-Author/Code/Regression/Regession_data_monthly_2_processed.xlsx')
+#data = read_excel('D:/Single Author/Github/Single-Author/Data/Regression/Regession_data_monthly_2_processed.xlsx')
 data = data.frame(data)
 #data = data[24:dim(data)[1],]
 #data = data[9:dim(data)[1],]
@@ -251,7 +251,7 @@ ggplot(data, aes(x = time)) +
   geom_line(aes(y = Germany.Inflation.Professionell.Forecasts.RWI, colour = "RWI", linetype = "RWI")) +
   geom_line(aes(y = Eurozone.Inflation.Professionell.Forecasts, colour = "ECB Survey", linetype = "ECB Survey")) +
   geom_line(aes(y = German.Inflation.Year.on.Year.Harmonised, colour = "Germany Inflation", linetype = "Germany Inflation"), linewidth = 1) +
-  geom_line(aes(y = German.Household.Inflation.Expectations.Stm, colour = "Stm", linetype = "Stm"), linewidth = 1) +
+  #geom_line(aes(y = German.Household.Inflation.Expectations.Stm, colour = "Stm", linetype = "Stm"), linewidth = 1) +
  #geom_line(aes(y = Eurozone.Inflation, colour = "Eurozone Inflation", linetype = "Eurozone Inflation"), linewidth = 1) +
   scale_x_date(date_labels="%Y", breaks = unique(years), name = "") +
   scale_color_manual(values = c("GD" = "red", "RWI" = "blue", "ECB Survey" = "black", "Germany Inflation" = "darkorange", "Stm" = "darkred", "Eurozone Inflation" = "green")) +
@@ -270,8 +270,8 @@ ggplot(data, aes(x = time)) +
 
 ##### Residuals - EU
 
-coeff_1 = max(data$ECB_News_res_inf_1)/max(ECB_News_res_inf_0_eu)
-coeff_2 = max(data$ECB_News_res_inf_2_eu)/max(ECB_News_res_inf_0_eu)
+coeff_1 = max(data$ECB_News_res_inf_1)/max(data$ECB_News_res_inf_0_eu)
+coeff_2 = max(data$ECB_News_res_inf_2_eu)/max(data$ECB_News_res_inf_0_eu)
 
 ggplot(data, aes(x = time)) + 
   geom_hline(yintercept = 0) + 
@@ -299,10 +299,41 @@ ggplot(data, aes(x = time)) +
         legend.text = element_text(size = 10)) +
   guides(color = guide_legend(nrow = 1, byrow = TRUE, title = NULL))
 
+####
+
+coeff_1 = max(data$ECB_News_res_inf_1)/max(data$ECB_News_res_inf_0_eu)
+coeff_2 = max(data$ECB_News_res_inf_2_eu)/max(data$ECB_News_res_inf_0_eu)
+
+ggplot(data, aes(x = time)) + 
+  geom_hline(yintercept = 0) + 
+  geom_line(aes(y = ECB_News_res_inf_1.role/coeff_1, color="ECB_News"), linetype = 1) +
+  #geom_line(aes(y = ECB_News_res_inf_0_eu.role, color="ECB_Count"), linetype = 1) +
+  geom_line(aes(y = ECB_News_res_inf_2_eu.role/coeff_2, color="News_Forecast"), linetype = 1) +
+  scale_y_continuous(name = "Absolute Expectation Gap", sec.axis = sec_axis(~.*coeff-0.015, name = "Media Bias")) +
+  scale_x_date(date_labels="%Y", breaks = unique(years), name = "") +
+  scale_color_manual(values=c("ECB_News"="blue", "News_Forecast"="green"),
+                     name="Legend",
+                     labels=c("ECB_News", "News_Forecast")) +
+  theme_classic() + 
+  theme(axis.text.y.left = element_text(color = "red"),
+        axis.text.y.right = element_text(color = "blue"),
+        axis.title.y = element_text(color = "red"),
+        axis.title.y.right = element_text(color = "blue", vjust = 2),
+        axis.text.x = element_text(angle = 45, vjust = 0.5, size = 11),
+        panel.grid.minor = element_blank(),
+        panel.grid.major = element_blank(),
+        legend.position = c(0.98, 0.98),
+        legend.justification = c("right", "top"),
+        legend.box.just = "right",
+        legend.margin = margin(6, 6, 6, 6),
+        legend.box.background = element_rect(color = "white", size = 0.5, linetype = "solid"),
+        legend.text = element_text(size = 10)) +
+  guides(color = guide_legend(nrow = 1, byrow = TRUE, title = NULL))
+
 ##### Residuals - GD
 
-coeff_1 = max(data$ECB_News_res_inf_1)/max(ECB_News_res_inf_0_GD)
-coeff_2 = max(data$ECB_News_res_inf_2_GD)/max(ECB_News_res_inf_0_GD)
+coeff_1 = max(data$ECB_News_res_inf_1)/max(data$ECB_News_res_inf_0_GD)
+coeff_2 = max(data$ECB_News_res_inf_2_GD)/max(data$ECB_News_res_inf_0_GD)
 
 ggplot(data, aes(x = time)) + 
   geom_hline(yintercept = 0) + 
@@ -362,8 +393,8 @@ ggplot(data, aes(x = time)) +
 
 ggplot(data, aes(x = time)) + 
   labs(y = "Inflation Expectation") +
-  geom_line(aes(y = German.Absolute.Expectations.Gap.Stm.GD.role, colour = "Stm - GD", linetype = "Stm - GD")) +
-  geom_line(aes(y = German.Absolute.Expectations.Gap.Stm.RWI.role, colour = "Stm - RWI", linetype = "Stm - RWI")) +
+  #geom_line(aes(y = German.Absolute.Expectations.Gap.Stm.GD.role, colour = "Stm - GD", linetype = "Stm - GD")) +
+  #geom_line(aes(y = German.Absolute.Expectations.Gap.Stm.RWI.role, colour = "Stm - RWI", linetype = "Stm - RWI")) +
   geom_line(aes(y = German.ECB.Absolute.Expectations.Gap.Stm.role, colour = "Stm - ECB", linetype = "Stm - ECB")) +
   #geom_line(aes(y = German.Inflation.Year.on.Year, colour = "Germany Inflation", linetype = "Germany Inflation"), size = 1) +
   scale_x_date(date_labels="%Y", breaks = unique(years), name = "") +
@@ -440,14 +471,14 @@ ggplot(data, aes(x = time)) +
         panel.grid.minor = element_blank(),
         panel.grid.major = element_blank()) 
 
-data = data[36:dim(data)[1],]
+data = data[30:dim(data)[1],]
 
 coeff = max(data$ECB_News_res_inf_1.role)/max(data$German.ECB.Absolute.Expectations.Gap.Role.role)
 
 ggplot(data, aes(x = time)) + 
   geom_hline(yintercept = 0) + 
   geom_line(aes(y = ECB_News_res_inf_1.role/coeff+0/coeff), colour="blue", linetype = 1) +
-  geom_line(aes(y = German.ECB.Absolute.Expectations.Gap.Berk.5.role), colour="red", linetype = 2) +
+  geom_line(aes(y = German.ECB.Absolute.Expectations.Gap.Role.role), colour="red", linetype = 2) +
   scale_y_continuous(name = "Absolute Expectation Gap (EU - Stm)", sec.axis = sec_axis(~.*coeff-0.0, name = "News Index Residuals")) +
   scale_x_date(date_labels="%Y", breaks = unique(years), name = "") +
   theme_classic() + 

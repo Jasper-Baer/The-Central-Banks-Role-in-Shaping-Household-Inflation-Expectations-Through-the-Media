@@ -11,12 +11,12 @@ library("writexl")
 
 #####################################################################################
 
-#data = read_excel('D:/Studium/PhD/Github/Single-Author/Data/Regression/regression_data_monthly_2.xlsx')
-data = read_excel('D:/Single Author/Github/Single-Author/Data/Regression/regression_data_monthly_2.xlsx')
+data = read_excel('D:/Studium/PhD/Github/Single-Author/Data/Regression/regression_data_monthly_2.xlsx')
+#data = read_excel('D:/Single Author/Github/Single-Author/Data/Regression/regression_data_monthly_2.xlsx')
 data = data.frame(data)
 
 #data = data[9:dim(data)[1],]
-data = data[21:dim(data)[1],]
+data = data[23:dim(data)[1],]
 
 data1 = data %>% select(Eurozone.Industrial.Production,
                         Eurozone.Inflation, 
@@ -165,7 +165,7 @@ names(time) = "Date"
 data1 = cbind(data1, time)
 data1 = data1[(lag_order+1):dim(data1)[1],]
 data1 = cbind(data1, data_lags)
-step = 5
+step = 3
 
 ###### Rolling average
 
@@ -182,5 +182,5 @@ data1 = data1[step:dim(data1)[1],]
 
 data1$time = as.Date(strptime(data1$time, "%Y-%m-%d"))
 
-#write_xlsx(data1, 'D:/Studium/PhD/Github/Single-Author/Code/Regression/Regession_data_monthly_2_processed.xlsx')
-write_xlsx(data1, 'D:/Single Author/Github/Single-Author/Data/Regression/Regession_data_monthly_2_processed.xlsx')
+write_xlsx(data1, 'D:/Studium/PhD/Github/Single-Author/Code/Regression/Regession_data_monthly_2_processed.xlsx')
+#write_xlsx(data1, 'D:/Single Author/Github/Single-Author/Data/Regression/Regession_data_monthly_2_processed.xlsx')

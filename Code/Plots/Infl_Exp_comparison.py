@@ -14,8 +14,8 @@ import os
 from dateutil.relativedelta import relativedelta
 
 warnings.simplefilter(action='ignore', category=FutureWarning)
-#PATH = r"D:\Studium\PhD\Github\Single-Author\Code\Plots"
-PATH = r"D:\Single Author\Github\Single-Author\Code\Plots"
+PATH = r"D:\Studium\PhD\Github\Single-Author\Code\Plots"
+#PATH = r"D:\Single Author\Github\Single-Author\Code\Plots"
 os.chdir(PATH)
 
 from Data_Prep_Supp import transform_date, scale_ECB_index, rolling_quant
@@ -33,8 +33,8 @@ start_date_hist = '1995-12-31'
 # Inflation
 ##############################################################################
 
-#PATH = r'D:\Studium\PhD\Github\Single-Author\Data\Regression'
-PATH = r'D:\Single Author\Github\Single-Author\Data\Regression'
+PATH = r'D:\Studium\PhD\Github\Single-Author\Data\Regression'
+#PATH = r'D:\Single Author\Github\Single-Author\Data\Regression'
 
 #inflation_ger_q = pd.read_excel(PATH + '\Consumer Price IndexAll Items Total Total for Germany.xls')[10:]
 #inflation_ger_m = pd.read_excel(PATH + '\Germany_harmonized_inflation.xls')[10:]
@@ -152,7 +152,7 @@ scaling = rolling_quant(
  inf_exp_miss, 
  inf_per_miss,
  inflation_ger_m,
- 9)
+ 5)
 
 scaling = scaling.loc[(scaling['date'] >= start_date) & (scaling['date'] <= end_date)]
 

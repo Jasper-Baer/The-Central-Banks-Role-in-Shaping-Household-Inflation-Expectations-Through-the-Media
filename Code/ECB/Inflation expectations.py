@@ -8,7 +8,7 @@ Created on Mon Dec 19 23:30:12 2022
 import pandas as pd
 import matplotlib.pyplot as plt
 
-dates_q = pd.date_range('1/1/1999', '1/1/2023', freq = 'Q').tolist()
+dates_q = pd.date_range('10/1/1998', '10/1/2022', freq = 'Q').tolist()
 
 infl_exps = []
 end_months = ['Dec', 'Mar', 'Jun', 'Sep']
