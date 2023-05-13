@@ -1,10 +1,10 @@
 Must do: 
-- Plot lambda and describe lambda
+- Describe lambda
 - ECB Plot Staff Projections einfügen (data is prepared) (Staff projections are now HICP)
 - SUMMER SCHOOL BUCHEN
 - Descriptiven Teil fertig schreiben (bin mir nicht sicher, was ich noch hinzufügen soll)
 - Aggregate data before publication???
-- Results fertig schreiben 
+- Results fertig schreiben (mehr oder weniger fertig für jetzt, brauche Kais Input)
 - Add figures of sentiment and direction to figure 1
 
 - Results (vorläufig):
@@ -17,7 +17,7 @@ Compare Bundesbank Inf Exp with my Quantifications
 Tabellen erstellen und einfügen?
 
 # Run all for new results
-- Lamala 2014 reproduce results for regression (Reproduce Indixes like (Badrising))
+- Lamala 2014 reproduce results for regression
 
 Easy must do:
 - Datastream E-Mail um zu gucken, ob ich die Daten für Diss verwenden darf
@@ -25,6 +25,7 @@ Easy must do:
 Optional:
 - compare rolling windo approach with michigan consumer survey
 - Make distinction in ECB press conferences between "current" and "future" changes
+- use quartlery quantitative ECB inflation data to test how results would change
 - Lexicon Based + Word Embedding
 
 Große offene Probleme
@@ -37,27 +38,17 @@ Große offene Probleme
 
 - Energiepreispauschale beantragen
 
-- Mittwoch: 12.04
-- 9:00: Aufstehen/Wach werden
-- 10:00: Uni???
-- 12:00: Single Author
-- 14:00: 1. Pause
-- 14:30 Single Author
-- 17:00: 2. Pause
-- 18:00: Single Author
-- 20:00: Einkaufen
-- 21:00: Single Author
-- 23:00: Schluss
-
 Fertig mit 
 - Einleitung (Literatureteil ausarbeiten)
-- Descriptive Part (fertig, aber nochmal Finja fragen)
+- Descriptive Part 
 - Economic Framework
 
 Fertig mit
 - Measure for Central Bank (fertig im Groben. Ergebnisse fehlen noch)
 - Results
 
-Offene Stellen schließen
-
-I have two different datasets. One for inflation-related sentences from newspaper articles and one for ECB press conferences. I have 3 categores for the press conferences, monetary which can be either hawkish, doovish or neutral, economic outlook which can be either positive, neutral or negative and inflation outlookc which can be either rising, neutral or declining. For the news sentences I have two categories: inflation sentiment which can be either positve, neutral or negative and inflation directio n which can be either rising, neutral or declining.
+Plan Freitag 27.04:
+-PC Übung
+-Bertopic zum Laufen bekommen
+-Liste erzeugen (besser alte Liste weiterverwenden)
+-Eigene Klassifzierungen auf der Liste vornehmen

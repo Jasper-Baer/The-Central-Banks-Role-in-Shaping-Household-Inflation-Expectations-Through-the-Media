@@ -1,0 +1,20 @@
+Fischerei
+
+15.05 Bert Classification beschreiben
+10.05 Graphen fixen
+15.05 Graphen in Appendix
+20.05 Bertopic erste Ergebnisse
+01.06 Bertopic beschreiben 
+
+Media Tenor
+01.06 Warten auf Mariia
+
+Single Author
+
+10.05 Mail an Kai wegen KFG
+11.05 Schlachtplan im Detail
+15.05 Genauere Definition für Lambda
+01.06 Literature für Makro und Baysian Learning Framework
+15.06 Grobes Modell zum Diskutieren
+
+
