@@ -9,8 +9,8 @@ library("ggplot2")
 
 #####################################################################################
 
-data = read_excel('D:/Studium/PhD/Github/Single-Author/Code/Regression/Regession_data_monthly_2_processed.xlsx')
-#data = read_excel('D:/Single Author/Github/Single-Author/Data/Regression/Regession_data_monthly_2_processed.xlsx')
+#data = read_excel('D:/Studium/PhD/Github/Single-Author/Code/Regression/Regession_data_monthly_2_processed.xlsx')
+data = read_excel('D:/Single Author/Github/Single-Author/Data/Regression/Regession_data_monthly_2_processed.xlsx')
 data = data.frame(data)
 #data = data[24:dim(data)[1],]
 #data = data[9:dim(data)[1],]
@@ -205,7 +205,7 @@ ggplot(data, aes(x = time)) +
   geom_bar(aes(y = News.ECB.Count.role/coeff+0.0/coeff), stat = "identity", fill = "blue", width = 10) +
   geom_line(aes(y = German.Inflation.Year.on.Year), colour="red", linetype = 2) +
   geom_hline(yintercept = 0) + 
-  scale_y_continuous(name = "German Inflation", sec.axis = sec_axis(~.*coeff-0.0, name = "ECB Lambda")) +
+  scale_y_continuous(name = "Germany HCPI", sec.axis = sec_axis(~.*coeff-0.0, name = "ECB Lambda")) +
   scale_x_date(date_labels="%Y", breaks = seq(as.Date("2000-01-01"), max(data$time), by = "1 year"), name = "", limits = c(min(data$time), max(data$time))) +
   theme_classic() + 
   theme(axis.text.y.left = element_text(color = "red"),

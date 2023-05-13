@@ -1,0 +1,10 @@
+- Einleitung - Ziel des Papers wiederholen
+- Modell erklären
+
+- Methode erklären
+	-Kurz Lexicon Methode erklären
+	-Auf Nutzung eines eigenen Datensets eingehen
+
+- NLP Ergebnisse als Plots zeigen
+
+- Problem mit Quantification und Prof Forecasts aufzeigen

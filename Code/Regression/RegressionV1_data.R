@@ -11,12 +11,17 @@ library("writexl")
 
 #####################################################################################
 
-data = read_excel('D:/Studium/PhD/Github/Single-Author/Data/Regression/regression_data_monthly_2.xlsx')
-#data = read_excel('D:/Single Author/Github/Single-Author/Data/Regression/regression_data_monthly_2.xlsx')
+#data = read_excel('D:/Studium/PhD/Github/Single-Author/Data/Regression/regression_data_monthly_2.xlsx')
+data = read_excel('D:/Single Author/Github/Single-Author/Data/Regression/regression_data_monthly_2.xlsx')
 data = data.frame(data)
 
+
+#data$time = as.Date(strptime(data$time, "%Y-%m-%d"))
+
 #data = data[9:dim(data)[1],]
-data = data[23:dim(data)[1],]
+#data = data[23:dim(data)[1],]
+
+data = data[50:dim(data)[1],]
 
 data1 = data %>% select(Eurozone.Industrial.Production,
                         Eurozone.Inflation, 
@@ -79,7 +84,11 @@ data1 = data %>% select(Eurozone.Industrial.Production,
                         German.ECB.Absolute.Expectations.Gap.Quant,
                         German.ECB.Relative.Expectations.Gap.Quant,
                         German.Absolute.Real.Inflation.Expectations.Gap.Quant,
-                        German.Relative.Real.Inflation.Expectations.Gap.Quant)
+                        German.Relative.Real.Inflation.Expectations.Gap.Quant,
+                        German.Absolute.Real.Inflation.Expectations.Gap.Stm.Reuter, # mislabeled
+                        German.Absolute.Real.Inflation.Expectations.Gap.Role.Reuter, # mislabeled
+                        German.Absolute.Real.Inflation.Expectations.Gap.Berk5.Reuter,
+                        Reuter.Poll.Forecast) # mislabled
 
 ############################################
 # Residuals - ECB and News Index
@@ -93,6 +102,9 @@ ECB_News_res_inf_1 = fit$residuals
 
 #ECB_News_res_inf_1 = stand_ECB - stand_news
 
+fit = lm(News.Inflation.Count ~ Reuter.Poll.Forecast, data1)
+ECB_News_res_inf_0_Reuter = fit$residuals
+
 fit = lm(News.Inflation.Count ~ Germany.Inflation.Professionell.Forecasts.RWI, data1)
 ECB_News_res_inf_0_RWI = fit$residuals
 
@@ -101,6 +113,9 @@ ECB_News_res_inf_0_GD = fit$residuals
 
 fit = lm(News.Inflation.Count ~ Eurozone.Inflation.Professionell.Forecasts, data1)
 ECB_News_res_inf_0_eu = fit$residuals
+
+fit = lm(News.Inflation.Index*-1 ~ Reuter.Poll.Forecast, data1)
+ECB_News_res_inf_2_Reuter = fit$residuals
 
 fit = lm(News.Inflation.Index*-1 ~ Germany.Inflation.Professionell.Forecasts.RWI, data1)
 ECB_News_res_inf_2_RWI = fit$residuals
@@ -111,6 +126,10 @@ ECB_News_res_inf_2_GD = fit$residuals
 fit = lm(News.Inflation.Index*-1 ~ Eurozone.Inflation.Professionell.Forecasts, data1)
 ECB_News_res_inf_2_eu = fit$residuals
 
+fit = lm(News.Inflation.Sentiment.Index*-1 ~ Reuter.Poll.Forecast, data1)
+ECB_News_res_inf_3_Reuter = fit$residuals
+
+
 fit = lm(News.Inflation.Sentiment.Index*-1 ~ Germany.Inflation.Professionell.Forecasts.RWI, data1)
 ECB_News_res_inf_3_RWI = fit$residuals
 
@@ -120,6 +139,9 @@ ECB_News_res_inf_3_GD = fit$residuals
 fit = lm(News.Inflation.Sentiment.Index*-1 ~ Eurozone.Inflation.Professionell.Forecasts, data1)
 ECB_News_res_inf_3_eu = fit$residuals
 
+fit = lm(News.Inflation.Direction.Index*-1 ~ Reuter.Poll.Forecast, data1)
+ECB_News_res_inf_4_Reuter = fit$residuals
+
 fit = lm(News.Inflation.Direction.Index*-1 ~ Germany.Inflation.Professionell.Forecasts.RWI, data1)
 ECB_News_res_inf_4_RWI = fit$residuals
 
@@ -128,6 +150,11 @@ ECB_News_res_inf_4_GD = fit$residuals
 
 fit = lm(News.Inflation.Direction.Index*-1 ~ Eurozone.Inflation.Professionell.Forecasts, data1)
 ECB_News_res_inf_4_eu = fit$residuals
+
+data1 = cbind(data1, ECB_News_res_inf_0_Reuter)
+data1 = cbind(data1, ECB_News_res_inf_2_Reuter)
+data1 = cbind(data1, ECB_News_res_inf_3_Reuter)
+data1 = cbind(data1, ECB_News_res_inf_4_Reuter)
 
 data1 = cbind(data1, ECB_News_res_inf_0_RWI)
 data1 = cbind(data1, ECB_News_res_inf_0_GD)
@@ -182,5 +209,5 @@ data1 = data1[step:dim(data1)[1],]
 
 data1$time = as.Date(strptime(data1$time, "%Y-%m-%d"))
 
-write_xlsx(data1, 'D:/Studium/PhD/Github/Single-Author/Code/Regression/Regession_data_monthly_2_processed.xlsx')
-#write_xlsx(data1, 'D:/Single Author/Github/Single-Author/Data/Regression/Regession_data_monthly_2_processed.xlsx')
+#write_xlsx(data1, 'D:/Studium/PhD/Github/Single-Author/Code/Regression/Regession_data_monthly_2_processed.xlsx')
+write_xlsx(data1, 'D:/Single Author/Github/Single-Author/Data/Regression/Regession_data_monthly_2_processed.xlsx')
