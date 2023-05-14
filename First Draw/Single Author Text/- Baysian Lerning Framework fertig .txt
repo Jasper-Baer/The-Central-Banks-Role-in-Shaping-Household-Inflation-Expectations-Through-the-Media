@@ -8,9 +8,9 @@ Must do:
 - Add figures of sentiment and direction to figure 1
 
 - Results (vorläufig):
-Ergebnisse für ECB (Stm, Rolling, Berk 1 und Berk5) - fertig
+Ergebnisse für ECB (Stm, Rolling, Berk 1 und Berk5) - fertig (nochmal aktualisieren)
 Ergebnisse für GD und RWI (Stm, Rolling, Berk 1 und Berk5) - fertig
-+ Ergebnisse für residuen auf jeweiligen (GD, STM , ECB) - fertig
+Ergebnisse für residuen auf jeweiligen (GD, STM , ECB) - fertig
 Plots für Stm, Rolling, Berk 1 und Berk5 - fertig
 Plots für Absolute Errors (RWI, GD und ECB mit Stm und Berk5) - fertig
 Compare Bundesbank Inf Exp with my Quantifications
@@ -40,7 +40,11 @@ Große offene Probleme
 
 Fertig mit 
 - Einleitung (Literatureteil ausarbeiten)
+<<<<<<< Updated upstream
 - Descriptive Part 
+=======
+- Descriptive Part
+>>>>>>> Stashed changes
 - Economic Framework
 
 Fertig mit
