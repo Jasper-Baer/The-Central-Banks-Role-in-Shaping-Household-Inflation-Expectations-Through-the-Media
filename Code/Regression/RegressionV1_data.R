@@ -11,8 +11,8 @@ library("writexl")
 
 #####################################################################################
 
-#data = read_excel('D:/Studium/PhD/Github/Single-Author/Data/Regression/regression_data_monthly_2.xlsx')
-data = read_excel('D:/Single Author/Github/Single-Author/Data/Regression/regression_data_monthly_2.xlsx')
+data = read_excel('D:/Studium/PhD/Github/Single-Author/Data/Regression/regression_data_monthly_2.xlsx')
+#data = read_excel('D:/Single Author/Github/Single-Author/Data/Regression/regression_data_monthly_2.xlsx')
 data = data.frame(data)
 
 
@@ -86,8 +86,11 @@ data1 = data %>% select(Eurozone.Industrial.Production,
                         German.Absolute.Real.Inflation.Expectations.Gap.Quant,
                         German.Relative.Real.Inflation.Expectations.Gap.Quant,
                         German.Absolute.Real.Inflation.Expectations.Gap.Stm.Reuter, # mislabeled
+                        German.Relative.Real.Inflation.Expectations.Gap.Stm.Reuter, # mislabeled
                         German.Absolute.Real.Inflation.Expectations.Gap.Role.Reuter, # mislabeled
+                        German.Relative.Real.Inflation.Expectations.Gap.Role.Reuter, # mislabeled
                         German.Absolute.Real.Inflation.Expectations.Gap.Berk5.Reuter,
+                        German.Relative.Real.Inflation.Expectations.Gap.Berk5.Reuter,
                         Reuter.Poll.Forecast) # mislabled
 
 ############################################
@@ -209,5 +212,5 @@ data1 = data1[step:dim(data1)[1],]
 
 data1$time = as.Date(strptime(data1$time, "%Y-%m-%d"))
 
-#write_xlsx(data1, 'D:/Studium/PhD/Github/Single-Author/Code/Regression/Regession_data_monthly_2_processed.xlsx')
-write_xlsx(data1, 'D:/Single Author/Github/Single-Author/Data/Regression/Regession_data_monthly_2_processed.xlsx')
+write_xlsx(data1, 'D:/Studium/PhD/Github/Single-Author/Code/Regression/Regession_data_monthly_2_processed.xlsx')
+#write_xlsx(data1, 'D:/Single Author/Github/Single-Author/Data/Regression/Regession_data_monthly_2_processed.xlsx')

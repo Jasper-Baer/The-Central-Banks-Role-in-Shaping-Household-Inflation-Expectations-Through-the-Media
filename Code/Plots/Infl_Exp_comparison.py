@@ -33,6 +33,62 @@ start_date_hist = '1995-12-31'
 # Inflation
 ##############################################################################
 
+forecast_df = pd.DataFrame()
+
+for year in range(2000, 2021):
+    
+   inflation_poll = pd.read_excel(r'D:\Studium\PhD\Github\Single-Author\Data\Reuters Poll\Inflation_Forecast_' + str(year) + '.xlsx')
+   inflation_poll =  inflation_poll[7:9]
+   
+   date = inflation_poll.iloc[0,:]
+   median = inflation_poll.iloc[1,:]
+   
+   inflation_poll = pd.DataFrame({'Date': date, 'Median': median, 'Target': year})[1:]
+   
+   forecast_df = forecast_df.append(inflation_poll, ignore_index=True)
+ 
+forecast_df['Date'] = pd.to_datetime(forecast_df['Date'])
+
+forecast_df = forecast_df.dropna()
+forecast_df = forecast_df.reset_index(drop = True)
+
+#forecast_df.to_excel(r'D:\Studium\PhD\Github\Single-Author\Data\Reuters Poll\Forecast_Inflation_Reuter.xlsx')
+
+# def transform_forecast(row):
+    
+#     for row in forecast_df[3:-6].iterrows():
+        
+#         row = row[1]
+    
+#         m = row['Date'].month
+#         t = row['Date'].year
+#         next_year_t = t + 1
+#         target = row['Target']
+        
+#         if t <= target:
+            
+#             print(row)
+        
+#             forecast_t = row['Median']
+    
+#             next_year_forecast = forecast_df.loc[forecast_df['Target'] == next_year_t, 'Median'].iloc[0]
+    
+#     transformed_forecast = (13 - m) / 12 * forecast_t + (m - 1) / 12 * next_year_forecast
+#     return transformed_forecast
+
+# Apply the transformation to the DataFrame
+
+# for year in set(forecast_df['Target']):
+    
+#     yearly_data = forecast_df[forecast_df['Target'] == year]
+
+# forecast_df['Transformed_Forecast'] = forecast_df.apply(transform_forecast, axis=1)
+
+forecast_df = pd.read_excel(r'D:\Studium\PhD\Github\Single-Author\Data\Reuters Poll\Forecast_Inflation_Reuter.xlsx')
+forecast_df = forecast_df.dropna(subset = ['One-Year-Ahead'])
+forecast_df['Date'] = pd.to_datetime(forecast_df['Date'])
+forecast_df.index = forecast_df['Date']
+
 PATH = r'D:\Studium\PhD\Github\Single-Author\Data\Regression'
 #PATH = r'D:\Single Author\Github\Single-Author\Data\Regression'
 
@@ -266,6 +322,29 @@ ea_inf_exp_quant = ea_inf_exp_quant.loc[(ea_inf_exp_quant.index >= start_date) &
 
 ###############################################################################
 
+forecast_df_m = forecast_df.groupby(pd.Grouper(freq="M")).mean().fillna(method = 'ffill')
+
+first_date = forecast_df_m.index.min() - pd.DateOffset(years=5)
+last_date = forecast_df_m.index.max()
+new_index = pd.date_range(start=first_date, end=last_date, freq='M')
+
+forecast_df_m = pd.DataFrame(forecast_df_m)
+
+# Create a new DataFrame with the same columns and the new index
+extended_data = pd.DataFrame(index=new_index, columns=forecast_df_m.columns)
+
+# Fill the new DataFrame with 0 values for the additional four years
+extended_data.loc[:first_date + pd.DateOffset(years=4, months=-1), :] = 0
+
+# Concatenate the new DataFrame with the original DataFrame
+extended_data.update(forecast_df_m)
+
+forecast_df_m = extended_data
+
+forecast_df_m = forecast_df_m.loc[(forecast_df_m.index >= start_date) & (forecast_df_m.index <= end_date)]
+
+###############################################################################
+
 start_date_RWI = RWI_inflation_m.index.min() - pd.DateOffset(years=4)
 end_date_RWI = RWI_inflation_m.index.min() - pd.DateOffset(months=1)
 zero_index = pd.date_range(start=start_date_RWI, end=end_date_RWI, freq='M')
@@ -419,6 +498,13 @@ ger_relative_exp_gap_m_quant_GD, ger_abslolute_exp_gap_m_quant_GD = absolute_err
 ger_eu_relative_exp_gap_m_quant, ger_eu_abslolute_exp_gap_m_quant =  absolute_errors(ea_inf_exp_quant['Median'], data_inf_exp_eu.iloc[:,0])
 ger_relative_inf_gap_m_quant, ger_abslolute_inf_gap_m_quant = absolute_errors(ea_inf_exp_quant['Median'], inflation_ger_m.iloc[:,1])
 
+####
+
+ger_relative_exp_gap_m_berk_stm_Reuter, ger_abslolute_exp_gap_m_berk_stm_Reuter = absolute_errors(stm_lam_df.iloc[:,0], forecast_df_m['One-Year-Ahead'])
+ger_relative_exp_gap_m_role_Reuter, ger_abslolute_exp_gap_m_role_Reuter = absolute_errors(scaling['German Inflation Expectations'], forecast_df_m['One-Year-Ahead'])
+ger_relative_exp_gap_m_berk_5_Reuter, ger_abslolute_exp_gap_m_berk_5_Reuter = absolute_errors(exp_inf_berk_5_var_mean.iloc[:,0], forecast_df_m['One-Year-Ahead'])
+
+
 ###############################################################################
 
 #inflation_ger_m['Recursive_Mean'] = inflation_ger_m['Inflation'].expanding().mean()
@@ -495,6 +581,21 @@ Regression_data_m['German ECB Relative Expectations Gap Quant'] = list(ger_eu_re
 Regression_data_m['German Absolute Real Inflation Expectations Gap Quant'] = list(ger_abslolute_inf_gap_m_quant)
 Regression_data_m['German Relative Real Inflation Expectations Gap Quant'] = list(ger_relative_inf_gap_m_quant)
 
+ger_relative_exp_gap_m_berk_stm_Reuter, ger_abslolute_exp_gap_m_berk_stm_Reuter = absolute_errors(stm_lam_df.iloc[:,0], forecast_df_m['One-Year-Ahead'])
+ger_relative_exp_gap_m_role_Reuter, ger_abslolute_exp_gap_m_role_Reuter = absolute_errors(scaling['German Inflation Expectations'], forecast_df_m['One-Year-Ahead'])
+ger_relative_exp_gap_m_berk_5_Reuter, ger_abslolute_exp_gap_m_berk_5_Reuter = absolute_errors(exp_inf_berk_5_var_mean.iloc[:,0], forecast_df_m['One-Year-Ahead'])
+
+Regression_data_m['German Absolute Real Inflation Expectations Gap Stm Reuter'] = list(ger_abslolute_exp_gap_m_berk_stm_Reuter)
+Regression_data_m['German Absolute Real Inflation Expectations Gap Role Reuter'] = list(ger_abslolute_exp_gap_m_role_Reuter)
+Regression_data_m['German Absolute Real Inflation Expectations Gap Berk5 Reuter'] = list(ger_abslolute_exp_gap_m_berk_5_Reuter)
+
+Regression_data_m['German Relative Real Inflation Expectations Gap Stm Reuter'] = list(ger_relative_exp_gap_m_berk_stm_Reuter)
+Regression_data_m['German Relative Real Inflation Expectations Gap Role Reuter'] = list(ger_relative_exp_gap_m_role_Reuter)
+Regression_data_m['German Relative Real Inflation Expectations Gap Berk5 Reuter'] = list(ger_relative_exp_gap_m_berk_5_Reuter)
+
+Regression_data_m['Reuter Poll Forecast'] = list(forecast_df_m['One-Year-Ahead'])
+
+
 #Regression_data_m['German Household Inflation Expectations Balanced'] = list(inf_exp_balanced.iloc[:,1])
 # Regression_data_m['German Household Inflation Expectations'] = list(scaling['German Inflation Expectations'][180-w:408-w])
 # Regression_data_m['German Household Inflation Expectations'] = list(exp_inf[180:-43])
@@ -509,6 +610,13 @@ Regression_data_m.to_excel(PATH + '\\regression_data_monthly_2.xlsx')
 ###############################################################################
 
 ###############################################################################
+
+Regression_q = 
+
+Regression_data_m['German Inflation Year-on-Year'] = list(inflation_ger_m.iloc[:,1])
+forecast_df
+data_inf_exp_eu
+Gaps
 
 import pylab as plt
 
@@ -548,6 +656,36 @@ np.sum((np.array(inflation_ger_m['Inflation']) - np.array(monthly_df.iloc[:,0]))
 
 plt.plot(monthly_df)
 plt.plot(data_inf_exp_eu)
+plt.show()
+
+plt.plot(forecast_df['Date'], forecast_df['One-Year-Ahead'])
+#plt.plot(stm_lam_df.index, stm_lam_df['exp_inf_min'])
+#plt.plot(data_inf_exp_eu)
+plt.show()
+
+
+import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
+
+fig, ax = plt.subplots()
+
+# Plot the data
+ax.plot(forecast_df['Date'], forecast_df['One-Year-Ahead'])
+
+# Set the y-axis label
+ax.set_ylabel('Inflation')
+
+# Set the x-axis ticks to yearly
+years = mdates.YearLocator()
+ax.xaxis.set_major_locator(years)
+
+# Format the x-axis ticks as years
+ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y'))
+
+# Rotate the x-axis ticks for better visibility
+plt.xticks(rotation=45)
+
+# Display the plot
 plt.show()
 
 # from sklearn.linear_model import LinearRegression
