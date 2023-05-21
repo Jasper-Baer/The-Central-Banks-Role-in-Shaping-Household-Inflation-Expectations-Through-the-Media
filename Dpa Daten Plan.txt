@@ -1,0 +1,7 @@
+1. Daten über Nacht einladen (hat nicht geklappt, jetzt auf Arbeitspc laufen lassen)
+2.a) Somajo ersetzen durch sentence tokenizer (nltk)
+2.b) Daten in Sätze verwandeln
+3. Inflation Detection durchlaufen lassen
+4. Dependency Parsing durchlaufen lassen
+5. Sentiment Analysis durchlaufen lassen
+6. Artikel raussuchen und zeigen welche Sätze identifiziert wurden 

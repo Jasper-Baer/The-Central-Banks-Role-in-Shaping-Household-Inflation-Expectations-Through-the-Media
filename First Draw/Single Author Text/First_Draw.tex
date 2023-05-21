@@ -224,14 +224,20 @@ For $\bar{\lambda_t} = 0$, the mean would be $\mu_t = \rho_t \pi_t + (1- \rho_t)
 \\
 $B_t$ is the difference between the professional inflation forecast and the household inflation expectations. I assume that the rational inflation forecasts of the central bank and of the media are similar, i.e, $\Theta_t \approx \Psi_t$.
 \begin{equation}
-B_t = |\mu_t - \Psi_t| = |\rho_t \pi_t + (1-\rho_t)(\alpha_t(1- \bar{\lambda_t}) + \Psi_t) - \Psi_t|
+B_t = \mu_t - \Psi_t = \rho_t \pi_t + (1-\rho_t)(\alpha_t(1- \bar{\lambda_t}) + \Psi_t) - \Psi_t
 \end{equation}
 \begin{equation}
-= |\rho_t (\pi_t - \Psi_t - \alpha_t (1-\bar{\lambda}_t)) + \alpha_t (1- \bar{\lambda}_t)|
+= \rho_t (\pi_t - \Psi_t - \alpha_t (1-\bar{\lambda}_t)) + \alpha_t (1- \bar{\lambda}_t)
 \end{equation}
 \begin{equation}
-= |(1-\rho_t)(1-\bar{\lambda}_t)\alpha_t + \rho(\pi_t - \Psi_t)|
+= (1-\rho_t)(1-\bar{\lambda}_t)\alpha_t + \rho(\pi_t - \Psi_t)
 \end{equation}
+\\
+The effect of $\bar{\lambda_t}$ on $B_t$ is
+\begin{equation}
+\frac{\partial B_t}{\partial \bar{\lambda_t}} = -(1-\rho_t)\alpha_t < 0
+\end{equation}
+Hence, the effect of $\bar{\lambda}$ depends on the sign and size of the media bias $\alpha_t$.   
 \\
 If $\pi_t$ is larger or close to $\Psi_t$ 
 \begin{equation}

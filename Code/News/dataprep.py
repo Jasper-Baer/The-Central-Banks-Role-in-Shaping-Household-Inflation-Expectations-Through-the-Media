@@ -6,7 +6,7 @@ Created on Sun Jul 25 16:06:42 2021
 """
 
 ######### CITE SOMAJO ! ######################
-from somajo import SoMaJo
+#from somajo import SoMaJo
 ######### CITE SOMAJO ! ######################
 
 from tensorflow.keras.preprocessing.sequence import pad_sequences
@@ -17,42 +17,94 @@ import numpy as np
 import treetaggerwrapper
 from nltk.corpus import stopwords
 from sklearn.feature_extraction.text import TfidfVectorizer 
+import spacy
 
-def tokenizer_articles(data):
+from nltk.tokenize import sent_tokenize, word_tokenize
+
+def tokenizer_articles(data, language):
     
-    # initialize tokenizer
-    tokenizer = SoMaJo("de_CMC", split_camel_case=True)
-    sentence_split = pd.DataFrame()
+    rows = []
     
-    # split articles into sentences
-    articles_token = [tokenizer.tokenize_text([x]) for x in data['text']]
+    for _, row in data.iterrows():
+        article = row['texts']
+        sentences = sent_tokenize(article, language=language)
+        
+        metadata = row.drop('texts')
+        metadata['texts'] = sentences
+        rows.append(metadata)
+
+    sentence_split = pd.DataFrame(rows).reset_index(drop=True)
     
-    i = 0
-    for article in articles_token:
-            for sent in article:  
+    return sentence_split
+
+# def tokenizer_articles(data, language):
+    
+#     rows = []
+    
+#     for _, row in data.iterrows():
+#         article = row['texts']
+#         sentences = sent_tokenize(article, language=language)
+        
+#         for sent in sentences:
+#             metadata = row.drop('texts')
+#             metadata['texts'] = sent
+#             rows.append(metadata)
+
+#     sentence_split = pd.DataFrame(rows).reset_index(drop=True)
+    
+#     return sentence_split
+
+# def tokenizer_articles(data, language):
+    
+#     # initialize tokenizer
+#     #tokenizer = SoMaJo("de_CMC", split_camel_case=True)
+#     sentence_split = pd.DataFrame()
+    
+#     # split articles into sentences
+#     #articles_token = [tokenizer.tokenize_text([x]) for x in data['text']]
+    
+#     i = 0
+#     for i, row in data.iterrows():
+        
+#             article = row['texts']
+#             sentences = sent_tokenize(article, language=language)
+        
+#             # for sent in article:  
                 
-                metadata = data.loc[:, data.columns != 'text'].iloc[i]
-                metadata['text'] = [" ".join([token.text for token in sent])][0]                
-                sentence_split = sentence_split.append(metadata)
-            i += 1
-    
-    return(sentence_split)
+#             #     metadata = data.loc[:, data.columns != 'text'].iloc[i]
+#             #     metadata['text'] = [" ".join([token.text for token in sent])][0]                
+#             #     sentence_split = sentence_split.append(metadata)
 
-def tokenize_sentences(sentence):
+#             for sent in sentences:
+#                 metadata = row.drop('texts')
+#                 metadata['texts'] = sent
+#                 sentence_split = pd.concat([sentence_split,pd.DataFrame(metadata).transpose()], ignore_index=True)
+
     
-    # initialize tokenizer
-    tokenizer = SoMaJo("de_CMC", split_camel_case=True)
+#     return(sentence_split)
+
+def tokenize_sentences(sentence, language):
     
     # split sentences into words
-    sent_token = tokenizer.tokenize_text([sentence])
-    token_sent = []
-    
-    for sent in sent_token:
-            
-        sent_tokens = [token.text for token in sent]     
-        token_sent.append(sent_tokens)
+    sent_tokens = word_tokenize(sentence, language=language)
 
-    return(token_sent)
+    return [sent_tokens]
+
+# def tokenize_sentences(sentence, language):
+    
+#     # initialize tokenizer
+#     #tokenizer = SoMaJo("de_CMC", split_camel_case=True)
+    
+#     # split sentences into words
+#     sent_token = tokenizer.tokenize_text([sentence])
+#     token_sent = []
+    
+#     for sent in sent_token:
+            
+#         sent_tokens = [token.text for token in sent]     
+#         token_sent.append(sent_tokens)
+
+#     return(token_sent)
 
 def pre_processing(sentences, tokenizer, max_len):
     
@@ -86,7 +138,7 @@ def pre_processing(sentences, tokenizer, max_len):
     
     return(fish_dataloader)
     
-def lemmatize_sentences(sentences, remove_stopwords = 'all'):
+def lemmatize_sentences(sentences, language ,remove_stopwords = 'all'):
     
     # initialize list with all negation words which are kept for the negation feature
     neg_words = ["nicht", "nichts", "kein", "keinen", "keine", "keiner", 
@@ -100,31 +152,35 @@ def lemmatize_sentences(sentences, remove_stopwords = 'all'):
               "!", ":", ";", 'für+die', '“', '„', '«', '»', 'bu', 'BU','das', 
               'für', 'fuer', 'oz'] 
     
-    stopset = stopwords.words("german")
+    stopset = stopwords.words(language)
     
-    if remove_stopwords == ('all' or 'delim'):
-        
+    if remove_stopwords in ('all', 'delim'):
         # load set with stopwords and add delimiters to them
         stopset += delims 
     
-    elif remove_stopwords == ('all' or 'negations'):
-        
+    elif remove_stopwords in ('all', 'negations'):
         # add negation words from stopword list
         stopset += neg_words
     
-        # add token for links and ip to stopword list
+    # add token for links and ip to stopword list
     stopset += ['replaced-dns', 'replaced-ip']
 
     stopset = set(stopset)
 
-    # use the treetagwrapper to lemmatize sentences
-    tagger = treetaggerwrapper.TreeTagger(TAGLANG='de')
-    lemmas = [[j for j in treetaggerwrapper.make_tags(tagger.tag_text(sentences[i]), allow_extra = False)] for i in range(len(sentences))]
-    sent_lemmas = [[j[2].lower() for j in lemmas[i] if type(j) == treetaggerwrapper.Tag]for i in
-                   range(len(lemmas))]
+    # Load Spacy's German model
     
-    if remove_stopwords == ('all' or 'dellim' or 'negations'):
+    if language == 'german':
+    
+        nlp = spacy.load('de_core_news_sm')
         
+    elif language == 'english':
+        
+        nlp = spacy.load('en_core_news_sm')
+
+    # Lemmatize sentences
+    sent_lemmas = [[token.lemma_.lower() for token in nlp(sent)] for sent in sentences]
+
+    if remove_stopwords in ('all', 'delim', 'negations'):
         # remove stopwords from lemmas and (POS)
         sent_lemmas  = [[word for word in sent_lemmas[i] if word not in stopset] for i in range(0, len(sent_lemmas))]
         lemma_str = [" ".join(j) for j in sent_lemmas]
@@ -133,10 +189,61 @@ def lemmatize_sentences(sentences, remove_stopwords = 'all'):
         lemma_str = [sent.replace('“','') for sent in lemma_str]
         
     else:
-        
         lemma_str = [" ".join(j) for j in sent_lemmas]
     
-    return(lemma_str)
+    return lemma_str
+
+# def lemmatize_sentences(sentences, language ,remove_stopwords = 'all'):
+    
+#     # initialize list with all negation words which are kept for the negation feature
+#     neg_words = ["nicht", "nichts", "kein", "keinen", "keine", "keiner", 
+#                  "keines", "keinem", "keins", "niemals", "nie"]
+    
+#     # initialize list with special charakter to remove
+#     delims = ["-", "_", "#", "+", "*", "~", "$", "%", "`", "´", "=", "§", 
+#               "{", "}", "/", "[", "]", "^", "°", str("("), str(")"), str("'"),
+#               "&", "in+die","zu+die", "@card@",".", ",", ";",":", str("„"), 
+#               "@ord@",str('"'), "an+die", "von+die", 'bei+die',".", ",", "?",
+#               "!", ":", ";", 'für+die', '“', '„', '«', '»', 'bu', 'BU','das', 
+#               'für', 'fuer', 'oz'] 
+    
+#     stopset = stopwords.words("german")
+    
+#     if remove_stopwords in ('all', 'delim'):
+        
+#         # load set with stopwords and add delimiters to them
+#         stopset += delims 
+    
+#     elif remove_stopwords in ('all', 'negations'):
+        
+#         # add negation words from stopword list
+#         stopset += neg_words
+    
+#         # add token for links and ip to stopword list
+#     stopset += ['replaced-dns', 'replaced-ip']
+
+#     stopset = set(stopset)
+
+#     # use the treetagwrapper to lemmatize sentences
+#     tagger = treetaggerwrapper.TreeTagger(TAGLANG=language)
+#     lemmas = [[j for j in treetaggerwrapper.make_tags(tagger.tag_text(sentences[i]), allow_extra = False)] for i in range(len(sentences))]
+#     sent_lemmas = [[j[2].lower() for j in lemmas[i] if type(j) == treetaggerwrapper.Tag]for i in
+#                    range(len(lemmas))]
+    
+#     if remove_stopwords in ('all', 'dellim', 'negations'):
+        
+#         # remove stopwords from lemmas and (POS)
+#         sent_lemmas  = [[word for word in sent_lemmas[i] if word not in stopset] for i in range(0, len(sent_lemmas))]
+#         lemma_str = [" ".join(j) for j in sent_lemmas]
+#         lemma_str = [sent.replace('„','') for sent in lemma_str]
+#         lemma_str = [sent.replace('.','') for sent in lemma_str]
+#         lemma_str = [sent.replace('“','') for sent in lemma_str]
+        
+#     else:
+        
+#         lemma_str = [" ".join(j) for j in sent_lemmas]
+    
+#     return(lemma_str)
     
 def reorder_data(data, year, start_month, end_month):
     

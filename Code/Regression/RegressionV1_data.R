@@ -100,7 +100,7 @@ data1 = data %>% select(Eurozone.Industrial.Production,
 stand_ECB = scale(data$ECB.Inflation.Index)
 stand_news = scale(data$News.Inflation.Index)
 
-fit = lm(ECB.Inflation.Index ~ News.Inflation.Index*-1, data1)
+fit = lm(scale(ECB.Inflation.Index) ~ scale(News.Inflation.Index*-1), data1)
 ECB_News_res_inf_1 = fit$residuals
 
 #ECB_News_res_inf_1 = stand_ECB - stand_news
@@ -129,17 +129,16 @@ ECB_News_res_inf_2_GD = fit$residuals
 fit = lm(News.Inflation.Index*-1 ~ Eurozone.Inflation.Professionell.Forecasts, data1)
 ECB_News_res_inf_2_eu = fit$residuals
 
-fit = lm(News.Inflation.Sentiment.Index*-1 ~ Reuter.Poll.Forecast, data1)
+fit = lm(News.Inflation.Sentiment.Index ~ Reuter.Poll.Forecast, data1)
 ECB_News_res_inf_3_Reuter = fit$residuals
 
-
-fit = lm(News.Inflation.Sentiment.Index*-1 ~ Germany.Inflation.Professionell.Forecasts.RWI, data1)
+fit = lm(News.Inflation.Sentiment.Index ~ Germany.Inflation.Professionell.Forecasts.RWI, data1)
 ECB_News_res_inf_3_RWI = fit$residuals
 
-fit = lm(News.Inflation.Sentiment.Index*-1 ~ Germany.Inflation.Professionell.Forecasts.GD, data1)
+fit = lm(News.Inflation.Sentiment.Index ~ Germany.Inflation.Professionell.Forecasts.GD, data1)
 ECB_News_res_inf_3_GD = fit$residuals
 
-fit = lm(News.Inflation.Sentiment.Index*-1 ~ Eurozone.Inflation.Professionell.Forecasts, data1)
+fit = lm(News.Inflation.Sentiment.Index ~ Eurozone.Inflation.Professionell.Forecasts, data1)
 ECB_News_res_inf_3_eu = fit$residuals
 
 fit = lm(News.Inflation.Direction.Index*-1 ~ Reuter.Poll.Forecast, data1)

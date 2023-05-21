@@ -59,7 +59,8 @@ nlp = stanza.Pipeline(processors= 'lemma,tokenize,pos,depparse', lang = 'de')
 
 data = pd.read_csv('D:\Studium\PhD\Single Author\Data\dpa_sents_v01.csv')
 
-pre_processing = prepare_text(data['sentences']).preproces_text()
+#pre_processing = prepare_text(data['sentences']).preproces_text()
+pre_processing = prepare_text(data['texts']).preproces_text()
 data['tokens'] = pre_processing[0]
 stem_map = pre_processing[1]
 
@@ -136,7 +137,7 @@ for idx, art in tqdm(enumerate(data['tokens'])):
         
         if any(word in word_list for word in tok):
         
-            inflation_sentences = inflation_sentences.append({'tokens' : tok, 'index': idx}, ignore_index=True)
+            #inflation_sentences = inflation_sentences.append({'tokens' : tok, 'index': idx}, ignore_index=True)
             
             for i in range(len(tok) - 1):
                 
@@ -158,6 +159,32 @@ for idx, art in tqdm(enumerate(data['tokens'])):
                 sent = ast.literal_eval(data['sentences'].iloc[idx])[j]
                 
                 ecb_sentences = ecb_sentences.append({'sentence': sent,'tokens' : tok, 'index': idx}, ignore_index=True) 
+                
+# Initialize an empty list to store the rows
+rows = []
+ecb_rows = []
+
+for idx, art in tqdm(enumerate(data['tokens'])):
+    for j, tok in enumerate(art):
+        found_names = set()
+        if any(word in word_list for word in tok):
+            rows.append({'tokens' : tok, 'index': idx})
+            for i in range(len(tok) - 1):
+                if tok[i] in word_list_ecb:
+                    found_names.add(tok[i])
+                elif tok[i] == "europa" and tok[i+1] == "zentralbank":
+                    found_names.add(tok[i])
+                elif tok[i] == "jurg" and tok[i+1] == "stark":
+                    found_names.add(tok[i])
+            if len(found_names) > 0:
+                #sent = ast.literal_eval(data['texts'].iloc[idx])[j]
+                sent = data['texts'].iloc[idx][j]
+                #sent = ast.literal_eval(data['sentences'].iloc[idx])[j]
+                ecb_rows.append({'sentence': sent,'tokens' : tok, 'index': idx})
+
+# Create the DataFrame from the list of dictionaries all at once
+inflation_sentences = pd.DataFrame(rows)
+ecb_sentences = pd.DataFrame(ecb_rows)
 
 # inflation_sentences.to_csv(r'D:\Studium\PhD\Github\Single-Author\Data\newspaper_dpa_inflation_sentences.csv')
 # ecb_sentences.to_csv(r'D:\Studium\PhD\Github\Single-Author\Data\news_dpa_ecb_inflation_sentences.csv')
@@ -237,6 +264,8 @@ ecb_data.set_index('date', inplace=True)
 
 ecb_data.to_csv(r'D:\Studium\PhD\Single Author\Data\ecb_data.csv')
 news_data_full.to_csv(r'D:\Studium\PhD\Single Author\Data\news_data_full_inflation.csv')
+
+news_data_full = pd.read_csv(r'D:\Studium\PhD\Single Author\Data\news_data_full_inflation.csv')
 
 # Resample the DataFrame by month and count the number of rows in each month
 monthly_counts_ecb = ecb_data.resample('M').size()
