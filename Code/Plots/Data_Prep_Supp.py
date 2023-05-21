@@ -46,27 +46,55 @@ def scale_ECB_index(ECB_index, date_inf):
     for idx, date in enumerate(date_inf):
         
         index = list(ECB_index[(ECB_index.index <= date) & (ECB_index.index > prev_date)]['index']) 
-        #prev_date = date
         
         if index == []:
-            
             index = prev_index
             
         if len(index) > 1:
-            
             index = [sum(index)/len(index)]
-            
         else:
-            
             index = index
             
-        scaled_ECB_index = scaled_ECB_index.append({"date": date, "index": index}, ignore_index=True)
+        new_row = pd.DataFrame([{"date": date, "index": index}])
+        scaled_ECB_index = pd.concat([scaled_ECB_index, new_row], ignore_index=True)
+        
         prev_date = date
         prev_index = index
     
     scaled_ECB_index['index'] = [ind[0] for ind in scaled_ECB_index['index']]
     
     return(scaled_ECB_index)
+
+# def scale_ECB_index(ECB_index, date_inf):
+    
+#     scaled_ECB_index = pd.DataFrame()
+#     prev_date = date_inf[0]
+#     prev_index = list(ECB_index.iloc[0])
+    
+#     for idx, date in enumerate(date_inf):
+        
+#         index = list(ECB_index[(ECB_index.index <= date) & (ECB_index.index > prev_date)]['index']) 
+#         #prev_date = date
+        
+#         if index == []:
+            
+#             index = prev_index
+            
+#         if len(index) > 1:
+            
+#             index = [sum(index)/len(index)]
+            
+#         else:
+            
+#             index = index
+            
+#         scaled_ECB_index = scaled_ECB_index.append({"date": date, "index": index}, ignore_index=True)
+#         prev_date = date
+#         prev_index = index
+    
+#     scaled_ECB_index['index'] = [ind[0] for ind in scaled_ECB_index['index']]
+    
+#     return(scaled_ECB_index)
 
 def transform_quantiles(inf_exp_inc_rap,
     inf_exp_inc_same,
@@ -153,26 +181,49 @@ def rolling_quant(inf_exp_inc_rap,
     # for years_roll in range(1, 13):
         
     # Lahiri and Zhao (2014)
+    
     w = years_roll*12
     scaling = pd.DataFrame()
-        
+    
     for date in scale['date'][w:]:
         
-       end_t = scale[scale['date'] == date].index.values.astype(int)
-       start_t = end_t - w
-       
-       window = scale[start_t[0]:end_t[0]]['perc_weight']
-       
-       date_inf_start = date - relativedelta(months=w-1, day = 1)
-       
-       inflation_past = inflation_m[(inflation_m.iloc[:,0] >= date_inf_start) & (inflation_m.iloc[:,0] <= date)]
-       
-       windows_sq_sum = sum(np.square(np.array(window)))
-       window_inf_sum = sum(np.array(inflation_past.iloc[:,1])*np.array(window))
+        end_t = scale[scale['date'] == date].index.values.astype(int)
+        start_t = end_t - w
+        
+        window = scale[start_t[0]:end_t[0]]['perc_weight']
+        
+        date_inf_start = date - relativedelta(months=w-1, day = 1)
+        
+        inflation_past = inflation_m[(inflation_m.iloc[:,0] >= date_inf_start) & (inflation_m.iloc[:,0] <= date)]
+        
+        windows_sq_sum = sum(np.square(np.array(window)))
+        window_inf_sum = sum(np.array(inflation_past.iloc[:,1])*np.array(window))
     
-       lambda_t =  window_inf_sum/windows_sq_sum   
+        lambda_t =  window_inf_sum/windows_sq_sum   
+        
+        new_row = pd.DataFrame([{'date': date, 'lambda': lambda_t}])
+        scaling = pd.concat([scaling, new_row], ignore_index=True)
+        
+    # w = years_roll*12
+    # scaling = pd.DataFrame()
+        
+    # for date in scale['date'][w:]:
+        
+    #    end_t = scale[scale['date'] == date].index.values.astype(int)
+    #    start_t = end_t - w
+       
+    #    window = scale[start_t[0]:end_t[0]]['perc_weight']
+       
+    #    date_inf_start = date - relativedelta(months=w-1, day = 1)
+       
+    #    inflation_past = inflation_m[(inflation_m.iloc[:,0] >= date_inf_start) & (inflation_m.iloc[:,0] <= date)]
+       
+    #    windows_sq_sum = sum(np.square(np.array(window)))
+    #    window_inf_sum = sum(np.array(inflation_past.iloc[:,1])*np.array(window))
     
-       scaling = scaling.append({'date': date, 'lambda': lambda_t}, ignore_index=True)
+    #    lambda_t =  window_inf_sum/windows_sq_sum   
+    
+    #    scaling = pd.concat([scaling,pd.Series({'date': date, 'lambda': lambda_t})], ignore_index=True)
     
     scaling['German Inflation Expectations'] = np.array(scaling.iloc[:,1]) * np.array(scale['exp_weight'][w:])
     scaling['exp_weight'] = list(scale['exp_weight'][w:])

@@ -45,7 +45,7 @@ for year in range(2000, 2021):
    
    inflation_poll = pd.DataFrame({'Date': date, 'Median': median, 'Target': year})[1:]
    
-   forecast_df = forecast_df.append(inflation_poll, ignore_index=True)
+   forecast_df = pd.concat([forecast_df,inflation_poll], ignore_index=True)
  
 forecast_df['Date'] = pd.to_datetime(forecast_df['Date'])
 
@@ -217,17 +217,18 @@ scaling = scaling.loc[(scaling['date'] >= start_date) & (scaling['date'] <= end_
 inflation_ger_m = transform_date(inflation_ger_m)
 
 hist_ger_inflation_m = inflation_ger_m.loc[(inflation_ger_m.index >= start_date_hist) & (inflation_ger_m.index <= end_date)]
-hist_ger_inflation_rollm_m = hist_ger_inflation_m.rolling(12).mean().shift(3)[14:]
+hist_ger_inflation_rollm_m = hist_ger_inflation_m['Inflation'].rolling(12).mean().shift(3)[14:]
 
 hist_ger_inflation_m_berk_1 = inflation_ger_m.loc[(inflation_ger_m.index >= start_date_hist_berk_1) & (inflation_ger_m.index <= end_date)]
-hist_ger_inflation_rollm_m_berk_1 = hist_ger_inflation_m_berk_1.rolling(12).mean().shift(3)[14:]
+hist_ger_inflation_rollm_m_berk_1['Inflation'] = hist_ger_inflation_m_berk_1['Inflation'].rolling(12).mean().shift(3)[14:]
 #mean()[60:-3]
 hist_ger_inflation_m.iloc[:,1] = pd.to_numeric(hist_ger_inflation_m.iloc[:,1])
 hist_ger_inflation_m_mean = hist_ger_inflation_m.iloc[:,1].mean()
 
 inflation_ger_m = inflation_ger_m.loc[(inflation_ger_m.index >= start_date) & (inflation_ger_m.index <= end_date)]
 inflation_ger_m.iloc[:,1] = pd.to_numeric(inflation_ger_m.iloc[:,1])
-mean_inflation = inflation_ger_m.mean()
+inflation_ger_m['Inflation'] = pd.to_numeric(inflation_ger_m['Inflation'])
+mean_inflation = inflation_ger_m['Inflation'].mean()
 
 ###############################################################################
 
@@ -238,7 +239,7 @@ germany_harmonised_inflation_m.iloc[:,1] = pd.to_numeric(germany_harmonised_infl
 
 ###
 
-hist_ger_inflation_rollm_m_tran = hist_ger_inflation_m.rolling(48).mean()[48:]
+hist_ger_inflation_rollm_m_tran['Inflation'] = hist_ger_inflation_m['Inflation'].rolling(48).mean()[48:]
 
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
 
@@ -505,6 +506,10 @@ ger_relative_exp_gap_m_role_Reuter, ger_abslolute_exp_gap_m_role_Reuter = absolu
 ger_relative_exp_gap_m_berk_5_Reuter, ger_abslolute_exp_gap_m_berk_5_Reuter = absolute_errors(exp_inf_berk_5_var_mean.iloc[:,0], forecast_df_m['One-Year-Ahead'])
 ger_relative_exp_gap_m_quant_Reuter, ger_abslolute_exp_gap_m_quant_Reuter = absolute_errors(ea_inf_exp_quant['Median'], forecast_df_m['One-Year-Ahead'])
 
+####
+
+ger_relative_exp_gap_m_quant_real, ger_abslolute_exp_gap_m_quant_real = absolute_errors(ea_inf_exp_quant['Median'], inflation_ger_m.iloc[:,1])
+
 ###############################################################################
 
 #inflation_ger_m['Recursive_Mean'] = inflation_ger_m['Inflation'].expanding().mean()
@@ -594,6 +599,9 @@ Regression_data_m['German Relative Real Inflation Expectations Gap Stm Reuter'] 
 Regression_data_m['German Relative Real Inflation Expectations Gap Role Reuter'] = list(ger_relative_exp_gap_m_role_Reuter)
 Regression_data_m['German Relative Real Inflation Expectations Gap Berk5 Reuter'] = list(ger_relative_exp_gap_m_berk_5_Reuter)
 Regression_data_m['German Relative Real Inflation Expectations Gap Quant Reuter'] = list(ger_relative_exp_gap_m_quant_Reuter)
+
+Regression_data_m['German Absolute Real Inflation Expectations Gap Quant Real'] = list(ger_abslolute_exp_gap_m_quant_real)
+Regression_data_m['German Relative Real Inflation Expectations Gap Quant Real'] = list(ger_relative_exp_gap_m_quant_real)
 
 Regression_data_m['Reuter Poll Forecast'] = list(forecast_df_m['One-Year-Ahead'])
 
