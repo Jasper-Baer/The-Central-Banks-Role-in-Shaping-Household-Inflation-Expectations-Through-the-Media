@@ -503,7 +503,7 @@ ger_relative_inf_gap_m_quant, ger_abslolute_inf_gap_m_quant = absolute_errors(ea
 ger_relative_exp_gap_m_berk_stm_Reuter, ger_abslolute_exp_gap_m_berk_stm_Reuter = absolute_errors(stm_lam_df.iloc[:,0], forecast_df_m['One-Year-Ahead'])
 ger_relative_exp_gap_m_role_Reuter, ger_abslolute_exp_gap_m_role_Reuter = absolute_errors(scaling['German Inflation Expectations'], forecast_df_m['One-Year-Ahead'])
 ger_relative_exp_gap_m_berk_5_Reuter, ger_abslolute_exp_gap_m_berk_5_Reuter = absolute_errors(exp_inf_berk_5_var_mean.iloc[:,0], forecast_df_m['One-Year-Ahead'])
-
+ger_relative_exp_gap_m_quant_Reuter, ger_abslolute_exp_gap_m_quant_Reuter = absolute_errors(ea_inf_exp_quant['Median'], forecast_df_m['One-Year-Ahead'])
 
 ###############################################################################
 
@@ -588,10 +588,12 @@ ger_relative_exp_gap_m_berk_5_Reuter, ger_abslolute_exp_gap_m_berk_5_Reuter = ab
 Regression_data_m['German Absolute Real Inflation Expectations Gap Stm Reuter'] = list(ger_abslolute_exp_gap_m_berk_stm_Reuter)
 Regression_data_m['German Absolute Real Inflation Expectations Gap Role Reuter'] = list(ger_abslolute_exp_gap_m_role_Reuter)
 Regression_data_m['German Absolute Real Inflation Expectations Gap Berk5 Reuter'] = list(ger_abslolute_exp_gap_m_berk_5_Reuter)
+Regression_data_m['German Absolute Real Inflation Expectations Gap Quant Reuter'] = list(ger_abslolute_exp_gap_m_quant_Reuter)
 
 Regression_data_m['German Relative Real Inflation Expectations Gap Stm Reuter'] = list(ger_relative_exp_gap_m_berk_stm_Reuter)
 Regression_data_m['German Relative Real Inflation Expectations Gap Role Reuter'] = list(ger_relative_exp_gap_m_role_Reuter)
 Regression_data_m['German Relative Real Inflation Expectations Gap Berk5 Reuter'] = list(ger_relative_exp_gap_m_berk_5_Reuter)
+Regression_data_m['German Relative Real Inflation Expectations Gap Quant Reuter'] = list(ger_relative_exp_gap_m_quant_Reuter)
 
 Regression_data_m['Reuter Poll Forecast'] = list(forecast_df_m['One-Year-Ahead'])
 
