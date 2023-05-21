@@ -1,8 +1,8 @@
 Fischerei
 
-15.05 Bert Classification beschreiben
-10.05 Graphen fixen
-15.05 Graphen in Appendix
+15.05 Bert Classification beschreiben (fertig)
+10.05 Graphen fixen (Tabelle noch machen)
+15.05 Graphen in Appendix (fertig, aber Heike bei einigen Sachen nochmal fragen) 
 20.05 Bertopic erste Ergebnisse
 01.06 Bertopic beschreiben 
 
@@ -10,11 +10,23 @@ Media Tenor
 01.06 Warten auf Mariia
 
 Single Author
-
-10.05 Mail an Kai wegen KFG
-11.05 Schlachtplan im Detail
+ 
+10.05 Mail an Kai wegen KFG (fertig)
+11.05 Schlachtplan im Detail (fertig)
 15.05 Genauere Definition für Lambda
 01.06 Literature für Makro und Baysian Learning Framework
 15.06 Grobes Modell zum Diskutieren
+
+Schlachtlan die Zweite:
+Mariia nach Daten fragen (bitte auf Mariia Festplate kopieren)
+Lambda rechtfertigen 20.05 (Verzögerung durch Neuerzeugung der Daten)
+Nochmal nachlassen warum carrol 2003 die quadrierten Fehler statt die relativen Fehler nimmt
+Nochmal über relative Ergebnisse reflektieren 21.05
+Statt der Reuters Poll Daten, real 12 month ahead inflation.
+Baysiean Lerning und Makro Literatur und erste Ideen 01.06
+Baysian Learning und Makro erstes Model 15.06
+
+Anhand eines Artikels darlegen, inwiefern meine Methode geignet ist direkte und indirekte Zitate, inflations bezogene Sätze und Sentiments zu klassifizieren.
+Accuracy und F1 Makro Score hinzufügen
 
 
