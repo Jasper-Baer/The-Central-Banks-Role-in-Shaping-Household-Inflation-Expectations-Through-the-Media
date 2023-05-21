@@ -24,6 +24,9 @@ from Survey_Quantification import recursive_mean, stm
 start_date = '1999-12-31'
 end_date = '2019-01-01'
 
+start_date_12_month_shift = '2000-12-31'
+end_date_12_month_shift = '2020-01-01'
+
 start_date_hist_berk_1 = '1998-10-31'
 start_date_hist = '1995-12-31'
 
@@ -217,13 +220,21 @@ scaling = scaling.loc[(scaling['date'] >= start_date) & (scaling['date'] <= end_
 inflation_ger_m = transform_date(inflation_ger_m)
 
 hist_ger_inflation_m = inflation_ger_m.loc[(inflation_ger_m.index >= start_date_hist) & (inflation_ger_m.index <= end_date)]
-hist_ger_inflation_rollm_m = hist_ger_inflation_m['Inflation'].rolling(12).mean().shift(3)[14:]
+hist_ger_inflation_m['Inflation'] = hist_ger_inflation_m['Inflation'].rolling(12).mean().shift(3)[14:]
+
+hist_ger_inflation_m.dropna(inplace=True)
 
 hist_ger_inflation_m_berk_1 = inflation_ger_m.loc[(inflation_ger_m.index >= start_date_hist_berk_1) & (inflation_ger_m.index <= end_date)]
-hist_ger_inflation_rollm_m_berk_1['Inflation'] = hist_ger_inflation_m_berk_1['Inflation'].rolling(12).mean().shift(3)[14:]
+hist_ger_inflation_m_berk_1['Inflation'] = hist_ger_inflation_m_berk_1['Inflation'].rolling(12).mean().shift(3)[14:]
 #mean()[60:-3]
+hist_ger_inflation_m_berk_1.dropna(inplace=True)
+
 hist_ger_inflation_m.iloc[:,1] = pd.to_numeric(hist_ger_inflation_m.iloc[:,1])
 hist_ger_inflation_m_mean = hist_ger_inflation_m.iloc[:,1].mean()
+
+inflation_ger_m_12_month_ahead = inflation_ger_m.loc[(inflation_ger_m.index >= start_date_12_month_shift) & (inflation_ger_m.index <= end_date_12_month_shift)]
+inflation_ger_m_12_month_ahead.iloc[:,1] = pd.to_numeric(inflation_ger_m_12_month_ahead.iloc[:,1])
+inflation_ger_m_12_month_ahead['Inflation'] = pd.to_numeric(inflation_ger_m_12_month_ahead['Inflation'])
 
 inflation_ger_m = inflation_ger_m.loc[(inflation_ger_m.index >= start_date) & (inflation_ger_m.index <= end_date)]
 inflation_ger_m.iloc[:,1] = pd.to_numeric(inflation_ger_m.iloc[:,1])
@@ -239,7 +250,8 @@ germany_harmonised_inflation_m.iloc[:,1] = pd.to_numeric(germany_harmonised_infl
 
 ###
 
-hist_ger_inflation_rollm_m_tran['Inflation'] = hist_ger_inflation_m['Inflation'].rolling(48).mean()[48:]
+hist_ger_inflation_m['Inflation'] = hist_ger_inflation_m['Inflation'].rolling(34).mean()[34:]
+hist_ger_inflation_m.dropna(inplace=True)
 
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
 
@@ -249,7 +261,7 @@ from sklearn.preprocessing import MinMaxScaler, StandardScaler
 initial_params = [2.15, 3.23, 4.56, 1.62]
 
 rec_mean = recursive_mean(inflation_ger_m)[1]
-stm_lam_df = stm(initial_params, scaling, hist_ger_inflation_rollm_m_tran, inflation_ger_m)
+stm_lam_df = stm(initial_params, scaling, hist_ger_inflation_m, inflation_ger_m)
 
 # # Scale the transition variable using Min-Max scaling
 # min_max_scaler = MinMaxScaler()
@@ -455,7 +467,7 @@ data_ECB_index_ec_m = scale_ECB_index(data_ECB_index_ec,date_inf)
 ###
 ###############################################################################
 
-exp_inf_berk_1 = np.array(hist_ger_inflation_rollm_m_berk_1['Inflation'])*np.array(scaling['exp_weight'])
+exp_inf_berk_1 = np.array(hist_ger_inflation_m_berk_1['Inflation'])*np.array(scaling['exp_weight'])
 exp_inf_berk_1 = pd.DataFrame(exp_inf_berk_1)
 exp_inf_berk_1.index = inflation_ger_m.iloc[:,0]
 
@@ -477,27 +489,27 @@ def absolute_errors(quant_surv, proff_fore):
 ger_relative_exp_gap_m_role_RWI, ger_abslolute_exp_gap_m_role_RWI = absolute_errors(scaling['German Inflation Expectations'], RWI_inflation_m['One-Year-Ahead'])   
 ger_relative_exp_gap_m_role_GD, ger_abslolute_exp_gap_m_role_GD = absolute_errors(scaling['German Inflation Expectations'], GD_inflation_m['One-Year-Ahead'])
 ger_eu_relative_exp_gap_m_role, ger_eu_abslolute_exp_gap_m_role =  absolute_errors(scaling['German Inflation Expectations'], data_inf_exp_eu.iloc[:,0])
-ger_relative_inf_gap_m_role, ger_abslolute_inf_gap_m_role = absolute_errors(scaling['German Inflation Expectations'], inflation_ger_m.iloc[:,1])
+ger_relative_inf_gap_m_role, ger_abslolute_inf_gap_m_role = absolute_errors(scaling['German Inflation Expectations'], inflation_ger_m_12_month_ahead.iloc[:,1])
 
 ger_relative_exp_gap_m_berk_1_RWI, ger_abslolute_exp_gap_m_berk_1_RWI = absolute_errors(exp_inf_berk_1.iloc[:,0], RWI_inflation_m['One-Year-Ahead'])
 ger_relative_exp_gap_m_berk_1_GD, ger_abslolute_exp_gap_m_berk_1_GD = absolute_errors(exp_inf_berk_1.iloc[:,0], GD_inflation_m['One-Year-Ahead'])
 ger_eu_relative_exp_gap_m_berk_1, ger_eu_abslolute_exp_gap_m_berk_1 = absolute_errors(exp_inf_berk_1.iloc[:,0], data_inf_exp_eu.iloc[:,0])
-ger_relative_inf_gap_m_berk_1, ger_abslolute_inf_gap_m_berk_1 = absolute_errors(exp_inf_berk_1.iloc[:,0], inflation_ger_m.iloc[:,1])
+ger_relative_inf_gap_m_berk_1, ger_abslolute_inf_gap_m_berk_1 = absolute_errors(exp_inf_berk_1.iloc[:,0], inflation_ger_m_12_month_ahead.iloc[:,1])
 
 ger_relative_exp_gap_m_berk_5_RWI, ger_abslolute_exp_gap_m_berk_5_RWI = absolute_errors(exp_inf_berk_5_var_mean.iloc[:,0], RWI_inflation_m['One-Year-Ahead'])
 ger_relative_exp_gap_m_berk_5_GD, ger_abslolute_exp_gap_m_berk_5_GD = absolute_errors(exp_inf_berk_5_var_mean.iloc[:,0], GD_inflation_m['One-Year-Ahead'])
 ger_eu_relative_exp_gap_m_berk_5, ger_eu_abslolute_exp_gap_m_berk_5 = absolute_errors(exp_inf_berk_5_var_mean.iloc[:,0], data_inf_exp_eu.iloc[:,0])
-ger_relative_inf_gap_m_berk_5, ger_abslolute_inf_gap_m_berk_5 = absolute_errors(exp_inf_berk_5_var_mean.iloc[:,0], inflation_ger_m.iloc[:,1])
+ger_relative_inf_gap_m_berk_5, ger_abslolute_inf_gap_m_berk_5 = absolute_errors(exp_inf_berk_5_var_mean.iloc[:,0], inflation_ger_m_12_month_ahead.iloc[:,1])
 
 ger_relative_exp_gap_m_berk_stm_RWI, ger_abslolute_exp_gap_m_berk_stm_RWI = absolute_errors(stm_lam_df.iloc[:,0], RWI_inflation_m['One-Year-Ahead'])
 ger_relative_exp_gap_m_berk_stm_GD, ger_abslolute_exp_gap_m_berk_stm_GD = absolute_errors(stm_lam_df.iloc[:,0], GD_inflation_m['One-Year-Ahead'])
 ger_eu_relative_exp_gap_m_berk_stm, ger_eu_abslolute_exp_gap_m_berk_stm = absolute_errors(stm_lam_df.iloc[:,0], data_inf_exp_eu.iloc[:,0])
-ger_relative_inf_gap_m_berk_stm, ger_abslolute_inf_gap_m_berk_stm = absolute_errors(stm_lam_df.iloc[:,0], inflation_ger_m.iloc[:,1])
+ger_relative_inf_gap_m_berk_stm, ger_abslolute_inf_gap_m_berk_stm = absolute_errors(stm_lam_df.iloc[:,0], inflation_ger_m_12_month_ahead.iloc[:,1])
 
 ger_relative_exp_gap_m_quant_RWI, ger_abslolute_exp_gap_m_quant_RWI = absolute_errors(ea_inf_exp_quant['Median'], RWI_inflation_m['One-Year-Ahead'])   
 ger_relative_exp_gap_m_quant_GD, ger_abslolute_exp_gap_m_quant_GD = absolute_errors(ea_inf_exp_quant['Median'], GD_inflation_m['One-Year-Ahead'])
 ger_eu_relative_exp_gap_m_quant, ger_eu_abslolute_exp_gap_m_quant =  absolute_errors(ea_inf_exp_quant['Median'], data_inf_exp_eu.iloc[:,0])
-ger_relative_inf_gap_m_quant, ger_abslolute_inf_gap_m_quant = absolute_errors(ea_inf_exp_quant['Median'], inflation_ger_m.iloc[:,1])
+ger_relative_inf_gap_m_quant, ger_abslolute_inf_gap_m_quant = absolute_errors(ea_inf_exp_quant['Median'], inflation_ger_m_12_month_ahead.iloc[:,1])
 
 ####
 
@@ -508,7 +520,7 @@ ger_relative_exp_gap_m_quant_Reuter, ger_abslolute_exp_gap_m_quant_Reuter = abso
 
 ####
 
-ger_relative_exp_gap_m_quant_real, ger_abslolute_exp_gap_m_quant_real = absolute_errors(ea_inf_exp_quant['Median'], inflation_ger_m.iloc[:,1])
+ger_relative_exp_gap_m_quant_real, ger_abslolute_exp_gap_m_quant_real = absolute_errors(ea_inf_exp_quant['Median'], inflation_ger_m_12_month_ahead.iloc[:,1])
 
 ###############################################################################
 
