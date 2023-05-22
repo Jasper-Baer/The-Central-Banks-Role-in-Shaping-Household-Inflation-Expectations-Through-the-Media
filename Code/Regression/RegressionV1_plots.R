@@ -9,8 +9,8 @@ library("ggplot2")
 
 #####################################################################################
 
-data = read_excel('D:/Studium/PhD/Github/Single-Author/Code/Regression/Regession_data_monthly_2_processed.xlsx')
-#data = read_excel('D:/Single Author/Github/Single-Author/Data/Regression/Regession_data_monthly_2_processed.xlsx')
+#data = read_excel('D:/Studium/PhD/Github/Single-Author/Code/Regression/Regession_data_monthly_2_processed.xlsx')
+data = read_excel('D:/Single Author/Github/Single-Author/Data/Regression/Regession_data_monthly_2_processed.xlsx')
 data = data.frame(data)
 #data = data[24:dim(data)[1],]
 #data = data[9:dim(data)[1],]
@@ -266,14 +266,15 @@ ggplot(data, aes(x = time)) +
   labs(y = "Inflation Expectation") +
   #geom_line(aes(y = Germany.Inflation.Professionell.Forecasts.GD, colour = "GD", linetype = "GD")) +
   #geom_line(aes(y = Germany.Inflation.Professionell.Forecasts.RWI, colour = "RWI", linetype = "RWI")) +
-  #geom_line(aes(y = Eurozone.Inflation.Professionell.Forecasts, colour = "ECB Survey", linetype = "ECB Survey")) +
+  geom_line(aes(y = Eurozone.Inflation.Professionell.Forecasts, colour = "ECB Survey", linetype = "ECB Survey")) +
+  geom_line(aes(y = German.Household.Inflation.Expectations.EU.Median, colour = "EU Median", linetype = "EU Median")) +
   geom_line(aes(y = Reuter.Poll.Forecast, colour = "Reuters Poll", linetype = "Reuters Poll")) +
   geom_line(aes(y = German.Inflation.Year.on.Year.Harmonised, colour = "Germany Inflation", linetype = "Germany Inflation"), linewidth = 1) +
-  geom_line(aes(y = German.Household.Inflation.Expectations.Stm, colour = "Stm", linetype = "Stm"), linewidth = 1) +
+ # geom_line(aes(y = German.Household.Inflation.Expectations.Stm, colour = "Stm", linetype = "Stm"), linewidth = 1) +
  #geom_line(aes(y = Eurozone.Inflation, colour = "Eurozone Inflation", linetype = "Eurozone Inflation"), linewidth = 1) +
   scale_x_date(date_labels="%Y", breaks = unique(years), name = "") +
-  scale_color_manual(values = c("GD" = "red", "RWI" = "blue", "ECB Survey" = "black", "Germany Inflation" = "darkorange", "Stm" = "darkred", "Eurozone Inflation" = "green", 'Reuters Poll' = 'darkgreen')) +
-  scale_linetype_manual(values = c("GD" = 1, "RWI" = 1, "ECB Survey" = 1, "Germany Inflation" = 3, "Stm" = 3,  "Eurozone Inflation" = 2, 'Reuters Poll' = 1)) +
+  scale_color_manual(values = c("EU Median" =  "darkblue", "GD" = "red", "RWI" = "blue", "ECB Survey" = "black", "Germany Inflation" = "darkorange", "Stm" = "darkred", "Eurozone Inflation" = "green", 'Reuters Poll' = 'darkgreen')) +
+  scale_linetype_manual(values = c("EU Median" = 1,"GD" = 1, "RWI" = 1, "ECB Survey" = 1, "Germany Inflation" = 3, "Stm" = 3,  "Eurozone Inflation" = 2, 'Reuters Poll' = 1)) +
   theme_classic() + 
   theme(axis.text.x = element_text(angle = 45, vjust = 0.5, size = 11),
         panel.grid.minor = element_blank(),
