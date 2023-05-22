@@ -347,7 +347,7 @@ forecast_df_m = pd.DataFrame(forecast_df_m)
 extended_data = pd.DataFrame(index=new_index, columns=forecast_df_m.columns)
 
 # Fill the new DataFrame with 0 values for the additional four years
-extended_data.loc[:first_date + pd.DateOffset(years=4, months=-1), :] = 0
+extended_data.loc[:first_date + pd.DateOffset(years=5, months=-1), :] = 0
 
 # Concatenate the new DataFrame with the original DataFrame
 extended_data.update(forecast_df_m)
@@ -531,6 +531,7 @@ ger_relative_exp_gap_m_quant_real, ger_abslolute_exp_gap_m_quant_real = absolute
 Regression_data_m = pd.DataFrame()
 Regression_data_m['Eurozone Industrial Production'] = ip_ea_m.iloc[:,1]
 Regression_data_m['Eurozone Inflation'] = list(inflation_ea_m.iloc[:,1])
+Regression_data_m['Eurozone Inflation 12 Month Ahead'] = list(inflation_ger_m_12_month_ahead['Inflation'])
 Regression_data_m['German Industrial Production'] = ip_ger_m.iloc[:,1]
 Regression_data_m['German Inflation Year-on-Year'] = list(inflation_ger_m.iloc[:,1])
 Regression_data_m['German Inflation Year-on-Year Harmonised'] = list(germany_harmonised_inflation_m.iloc[:,1])
@@ -642,9 +643,25 @@ Gaps
 
 import pylab as plt
 
-plt.plot(scaling['date'], scaling['German Inflation Expectations'])
-plt.plot(inflation_ger_m.index, inflation_ger_m.iloc[:,1])
+#plt.plot(inflation_ger_m.index, inflation_ger_m.iloc[:,1])
+#plt.plot(scaling['date'], scaling['German Inflation Expectations'])
+plt.plot(forecast_df_m.index, inflation_ger_m_12_month_ahead['Inflation'])
+plt.plot(forecast_df_m.index, forecast_df_m['One-Year-Ahead'])
+
+plt.plot(forecast_df_m.index,ea_inf_exp_quant['Median'])
+
 plt.show()
+
+#plt.plot(scaling['date'], scaling['German Inflation Expectations'])
+#plt.plot(scaling['date'], exp_inf_berk_5_var_mean.iloc[:,0])
+plt.plot(inflation_ger_m.index, inflation_ger_m.iloc[:,1])
+plt.plot(forecast_df_m.index, forecast_df_m['One-Year-Ahead'])
+plt.show()
+
+np.sum((np.array(inflation_ger_m_12_month_ahead['Inflation'][48:]) - np.array(scaling['German Inflation Expectations'][48:]))**2)
+np.sum((np.array(inflation_ger_m_12_month_ahead['Inflation'][48:]) - np.array(forecast_df_m['One-Year-Ahead'][48:]))**2)
+np.sum((np.array(inflation_ger_m_12_month_ahead['Inflation'][49:]) - np.array(ea_inf_exp_quant['Median'][49:]))**2)
+
 
 plt.plot(iwh_inflation_m['One-Year-Ahead'])
 plt.plot(institue_forecasts_RWI_m['One-Year-Ahead'])
@@ -660,13 +677,16 @@ plt.plot(stm_lam_df.index, stm_lam_df['exp_inf_min'])
 plt.plot(scaling['date'], scaling['German Inflation Expectations'])
 plt.show()
 
-np.sum((np.array(inflation_ger_m['Inflation']) - np.array(scaling['German Inflation Expectations']))**2)
-np.sum((np.array(inflation_ger_m['Inflation']) - np.array(stm_lam_df['exp_inf_min']))**2)
-np.sum((np.array(inflation_ger_m['Inflation']) - np.array(exp_inf_berk_5_var_mean.iloc[:,0]))**2)
+np.sum((np.array(inflation_ger_m_12_month_ahead['Inflation']) - np.array(scaling['German Inflation Expectations']))**2)
+np.sum((np.array(inflation_ger_m_12_month_ahead['Inflation']) - np.array(stm_lam_df['exp_inf_min']))**2)
+np.sum((np.array(inflation_ger_m_12_month_ahead['Inflation']) - np.array(exp_inf_berk_5_var_mean.iloc[:,0]))**2)
+np.sum((np.array(inflation_ger_m_12_month_ahead['Inflation']) - np.array(exp_inf_berk_1.iloc[:,0]))**2)
+np.sum((np.array(inflation_ger_m_12_month_ahead['Inflation']) - np.array(institue_forecasts_RWI_m['One-Year-Ahead']))**2)
+np.sum((np.array(inflation_ger_m_12_month_ahead['Inflation']) - np.array(iwh_inflation_m['One-Year-Ahead']))**2)
 np.sum((np.array(inflation_ger_m['Inflation']) - np.array(exp_inf_berk_1.iloc[:,0]))**2)
-np.sum((np.array(inflation_ger_m['Inflation']) - np.array(institue_forecasts_RWI_m['One-Year-Ahead']))**2)
-np.sum((np.array(inflation_ger_m['Inflation']) - np.array(iwh_inflation_m['One-Year-Ahead']))**2)
-np.sum((np.array(inflation_ger_m['Inflation']) - np.array(exp_inf_berk_1.iloc[:,0]))**2)
+
+
+plt.plot(inflation_ger_m_12_month_ahead.iloc[:,1])
 
 np.sum((np.array(inflation_ger_m['Inflation']) - np.array(data_inf_exp_eu.iloc[:,0]))**2)
 np.sum((np.array(inflation_ger_m['Inflation']) - np.array(monthly_df.iloc[:,0]))**2)
