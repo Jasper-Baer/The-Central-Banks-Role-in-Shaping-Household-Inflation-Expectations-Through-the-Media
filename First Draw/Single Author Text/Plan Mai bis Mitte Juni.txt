@@ -7,7 +7,8 @@ Fischerei
 01.06 Bertopic beschreiben 
 
 Media Tenor
-01.06 Warten auf Mariia
+01.06 Warten auf Mariia (gemacht)
+02.06 10:00 Uhr Treffen mit Joscha und Nils
 
 Single Author
  
@@ -18,15 +19,26 @@ Single Author
 15.06 Grobes Modell zum Diskutieren
 
 Schlachtlan die Zweite:
-Mariia nach Daten fragen (bitte auf Mariia Festplate kopieren)
+Mariia nach Daten fragen (bitte auf Mariia Festplate kopieren) (Text fertig, in Slack reinschreiben)
 Lambda rechtfertigen 20.05 (Verzögerung durch Neuerzeugung der Daten)
-Nochmal nachlassen warum carrol 2003 die quadrierten Fehler statt die relativen Fehler nimmt
-Nochmal über relative Ergebnisse reflektieren 21.05
-Statt der Reuters Poll Daten, real 12 month ahead inflation.
-Baysiean Lerning und Makro Literatur und erste Ideen 01.06
-Baysian Learning und Makro erstes Model 15.06
+Nochmal nachlassen warum carrol 2003 die quadrierten Fehler statt die relativen Fehler nimmt (gemacht, keine Info dazu, aber auch nicht wirklich wichtig)
+Nochmal über relative Ergebnisse reflektieren 21.05 (gemacht, funktioniert besser mit ECB quant)
+Statt der Reuters Poll Daten, real 12 month ahead inflation. (gemacht, funktioniert nicht)
+Baysiean Lerning und Makro Literatur und erste Ideen 01.06 (mehr oder weniger gemacht, aber wie Lambda und Alpha modelieren?)
+Baysian Learning und Makro erstes Model 15.06 
+Quartalsweise Daten ausprobieren
+Rausfinden wie Paper mit Bayesian Learning Inflation Expectations hat Model geschätzt
+Kai nach Funding fragen (gemacht, warte auf Antwort)
+Paper "Learning in a Medium-Scale DSGE Model with Expectations Based on Small Forecasting Models" anschauen und Code anschauen (interessant aber viel zu kompliziert, wenn dann nur bei Bedarf nochmal schauen)
+Richtiges GMX Passwort einrichten
+GEZ an Matthes überweisen
+Nach Model suchen das Adaptive Learning in DSGE Modellen anwendet
+
+Dinge die ich Kai noch fragen möchte:
+- Should I try to model alpha and lambda or just take averages based on the data?
+
 
 Anhand eines Artikels darlegen, inwiefern meine Methode geignet ist direkte und indirekte Zitate, inflations bezogene Sätze und Sentiments zu klassifizieren.
 Accuracy und F1 Makro Score hinzufügen
 
-
+Lambda = transparity + Dummy für "Whatever it takes" + credibility (e.g. consistency of past observation)
