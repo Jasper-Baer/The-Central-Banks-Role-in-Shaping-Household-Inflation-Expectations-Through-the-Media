@@ -266,6 +266,12 @@ ecb_data.to_csv(r'D:\Studium\PhD\Single Author\Data\ecb_data.csv')
 news_data_full.to_csv(r'D:\Studium\PhD\Single Author\Data\news_data_full_inflation.csv')
 
 news_data_full = pd.read_csv(r'D:\Studium\PhD\Single Author\Data\news_data_full_inflation.csv')
+ecb_data = pd.read_csv(r'D:\Studium\PhD\Single Author\Data\ecb_data.csv')
+data = pd.read_csv('D:\Studium\PhD\Single Author\Data\dpa_sents_v01.csv')
+
+ecb_data.index = pd.to_datetime(ecb_data['date'])
+news_data_full.index = pd.to_datetime(news_data_full['date'])
+data.index = pd.to_datetime(data[['year', 'month', 'day']])
 
 # Resample the DataFrame by month and count the number of rows in each month
 monthly_counts_ecb = ecb_data.resample('M').size()
@@ -274,4 +280,24 @@ monthly_counts_full_data = news_data_full.resample('M').size()
 monthly_counts = monthly_counts_ecb/monthly_counts_full_data
 monthly_counts = monthly_counts.dropna()
 
-monthly_counts.to_csv(r'D:\Studium\PhD\Github\Single-Author\Data\monthly_ecb_counts.csv')
+monthly_counts.to_csv(r'D:\\Studium\\PhD\\Github\\Single-Author\\Data\\Regression\\monthly_ecb_counts.csv')
+
+# Resample the DataFrame by month and count the number of rows in each month
+quarterly_counts_ecb = ecb_data.resample('Q').size()
+quarterly_counts_full_data = news_data_full.resample('Q').size()
+
+quarterly_counts = quarterly_counts_ecb/quarterly_counts_full_data
+quarterly_counts = quarterly_counts.dropna()
+
+quarterly_counts.to_csv(r'D:\\Studium\\PhD\\Github\\Single-Author\\Data\\Regression\\quarterly_ecb_counts.csv')
+
+###
+
+monthly_counts_full_data_all = data.resample('M').size() 
+quarterly_counts_full_data_all = data.resample('Q').size() 
+
+monthly_inflation_count = monthly_counts_full_data/monthly_counts_full_data_all
+quarterly_inflation_count = quarterly_counts_full_data/quarterly_counts_full_data_all
+
+monthly_inflation_count.to_csv(r'D:\\Studium\\PhD\\Github\\Single-Author\\Data\\Regression\\monthly_inflation_count.csv')
+quarterly_inflation_count.to_csv(r'D:\\Studium\\PhD\\Github\\Single-Author\\Data\\Regression\\quarterly_inflation_count.csv')

@@ -102,12 +102,13 @@ def prepare_date(data):
     
     data = data.sort_values('date')
     monthly_data = data.groupby(data['date'].dt.strftime('%Y-%m')).mean()
+    quarterly_data = data.groupby(data['date'].dt.to_period("Q")).mean()
     yearly_data = data.groupby(data['date'].dt.strftime('%Y')).mean()
     
-    return(data, monthly_data, yearly_data)
+    return(data, monthly_data, quarterly_data, yearly_data)
 
-data_dir, monthly_dir, yearly_dir = prepare_date(data_dir)
-data_sent, monthly_sent, yearly_sent = prepare_date(data_sent)
+data_dir, monthly_dir, quarterly_dir, yearly_dir = prepare_date(data_dir)
+data_sent, monthly_sent, quarterly_sent, yearly_sent = prepare_date(data_sent)
 
 dire_sent = monthly_dir['index']*monthly_sent['index']
 dire_sent.to_excel(r'D:\Studium\PhD\Github\Single-Author\Data\Regression\\news_index_dire_senti_lex.xlsx')
@@ -115,11 +116,23 @@ dire_sent.to_excel(r'D:\Studium\PhD\Github\Single-Author\Data\Regression\\news_i
 dire_sent_PMI = monthly_dir['index PMI']*monthly_sent['index PMI']
 dire_sent_PMI.to_excel(r'D:\Studium\PhD\Github\Single-Author\Data\Regression\\news_index_dire_senti_lex_PMI.xlsx')
 
+dire_sent_q = quarterly_dir['index']*quarterly_sent['index']
+dire_sent_q.to_excel(r'D:\Studium\PhD\Github\Single-Author\Data\Regression\\news_index_dire_senti_lex_q.xlsx')
+
+dire_sent_PMI_q = quarterly_dir['index PMI']*quarterly_sent['index PMI']
+dire_sent_PMI_q.to_excel(r'D:\Studium\PhD\Github\Single-Author\Data\Regression\\news_index_dire_senti_lex_PMI_q.xlsx')
+
 monthly_dir['index'].to_excel(r'D:\Studium\PhD\Github\Single-Author\Data\Regression\\news_index_dire_lex.xlsx')
 monthly_sent['index'].to_excel(r'D:\Studium\PhD\Github\Single-Author\Data\Regression\\news_index_senti_lex.xlsx')
 
 monthly_dir['index PMI'].to_excel(r'D:\Studium\PhD\Github\Single-Author\Data\Regression\\news_index_dire_lex_PMI.xlsx')
 monthly_sent['index PMI'].to_excel(r'D:\Studium\PhD\Github\Single-Author\Data\Regression\\news_index_senti_lex_PMI.xlsx')
+
+quarterly_dir['index'].to_excel(r'D:\Studium\PhD\Github\Single-Author\Data\Regression\\news_index_dire_lex_q.xlsx')
+quarterly_sent['index'].to_excel(r'D:\Studium\PhD\Github\Single-Author\Data\Regression\\news_index_senti_lex_q.xlsx')
+
+quarterly_dir['index PMI'].to_excel(r'D:\Studium\PhD\Github\Single-Author\Data\Regression\\news_index_dire_lex_PMI_q.xlsx')
+quarterly_sent['index PMI'].to_excel(r'D:\Studium\PhD\Github\Single-Author\Data\Regression\\news_index_senti_lex_PMI_q.xlsx')
 
 ##############################################################################
 

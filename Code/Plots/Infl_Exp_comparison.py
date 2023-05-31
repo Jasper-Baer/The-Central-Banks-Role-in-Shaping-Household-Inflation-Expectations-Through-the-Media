@@ -23,6 +23,7 @@ from Survey_Quantification import recursive_mean, stm
 
 start_date = '1999-12-31'
 end_date = '2019-01-01'
+end_date_forecast = '2019-01-21'
 
 start_date_12_month_shift = '2000-12-31'
 end_date_12_month_shift = '2020-01-01'
@@ -36,24 +37,24 @@ start_date_hist = '1995-12-31'
 # Inflation
 ##############################################################################
 
-forecast_df = pd.DataFrame()
+# forecast_q = pd.DataFrame()
 
-for year in range(2000, 2021):
+# for year in range(2000, 2021):
     
-   inflation_poll = pd.read_excel(r'D:\Studium\PhD\Github\Single-Author\Data\Reuters Poll\Inflation_Forecast_' + str(year) + '.xlsx')
-   inflation_poll =  inflation_poll[7:9]
+#    inflation_poll = pd.read_excel(r'D:\Studium\PhD\Github\Single-Author\Data\Reuters Poll\Inflation_Forecast_' + str(year) + '.xlsx')
+#    inflation_poll =  inflation_poll[7:9]
    
-   date = inflation_poll.iloc[0,:]
-   median = inflation_poll.iloc[1,:]
+#    date = inflation_poll.iloc[0,:]
+#    median = inflation_poll.iloc[1,:]
    
-   inflation_poll = pd.DataFrame({'Date': date, 'Median': median, 'Target': year})[1:]
+#    inflation_poll = pd.DataFrame({'Date': date, 'Median': median, 'Target': year})[1:]
    
-   forecast_df = pd.concat([forecast_df,inflation_poll], ignore_index=True)
+#    forecast_q = pd.concat([forecast_q,inflation_poll], ignore_index=True)
  
-forecast_df['Date'] = pd.to_datetime(forecast_df['Date'])
+# forecast_q['Date'] = pd.to_datetime(forecast_q['Date'])
 
-forecast_df = forecast_df.dropna()
-forecast_df = forecast_df.reset_index(drop = True)
+# forecast_q = forecast_q.dropna()
+# forecast_q = forecast_q.reset_index(drop = True)
 
 #forecast_df.to_excel(r'D:\Studium\PhD\Github\Single-Author\Data\Reuters Poll\Forecast_Inflation_Reuter.xlsx')
 
@@ -87,10 +88,10 @@ forecast_df = forecast_df.reset_index(drop = True)
 
 # forecast_df['Transformed_Forecast'] = forecast_df.apply(transform_forecast, axis=1)
 
-forecast_df = pd.read_excel(r'D:\Studium\PhD\Github\Single-Author\Data\Reuters Poll\Forecast_Inflation_Reuter.xlsx')
-forecast_df = forecast_df.dropna(subset = ['One-Year-Ahead'])
-forecast_df['Date'] = pd.to_datetime(forecast_df['Date'])
-forecast_df.index = forecast_df['Date']
+forecast_q = pd.read_excel(r'D:\Studium\PhD\Github\Single-Author\Data\Reuters Poll\Forecast_Inflation_Reuter.xlsx')
+forecast_q = forecast_q.dropna(subset = ['One-Year-Ahead'])
+forecast_q['Date'] = pd.to_datetime(forecast_q['Date'])
+forecast_q.index = forecast_q['Date']
 
 PATH = r'D:\Studium\PhD\Github\Single-Author\Data\Regression'
 #PATH = r'D:\Single Author\Github\Single-Author\Data\Regression'
@@ -148,7 +149,14 @@ inflation_ger_m = fred_monthly.iloc[:,2:4]
 inflation_ger_m = inflation_ger_m.rename(columns={"Unnamed: 3": "Inflation"})
 inflation_ea_m = fred_monthly.iloc[:,4:6]
 
+fred_quarterly = pd.read_excel(PATH + '\Fred_data_quarterly.xlsx')[6:]
+ip_ger_q = fred_quarterly.iloc[:,0:2]
+inflation_ger_q = fred_quarterly.iloc[:,2:4]
+inflation_ger_q = inflation_ger_q.rename(columns={"Unnamed: 3": "Inflation"})
+inflation_ea_q = fred_quarterly.iloc[:,4:6]
+
 monthly_ecb_count = pd.read_csv(PATH + '\monthly_ecb_counts.csv')
+quarterly_ecb_count = pd.read_csv(PATH + '\quarterly_ecb_counts.csv')
 
 data_ECB_index_inf = pd.read_csv(PATH + '\PR_ecb_inflation_results.csv')[['date', 'index']]
 data_ECB_index_mon = pd.read_csv(PATH + '\PR_ecb_monetary_results.csv')[['date', 'index']]
@@ -159,13 +167,17 @@ data_ECB_index_ec = pd.read_csv(PATH + '\PR_ecb_outlook_results.csv')[['date', '
 # data_ECB_index_ec = pd.read_csv(PATH + '\ECB_economic_own_trainingsset_labels.csv')[['date', 'index']]
 
 data_inf_exp_eu = pd.read_excel(PATH + '\Infl_Exp.xlsx', index_col = 0)
-ger_oecd_inf_exp = pd.read_csv(PATH + '\OECD_INF_FOR.csv', index_col = 0)
+#ger_oecd_inf_exp = pd.read_csv(PATH + '\OECD_INF_FOR.csv', index_col = 0)
 
-#dire_senti = pd.read_excel(PATH + '\\news_index_dire_senti.xlsx')
-dire_senti = pd.read_excel(PATH + '\\news_index_dire_senti_lex.xlsx')
-dire = pd.read_excel(PATH + '\\news_index_dire_lex.xlsx')
-sent = pd.read_excel(PATH + '\\news_index_senti_lex.xlsx')
-count_rel = pd.read_excel(PATH + '\\count_rel.xlsx')
+dire_senti_m = pd.read_excel(PATH + '\\news_index_dire_senti_lex.xlsx')
+dire_m = pd.read_excel(PATH + '\\news_index_dire_lex.xlsx')
+sent_m = pd.read_excel(PATH + '\\news_index_senti_lex.xlsx')
+count_rel_m = pd.read_csv(PATH + '\\monthly_inflation_count.csv')
+
+dire_senti_q = pd.read_excel(PATH + '\\news_index_dire_senti_lex_q.xlsx')
+dire_q = pd.read_excel(PATH + '\\news_index_dire_lex_q.xlsx')
+sent_q = pd.read_excel(PATH + '\\news_index_senti_lex_q.xlsx')
+count_rel_q = pd.read_csv(PATH + '\\quarterly_inflation_count.csv')
 
 ###############################################################################
 
@@ -218,6 +230,7 @@ scaling = scaling.loc[(scaling['date'] >= start_date) & (scaling['date'] <= end_
 ###############################################################################
 
 inflation_ger_m = transform_date(inflation_ger_m)
+inflation_ger_q = transform_date(inflation_ger_q)
 
 hist_ger_inflation_m = inflation_ger_m.loc[(inflation_ger_m.index >= start_date_hist) & (inflation_ger_m.index <= end_date)]
 hist_ger_inflation_m['Inflation'] = hist_ger_inflation_m['Inflation'].rolling(12).mean().shift(3)[14:]
@@ -240,6 +253,15 @@ inflation_ger_m = inflation_ger_m.loc[(inflation_ger_m.index >= start_date) & (i
 inflation_ger_m.iloc[:,1] = pd.to_numeric(inflation_ger_m.iloc[:,1])
 inflation_ger_m['Inflation'] = pd.to_numeric(inflation_ger_m['Inflation'])
 mean_inflation = inflation_ger_m['Inflation'].mean()
+
+inflation_ger_q_12_month_ahead = inflation_ger_q.loc[(inflation_ger_q.index >= start_date_12_month_shift) & (inflation_ger_q.index <= end_date_12_month_shift)]
+inflation_ger_q_12_month_ahead.iloc[:,1] = pd.to_numeric(inflation_ger_q_12_month_ahead.iloc[:,1])
+inflation_ger_q_12_month_ahead['Inflation'] = pd.to_numeric(inflation_ger_q_12_month_ahead['Inflation'])
+
+inflation_ger_q = inflation_ger_q.loc[(inflation_ger_q.index >= start_date) & (inflation_ger_q.index <= end_date)]
+inflation_ger_q.iloc[:,1] = pd.to_numeric(inflation_ger_q.iloc[:,1])
+inflation_ger_q['Inflation'] = pd.to_numeric(inflation_ger_q['Inflation'])
+#mean_inflation = inflation_ger_q['Inflation'].mean()
 
 ###############################################################################
 
@@ -312,30 +334,67 @@ stm_lam_df = stm(initial_params, scaling, hist_ger_inflation_m, inflation_ger_m)
 ea_inf_exp_quant['Unnamed: 0'] = pd.to_datetime(ea_inf_exp_quant['Unnamed: 0'])
 ea_inf_exp_quant.set_index('Unnamed: 0', inplace=True)
 
-ea_inf_exp_quant = ea_inf_exp_quant['Median'].resample('M').mean().interpolate(method='linear')
+ea_inf_exp_quant_m = ea_inf_exp_quant['Median'].resample('M').mean().interpolate(method='linear')
 
-first_date = ea_inf_exp_quant.index.min() - pd.DateOffset(years=5)
-last_date = ea_inf_exp_quant.index.max()
+first_date = ea_inf_exp_quant_m.index.min() - pd.DateOffset(years=5)
+last_date = ea_inf_exp_quant_m.index.max()
 new_index = pd.date_range(start=first_date, end=last_date, freq='M')
 
-ea_inf_exp_quant = pd.DataFrame(ea_inf_exp_quant)
+ea_inf_exp_quant_m = pd.DataFrame(ea_inf_exp_quant_m)
 
 # Create a new DataFrame with the same columns and the new index
-extended_data = pd.DataFrame(index=new_index, columns=ea_inf_exp_quant.columns)
+extended_data_m = pd.DataFrame(index=new_index, columns=ea_inf_exp_quant_m.columns)
 
 # Fill the new DataFrame with 0 values for the additional four years
-extended_data.loc[:first_date + pd.DateOffset(years=4, months=-1), :] = 0
+extended_data_m.loc[:first_date + pd.DateOffset(years=4, months=-1), :] = 0
 
 # Concatenate the new DataFrame with the original DataFrame
-extended_data.update(ea_inf_exp_quant)
+extended_data_m.update(ea_inf_exp_quant_m)
 
-ea_inf_exp_quant = extended_data
+ea_inf_exp_quant_m = extended_data_m
 
-ea_inf_exp_quant = ea_inf_exp_quant.loc[(ea_inf_exp_quant.index >= start_date) & (ea_inf_exp_quant.index <= end_date)]
+ea_inf_exp_quant_m = ea_inf_exp_quant_m.loc[(ea_inf_exp_quant_m.index >= start_date) & (ea_inf_exp_quant_m.index <= end_date)]
+
+####
+
+ea_inf_exp_quant_q = ea_inf_exp_quant
+
+ea_inf_exp_quant_q = ea_inf_exp_quant_q['Median']
+
+first_date = ea_inf_exp_quant_q.index.min() - pd.DateOffset(years=5)
+last_date = ea_inf_exp_quant_q.index.max()
+new_index = pd.date_range(start=first_date, end=last_date, freq='Q')
+
+# Generate daily dates range
+new_index_daily = pd.date_range(start=first_date + pd.DateOffset(days=1), end=last_date, freq='D')
+
+# Resample to quarterly frequency and shift to end of the quarter
+new_index = new_index_daily.to_period('Q').to_timestamp('Q', how='end')
+
+# Remove duplicates and add one day
+new_index = (new_index.unique() + pd.DateOffset(days=1)).date
+new_index = new_index[:-1]
+
+ea_inf_exp_quant_q = pd.DataFrame(ea_inf_exp_quant_q)
+
+# Create a new DataFrame with the same columns and the new index
+extended_data_q = pd.DataFrame(index=new_index, columns=ea_inf_exp_quant_q.columns)
+
+# Fill the new DataFrame with 0 values for the additional four years
+extended_data_q.loc[:first_date + pd.DateOffset(years=4, months=-3), :] = 0
+
+# Concatenate the new DataFrame with the original DataFrame
+extended_data_q.update(ea_inf_exp_quant_q)
+
+ea_inf_exp_quant_q = extended_data_q
+
+ea_inf_exp_quant_q.index = pd.to_datetime(ea_inf_exp_quant_q.index)
+
+ea_inf_exp_quant_q = ea_inf_exp_quant_q.loc[(ea_inf_exp_quant_q.index >= start_date) & (ea_inf_exp_quant_q.index <= end_date)]
 
 ###############################################################################
 
-forecast_df_m = forecast_df.groupby(pd.Grouper(freq="M")).mean().fillna(method = 'ffill')
+forecast_df_m = forecast_q.groupby(pd.Grouper(freq="M")).mean().fillna(method = 'ffill')
 
 first_date = forecast_df_m.index.min() - pd.DateOffset(years=5)
 last_date = forecast_df_m.index.max()
@@ -356,6 +415,43 @@ forecast_df_m = extended_data
 
 forecast_df_m = forecast_df_m.loc[(forecast_df_m.index >= start_date) & (forecast_df_m.index <= end_date)]
 
+####
+
+first_date = forecast_q.index.min() - pd.DateOffset(years=5)
+last_date = forecast_q.index.max()
+new_index = pd.date_range(start=first_date, end=last_date, freq='Q')
+
+# Generate daily dates range
+new_index_daily = pd.date_range(start=first_date + pd.DateOffset(days=1), end=last_date, freq='D')
+
+# Resample to quarterly frequency and shift to end of the quarter
+new_index = new_index_daily.to_period('Q').to_timestamp('Q', how='end')
+
+# Remove duplicates and add one day
+new_index = (new_index.unique() + pd.DateOffset(days=1)).date
+new_index = new_index[:-1]
+
+forecast_q = pd.DataFrame(forecast_q)
+
+# Create a new DataFrame with the same columns and the new index
+extended_data_q = pd.DataFrame(index=new_index, columns=forecast_q.columns)
+
+# Fill the new DataFrame with 0 values for the additional four years
+extended_data_q.loc[:first_date + pd.DateOffset(years=6, months=-3), :] = 0
+
+idx_list = extended_data_q.index.tolist() # Convert index to a list
+idx_list[19:] = forecast_q.index.tolist() # Update list elements
+extended_data_q.index = pd.DatetimeIndex(idx_list) # Convert back to index
+
+# Concatenate the new DataFrame with the original DataFrame
+extended_data_q.update(forecast_q)
+
+forecast_q = extended_data_q
+
+forecast_q.index = pd.to_datetime(forecast_q.index)
+
+forecast_q = forecast_q.loc[(forecast_q.index >= start_date) & (forecast_q.index <= end_date_forecast)]
+
 ###############################################################################
 
 start_date_RWI = RWI_inflation_m.index.min() - pd.DateOffset(years=4)
@@ -375,15 +471,23 @@ ip_ea_m = transform_date(ip_ea_m)
 ip_ea_m = ip_ea_m.loc[(ip_ea_m.index >= start_date) & (ip_ea_m.index <= end_date)]
 ip_ea_m.iloc[:,1] = pd.to_numeric(ip_ea_m.iloc[:,1])
 
+ip_ger_q = transform_date(ip_ger_q)
+ip_ger_q = ip_ger_q.loc[(ip_ger_q.index >= start_date) & (ip_ger_q.index <= end_date)]
+ip_ger_q.iloc[:,1] = pd.to_numeric(ip_ger_q.iloc[:,1])
+
+# ip_ea_q = transform_date(ip_ea_q)
+# ip_ea_q = ip_ea_m.loc[(ip_ea_q.index >= start_date) & (ip_ea_q.index <= end_date)]
+# ip_ea_q.iloc[:,1] = pd.to_numeric(ip_ea_q.iloc[:,1])
+
 inflation_ea_m = transform_date(inflation_ea_m)
 inflation_ea_m = inflation_ea_m.loc[(inflation_ea_m.index >= start_date) & (inflation_ea_m.index <= end_date)]
 inflation_ea_m.iloc[:,1] = pd.to_numeric(inflation_ea_m.iloc[:,1])
 
-ger_oecd_inf_exp = ger_oecd_inf_exp[ger_oecd_inf_exp.index == "DEU"]
-ger_oecd_inf_exp = ger_oecd_inf_exp[1:]
-ger_oecd_inf_exp.index = pd.date_range('31/12/1999', '1/1/2019', freq = 'Q').tolist()
-ger_oecd_inf_exp = ger_oecd_inf_exp['Value']
-ger_oecd_inf_exp_m = ger_oecd_inf_exp.groupby(pd.Grouper(freq="M")).mean().fillna(method = 'ffill')
+# ger_oecd_inf_exp = ger_oecd_inf_exp[ger_oecd_inf_exp.index == "DEU"]
+# ger_oecd_inf_exp = ger_oecd_inf_exp[1:]
+# ger_oecd_inf_exp.index = pd.date_range('31/12/1999', '1/1/2019', freq = 'Q').tolist()
+# ger_oecd_inf_exp = ger_oecd_inf_exp['Value']
+# ger_oecd_inf_exp_m = ger_oecd_inf_exp.groupby(pd.Grouper(freq="M")).mean().fillna(method = 'ffill')
 
 #GD_inflation_m = GD_inflation.groupby(pd.Grouper(freq="M")).mean().fillna(method = 'ffill')
 GD_inflation_m = GD_inflation_m.loc[(GD_inflation_m.index >= start_date) & (GD_inflation_m.index <= end_date)]
@@ -412,30 +516,40 @@ def get_last_day_of_month(year_month_str):
     
     return last_day
 
-dire_senti.iloc[:,0] = dire_senti.iloc[:,0].apply(get_last_day_of_month)
-dire_senti.index = dire_senti.iloc[:,0]
-dire_senti = dire_senti.loc[(dire_senti.index >= start_date) & (dire_senti.index <= end_date)]
-dire_senti_q = dire_senti.groupby(pd.Grouper(freq="Q")).mean()
+dire_senti_m.iloc[:,0] = dire_senti_m.iloc[:,0].apply(get_last_day_of_month)
+dire_senti_m.index = dire_senti_m.iloc[:,0]
+dire_senti_m = dire_senti_m.loc[(dire_senti_m.index >= start_date) & (dire_senti_m.index <= end_date)]
 
-dire.iloc[:,0] = dire.iloc[:,0].apply(get_last_day_of_month)
-dire.index = dire.iloc[:,0]
-dire = dire.loc[(dire.index >= start_date) & (dire.index <= end_date)]
-dire_q = dire.groupby(pd.Grouper(freq="Q")).mean()
+dire_senti_q.index = dire_senti_q['date'] + pd.DateOffset(months=3)
+dire_senti_q = dire_senti_q.loc[(dire_senti_q.index >= start_date) & (dire_senti_q.index <= end_date)]
 
-sent.iloc[:,0] = sent.iloc[:,0].apply(get_last_day_of_month)
-sent.index = sent.iloc[:,0]
-sent = sent.loc[(sent.index >= start_date) & (sent.index <= end_date)]
-sent_q = sent.groupby(pd.Grouper(freq="Q")).mean()
+dire_m.iloc[:,0] = dire_m.iloc[:,0].apply(get_last_day_of_month)
+dire_m.index = dire_m.iloc[:,0]
+dire_m = dire_m.loc[(dire_m.index >= start_date) & (dire_m.index <= end_date)]
 
-count_rel.iloc[:,0] = pd.to_datetime(count_rel.iloc[:,0])
-count_rel.index = count_rel.iloc[:,0]
-count_rel = count_rel.loc[(count_rel.index >= start_date) & (count_rel.index <= end_date)]
-count_rel_q = count_rel.groupby(pd.Grouper(freq="Q")).mean()
+dire_q.index = dire_q['date'] + pd.DateOffset(months=3)
+dire_q = dire_q.loc[(dire_q.index >= start_date) & (dire_q.index <= end_date)]
+
+sent_m.iloc[:,0] = sent_m.iloc[:,0].apply(get_last_day_of_month)
+sent_m.index = sent_m.iloc[:,0]
+sent_m = sent_m.loc[(sent_m.index >= start_date) & (sent_m.index <= end_date)]
+
+sent_q.index = sent_q['date'] + pd.DateOffset(months=3)
+sent_q = sent_q.loc[(sent_q.index >= start_date) & (sent_q.index <= end_date)]
+
+count_rel_m.iloc[:,0] = pd.to_datetime(count_rel_m.iloc[:,0])
+count_rel_m.index = count_rel_m.iloc[:,0]
+count_rel_m = count_rel_m.loc[(count_rel_m.index >= start_date) & (count_rel_m.index <= end_date)]
+
+count_rel_q.index = pd.to_datetime(count_rel_q['date'])
+count_rel_q = count_rel_q.loc[(count_rel_q.index >= start_date) & (count_rel_q.index <= end_date)]
 
 monthly_ecb_count.iloc[:,0] = pd.to_datetime(monthly_ecb_count.iloc[:,0])
 monthly_ecb_count.index = monthly_ecb_count.iloc[:,0]
 monthly_ecb_count = monthly_ecb_count.loc[(monthly_ecb_count.index >= start_date) & (monthly_ecb_count.index <= end_date)]
-monthly_ecb_count_q = monthly_ecb_count.groupby(pd.Grouper(freq="Q")).mean()
+
+quarterly_ecb_count.index = pd.to_datetime(quarterly_ecb_count['date'])
+quarterly_ecb_count = quarterly_ecb_count.loc[(quarterly_ecb_count.index >= start_date) & (quarterly_ecb_count.index <= end_date)]
 
 date_inf = list(inflation_ea_m.iloc[:,0])
 
@@ -447,6 +561,10 @@ data_ECB_index_inf['index'] = pd.to_numeric(data_ECB_index_inf['index'])
 data_ECB_index_inf = data_ECB_index_inf.loc[(data_ECB_index_inf.index >= start_date) & (data_ECB_index_inf.index <= end_date)]
 data_ECB_index_inf_m = scale_ECB_index(data_ECB_index_inf,date_inf)
 
+data_ECB_index_inf_m['date'] = pd.to_datetime(data_ECB_index_inf_m['date'])
+data_ECB_index_inf_m.set_index('date', inplace=True)
+data_ECB_index_inf_q = data_ECB_index_inf_m.resample('Q').mean()
+
 ###############################################################################
 
 data_ECB_index_mon.set_index('date', inplace=True)
@@ -455,6 +573,10 @@ data_ECB_index_mon['index'] = pd.to_numeric(data_ECB_index_mon['index'])
 data_ECB_index_mon = data_ECB_index_mon.loc[(data_ECB_index_mon.index >= start_date) & (data_ECB_index_mon.index <= end_date)]
 data_ECB_index_mon_m = scale_ECB_index(data_ECB_index_mon,date_inf)
 
+data_ECB_index_mon_m['date'] = pd.to_datetime(data_ECB_index_mon_m['date'])
+data_ECB_index_mon_m.set_index('date', inplace=True)
+data_ECB_index_mon_q = data_ECB_index_mon_m.resample('Q').mean()
+
 ###############################################################################
 
 data_ECB_index_ec.set_index('date', inplace=True)
@@ -462,6 +584,10 @@ data_ECB_index_ec.index = pd.to_datetime(data_ECB_index_ec.index)
 data_ECB_index_ec['index'] = pd.to_numeric(data_ECB_index_ec['index'])
 data_ECB_index_ec = data_ECB_index_ec.loc[(data_ECB_index_ec.index >= start_date) & (data_ECB_index_ec.index <= end_date)]
 data_ECB_index_ec_m = scale_ECB_index(data_ECB_index_ec,date_inf)
+
+data_ECB_index_ec_m['date'] = pd.to_datetime(data_ECB_index_ec_m['date'])
+data_ECB_index_ec_m.set_index('date', inplace=True)
+data_ECB_index_ec_q = data_ECB_index_ec_m.resample('Q').mean()
 
 ###############################################################################
 ###
@@ -506,21 +632,21 @@ ger_relative_exp_gap_m_berk_stm_GD, ger_abslolute_exp_gap_m_berk_stm_GD = absolu
 ger_eu_relative_exp_gap_m_berk_stm, ger_eu_abslolute_exp_gap_m_berk_stm = absolute_errors(stm_lam_df.iloc[:,0], data_inf_exp_eu.iloc[:,0])
 ger_relative_inf_gap_m_berk_stm, ger_abslolute_inf_gap_m_berk_stm = absolute_errors(stm_lam_df.iloc[:,0], inflation_ger_m_12_month_ahead.iloc[:,1])
 
-ger_relative_exp_gap_m_quant_RWI, ger_abslolute_exp_gap_m_quant_RWI = absolute_errors(ea_inf_exp_quant['Median'], RWI_inflation_m['One-Year-Ahead'])   
-ger_relative_exp_gap_m_quant_GD, ger_abslolute_exp_gap_m_quant_GD = absolute_errors(ea_inf_exp_quant['Median'], GD_inflation_m['One-Year-Ahead'])
-ger_eu_relative_exp_gap_m_quant, ger_eu_abslolute_exp_gap_m_quant =  absolute_errors(ea_inf_exp_quant['Median'], data_inf_exp_eu.iloc[:,0])
-ger_relative_inf_gap_m_quant, ger_abslolute_inf_gap_m_quant = absolute_errors(ea_inf_exp_quant['Median'], inflation_ger_m_12_month_ahead.iloc[:,1])
+ger_relative_exp_gap_m_quant_RWI, ger_abslolute_exp_gap_m_quant_RWI = absolute_errors(ea_inf_exp_quant_m['Median'], RWI_inflation_m['One-Year-Ahead'])   
+ger_relative_exp_gap_m_quant_GD, ger_abslolute_exp_gap_m_quant_GD = absolute_errors(ea_inf_exp_quant_m['Median'], GD_inflation_m['One-Year-Ahead'])
+ger_eu_relative_exp_gap_m_quant, ger_eu_abslolute_exp_gap_m_quant =  absolute_errors(ea_inf_exp_quant_m['Median'], data_inf_exp_eu.iloc[:,0])
+ger_relative_inf_gap_m_quant, ger_abslolute_inf_gap_m_quant = absolute_errors(ea_inf_exp_quant_m['Median'], inflation_ger_m_12_month_ahead.iloc[:,1])
 
 ####
 
 ger_relative_exp_gap_m_berk_stm_Reuter, ger_abslolute_exp_gap_m_berk_stm_Reuter = absolute_errors(stm_lam_df.iloc[:,0], forecast_df_m['One-Year-Ahead'])
 ger_relative_exp_gap_m_role_Reuter, ger_abslolute_exp_gap_m_role_Reuter = absolute_errors(scaling['German Inflation Expectations'], forecast_df_m['One-Year-Ahead'])
 ger_relative_exp_gap_m_berk_5_Reuter, ger_abslolute_exp_gap_m_berk_5_Reuter = absolute_errors(exp_inf_berk_5_var_mean.iloc[:,0], forecast_df_m['One-Year-Ahead'])
-ger_relative_exp_gap_m_quant_Reuter, ger_abslolute_exp_gap_m_quant_Reuter = absolute_errors(ea_inf_exp_quant['Median'], forecast_df_m['One-Year-Ahead'])
+ger_relative_exp_gap_m_quant_Reuter, ger_abslolute_exp_gap_m_quant_Reuter = absolute_errors(ea_inf_exp_quant_m['Median'], forecast_df_m['One-Year-Ahead'])
 
 ####
 
-ger_relative_exp_gap_m_quant_real, ger_abslolute_exp_gap_m_quant_real = absolute_errors(ea_inf_exp_quant['Median'], inflation_ger_m_12_month_ahead.iloc[:,1])
+ger_relative_exp_gap_m_quant_real, ger_abslolute_exp_gap_m_quant_real = absolute_errors(ea_inf_exp_quant_m['Median'], inflation_ger_m_12_month_ahead.iloc[:,1])
 
 ###############################################################################
 
@@ -536,16 +662,16 @@ Regression_data_m['German Industrial Production'] = ip_ger_m.iloc[:,1]
 Regression_data_m['German Inflation Year-on-Year'] = list(inflation_ger_m.iloc[:,1])
 Regression_data_m['German Inflation Year-on-Year Harmonised'] = list(germany_harmonised_inflation_m.iloc[:,1])
 Regression_data_m['ECB DFR'] = list(ecb_dfr.iloc[:,1])
-Regression_data_m['News Inflation Index'] = list(dire_senti.iloc[:,1])
-Regression_data_m['News Inflation Sentiment Index'] = list(sent.iloc[:,1])
-Regression_data_m['News Inflation Direction Index'] = list(dire.iloc[:,1])
-Regression_data_m['News Inflation Count'] = list(count_rel.iloc[:,1])
+Regression_data_m['News Inflation Index'] = list(dire_senti_m.iloc[:,1])
+Regression_data_m['News Inflation Sentiment Index'] = list(sent_m.iloc[:,1])
+Regression_data_m['News Inflation Direction Index'] = list(dire_m.iloc[:,1])
+Regression_data_m['News Inflation Count'] = list(count_rel_m.iloc[:,1])
 Regression_data_m['News ECB Count'] = list(monthly_ecb_count.iloc[:,1])
-Regression_data_m['ECB Inflation Index'] = list(data_ECB_index_inf_m.iloc[:,1])
-Regression_data_m['ECB Monetary Index'] = list(data_ECB_index_mon_m.iloc[:,1])
-Regression_data_m['ECB Economic Index'] = list(data_ECB_index_ec_m.iloc[:,1])
+Regression_data_m['ECB Inflation Index'] = list(data_ECB_index_inf_m.iloc[:,0])
+Regression_data_m['ECB Monetary Index'] = list(data_ECB_index_mon_m.iloc[:,0])
+Regression_data_m['ECB Economic Index'] = list(data_ECB_index_ec_m.iloc[:,0])
 Regression_data_m['German Household Inflation Expectations Berk 1'] = list(exp_inf_berk_1.iloc[:,0])
-Regression_data_m['German Household Inflation Expectations EU Median'] = list(ea_inf_exp_quant['Median'])
+Regression_data_m['German Household Inflation Expectations EU Median'] = list(ea_inf_exp_quant_m['Median'])
 Regression_data_m['German Household Inflation Expectations Berk 5'] = list(exp_inf_berk_5_var_mean.iloc[:,0])
 Regression_data_m['German Household Inflation Expectations Role'] = list(scaling['German Inflation Expectations'])
 Regression_data_m['German Household Inflation Expectations Stm'] = list(stm_lam_df.iloc[:,0])
@@ -632,23 +758,66 @@ Regression_data_m.to_excel(PATH + '\\regression_data_monthly_2.xlsx')
 
 ###############################################################################
 
+ger_relative_exp_gap_q_quant_Reuter, ger_abslolute_exp_gap_q_quant_Reuter = absolute_errors(ea_inf_exp_quant_q['Median'], forecast_q['Median'])
+
+####
+
+ger_relative_exp_gap_q_quant_real, ger_abslolute_exp_gap_q_quant_real = absolute_errors(ea_inf_exp_quant_q['Median'], inflation_ger_q_12_month_ahead.iloc[:,1])
+
 ###############################################################################
 
-Regression_q = 
+Regression_data_q = pd.DataFrame()
+Regression_data_q['German Industrial Production'] = ip_ger_q.iloc[:,1]
+Regression_data_q['German Inflation Year-on-Year'] = list(inflation_ger_q.iloc[:,1])
+Regression_data_q['News Inflation Index'] = list(dire_senti_q.iloc[:,1])
+Regression_data_q['News Inflation Sentiment Index'] = list(sent_q.iloc[:,1])
+Regression_data_q['News Inflation Direction Index'] = list(dire_q.iloc[:,1])
+Regression_data_q['News Inflation Count'] = list(count_rel_q.iloc[:,1])
+Regression_data_q['News ECB Count'] = list(quarterly_ecb_count.iloc[:,1])
+Regression_data_q['ECB Inflation Index'] = list(data_ECB_index_inf_q.iloc[:,0])
+Regression_data_q['ECB Monetary Index'] = list(data_ECB_index_mon_q.iloc[:,0])
+Regression_data_q['ECB Economic Index'] = list(data_ECB_index_ec_q.iloc[:,0])
+Regression_data_q['German Absolute Real Inflation Expectations Gap Quant Reuter'] = list(ger_abslolute_exp_gap_q_quant_Reuter)
+Regression_data_q['German Relative Real Inflation Expectations Gap Quant Reuter'] = list(ger_relative_exp_gap_q_quant_Reuter)
+Regression_data_q['German Absolute Real Inflation Expectations Gap Quant Real'] = list(ger_abslolute_exp_gap_q_quant_real)
+Regression_data_q['German Relative Real Inflation Expectations Gap Quant Real'] = list(ger_relative_exp_gap_q_quant_real)
+Regression_data_q['Reuter Poll Forecast'] = list(forecast_q['One-Year-Ahead'])
 
-Regression_data_m['German Inflation Year-on-Year'] = list(inflation_ger_m.iloc[:,1])
-forecast_df
-data_inf_exp_eu
-Gaps
+Regression_data_q.to_excel(PATH + '\\regression_data_quarterly.xlsx')
 
 import pylab as plt
+
+plt.plot(inflation_ger_q.index, inflation_ger_q.iloc[:,1])
+plt.plot(inflation_ger_m.index, inflation_ger_m.iloc[:,1])
+
+plt.show()
+
+plt.plot(forecast_df_m.index, forecast_df_m['One-Year-Ahead'])
+plt.plot(forecast_q.index, forecast_q['One-Year-Ahead'])
+
+plt.show()
+
+plt.plot(dire_senti_q.index, dire_senti_q.iloc[:,1])
+plt.plot(dire_senti_m.index, dire_senti_m.iloc[:,1])
+
+plt.show()
+
+plt.plot(data_ECB_index_inf_q.index, data_ECB_index_inf_q.iloc[:,0])
+plt.plot(data_ECB_index_inf_m.index, data_ECB_index_inf_m.iloc[:,0])
+
+plt.show()
+
+plt.plot(ger_abslolute_exp_gap_q_quant_Reuter)
+plt.plot(ger_abslolute_exp_gap_m_quant_Reuter)
+
+plt.show()
 
 #plt.plot(inflation_ger_m.index, inflation_ger_m.iloc[:,1])
 #plt.plot(scaling['date'], scaling['German Inflation Expectations'])
 plt.plot(forecast_df_m.index, inflation_ger_m_12_month_ahead['Inflation'])
 plt.plot(forecast_df_m.index, forecast_df_m['One-Year-Ahead'])
 
-plt.plot(forecast_df_m.index,ea_inf_exp_quant['Median'])
+#plt.plot(forecast_df_m.index,ea_inf_exp_quant['Median'])
 
 plt.show()
 
@@ -696,8 +865,8 @@ np.sum((np.array(inflation_ger_m['Inflation']) - np.array(monthly_df.iloc[:,0]))
 # plt.plot(dire_senti['date'], dire_senti['index']*5)
 # plt.plot()
 
-plt.plot(monthly_df)
-plt.plot(data_inf_exp_eu)
+plt.plot(dire_senti_m.index, dire_senti_m['index'])
+plt.plot(dire_senti_q.index, dire_senti_q['index'])
 plt.show()
 
 plt.plot(forecast_df['Date'], forecast_df['One-Year-Ahead'])
