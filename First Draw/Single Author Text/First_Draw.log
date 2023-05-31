@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 23.4) (preloaded format=pdflatex 2023.5.2)  14 MAY 2023 18:54
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 23.4) (preloaded format=pdflatex 2023.5.2)  30 MAY 2023 16:08
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -528,43 +528,44 @@ Package hyperref Warning: Token not allowed in a PDF string (Unicode):
 
 {C:/Users/Ja-ba/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}] [2]
 [3] [4] [5] [6] [7] [8] [9] [10] [11] [12] [13]
-<Inflation_Count.png, id=265, 650.43pt x 480.29437pt>
+<Inflation_Count.png, id=266, 650.43pt x 480.29437pt>
 File: Inflation_Count.png Graphic file (type png)
 <use Inflation_Count.png>
-Package pdftex.def Info: Inflation_Count.png  used on input line 392.
+Package pdftex.def Info: Inflation_Count.png  used on input line 400.
 (pdftex.def)             Requested size: 170.71562pt x 170.71455pt.
-<Inflation_Sentiment_Direction.png, id=266, 650.43pt x 480.29437pt>
+<Inflation_Sentiment_Direction.png, id=267, 650.43pt x 480.29437pt>
 File: Inflation_Sentiment_Direction.png Graphic file (type png)
 <use Inflation_Sentiment_Direction.png>
 Package pdftex.def Info: Inflation_Sentiment_Direction.png  used on input line 
-398.
+406.
 (pdftex.def)             Requested size: 170.71562pt x 170.71455pt.
-<ECB_inf_inf.png, id=268, 650.43pt x 480.29437pt>
+ [14]
+<ECB_inf_inf.png, id=276, 650.43pt x 480.29437pt>
 File: ECB_inf_inf.png Graphic file (type png)
 <use ECB_inf_inf.png>
-Package pdftex.def Info: ECB_inf_inf.png  used on input line 419.
+Package pdftex.def Info: ECB_inf_inf.png  used on input line 427.
 (pdftex.def)             Requested size: 345.00415pt x 170.71455pt.
-<abs_exp_res.png, id=270, 528.47438pt x 325.215pt>
+<abs_exp_res.png, id=278, 528.47438pt x 325.215pt>
 File: abs_exp_res.png Graphic file (type png)
 <use abs_exp_res.png>
-Package pdftex.def Info: abs_exp_res.png  used on input line 447.
+Package pdftex.def Info: abs_exp_res.png  used on input line 455.
 (pdftex.def)             Requested size: 344.99608pt x 170.72058pt.
- [14] [15 <./Inflation_Count.png> <./Inflation_Sentiment_Direction.png> <./ECB_
-inf_inf.png>] [16 <./abs_exp_res.png>] [17] (First_Draw.bbl [18] [19] [20] [21]
-) [22] [23]
+ [15 <./Inflation_Count.png> <./Inflation_Sentiment_Direction.png>] [16 <./ECB_
+inf_inf.png> <./abs_exp_res.png>] [17] (First_Draw.bbl [18] [19] [20] [21]) [22
+] [23]
 
 LaTeX Warning: Reference `fig:Inflation Expectations' on page 24 undefined on i
-nput line 630.
+nput line 638.
 
-<Household_Inf_Exp.png, id=348, 483.30562pt x 371.13657pt>
+<Household_Inf_Exp.png, id=350, 483.30562pt x 371.13657pt>
 File: Household_Inf_Exp.png Graphic file (type png)
 <use Household_Inf_Exp.png>
-Package pdftex.def Info: Household_Inf_Exp.png  used on input line 640.
+Package pdftex.def Info: Household_Inf_Exp.png  used on input line 648.
 (pdftex.def)             Requested size: 170.71555pt x 170.71922pt.
-<Prof_Inf_Exp.png, id=349, 483.30562pt x 371.13657pt>
+<Prof_Inf_Exp.png, id=351, 483.30562pt x 371.13657pt>
 File: Prof_Inf_Exp.png Graphic file (type png)
 <use Prof_Inf_Exp.png>
-Package pdftex.def Info: Prof_Inf_Exp.png  used on input line 646.
+Package pdftex.def Info: Prof_Inf_Exp.png  used on input line 654.
 (pdftex.def)             Requested size: 170.71555pt x 170.71922pt.
 [24]
 
@@ -586,8 +587,8 @@ Package rerunfilecheck Info: File `First_Draw.out' has not changed.
 (rerunfilecheck)             Checksum: F6F86165CA94755CF3937FE0656E0C38;2483.
  ) 
 Here is how much of TeX's memory you used:
- 12580 strings out of 476315
- 203519 string characters out of 5787197
+ 12582 strings out of 476315
+ 203545 string characters out of 5787197
  1887068 words of memory out of 5000000
  32760 multiletter control sequences out of 15000+600000
  519171 words of font info for 56 fonts, out of 8000000 for 9000
@@ -613,9 +614,9 @@ X/fonts/type1/public/amsfonts/cm/cmsy7.pfb><C:/Users/Ja-ba/AppData/Local/Progra
 ms/MiKTeX/fonts/type1/public/amsfonts/cm/cmti10.pfb><C:/Users/Ja-ba/AppData/Loc
 al/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmti8.pfb><C:/Users/Ja-ba/App
 Data/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmtt8.pfb>
-Output written on First_Draw.pdf (30 pages, 415480 bytes).
+Output written on First_Draw.pdf (30 pages, 416462 bytes).
 PDF statistics:
- 487 PDF objects out of 1000 (max. 8388607)
- 110 named destinations out of 1000 (max. 500000)
+ 489 PDF objects out of 1000 (max. 8388607)
+ 112 named destinations out of 1000 (max. 500000)
  143 words of extra memory for PDF output out of 10000 (max. 10000000)
 

@@ -154,22 +154,30 @@ I find that the inflation information in both news and ECB press conferences sha
 %A subbranch of this literature focuses on the connection between inflation expectations and central bank communication. \cite{Picaultetal2022} investigate how the reporting about the ECB in the media can be used to predict financial market inflation expectations. \\
 % Kurzer Abschnitt in der ich auf Media Biases eingehe (Media reacts to central bank communication, negativity bias)
 \section{Model}\label{sec:Model} 
-I extend the Bayesian learning model for inflation expectation by \cite{LamlaLein2014} by explicitly adding a channel for central bank communication. I assume that the central bank sends a noisy signal for the future inflation $\pi_{t+1}$ 
+I extend the Bayesian learning model for inflation expectation by \cite{LamlaLein2014} by explicitly adding a channel for central bank communication to the media signal. I assume that the central bank sends a noisy signal for the future inflation $\pi_{t+1}$. 
 %based on the observation of variables which are relevant for the inflation $\mathbf{X}_t$ to the media
-.Let $c_t$ denote the signal that captures information about the central bank's inflation forecast $\Theta_t$ that the central bank communicates to the media; that is, inflation-related information in press conferences. I further assume that the signal is normally distributed, $c_t \sim N(\Theta_t, \sigma^c_t)$, with variance $\sigma^c_t$. This assumption implies that the central bank only sends one unambiguous signal at each period $t$ rather than multiple conflicting signals at the same period.
+Let $c_t$ denote the signal that captures information about the central bank's inflation forecast $\Theta_t$ that the central bank communicates to the media; that is, inflation-related information in press conferences. I further assume that the signal is normally distributed, $c_t \sim N(\Theta_t, \sigma^c_t)$, with variance $\sigma^c_t$. This assumption implies that the central bank only sends one unambiguous signal at each period $t$ rather than multiple conflicting signals at the same period,i.e., conflicting information in press conferences.
 % In the case of the ECB this inflation forecast is equal to the ECB staff's inflation projection 
 %\\
 %$ c_t = \pi_{t+1} + \epsilon_t \quad \epsilon_t \sim N(0, \sigma^c_t)$
 %\\ 
 %where $\epsilon_t$ represents the noise in the central bank's observation. 
 %\\
-In the absence of the central bank's communication, the media sends a noisy "baseline" signal about the rational forecast of inflation $\Psi_t$ for future inflation $\pi_{t+1}$ to households based on a number of media reports $V$, with $s^b_{\nu,t} \sim N(\Psi_t + \alpha_t, \sigma^{sb}_t)$. Here, $\alpha_t$ captures the media bias, and I assume that $\alpha_t > 0$. The media can decide how closely to follow the central bank's communication. Therefore, the media's inflation signal can be defined as:
+In the absence of the central bank's communication, the media sends a noisy "baseline" signal about the rational forecast of inflation $\Psi_t$ for future inflation $\pi_{t+1}$ to households based on a number of media reports $V$, with $s^b_{\nu,t} \sim N(\Psi_t + \alpha_t, \sigma^{sb}_t)$. Here, $\alpha_t$ captures the media bias, and I assume that $\alpha_t > 0$. 
+The media can decide how closely to follow the central bank's communication. Therefore, the media's inflation signal can be defined as:
 \begin{equation}
-s_{\nu,t} = (1-\lambda_{\nu,t}) s^b_{\nu,t} + \lambda_{\nu,t} c_t \quad 0\leq \lambda_{\nu,t} \leq 1
+s_{\nu,t} = (1-\lambda_{t}) s^b_{\nu,t} + \lambda_{t} c_t \quad 0\leq \lambda_{t} \leq 1
 \end{equation}
-where $\lambda_{\nu, t}$ denotes the weight that the media report places on the central bank's signal $c_t$ relative to the "baseline" media signal $s^b_{\nu,t}$. A value of $\lambda_{\nu,t} = 0$ indicates that the media report completely ignores the central bank's communication, while $\lambda_{\nu,t} = 1$ describes a situation where the media only reproduces information from the central bank's communication.
+where $\lambda_{t}$ denotes the weight that the media report places on the central bank's signal $c_t$ relative to the "baseline" media signal $s^b_{\nu,t}$. A value of $\lambda_{t} = 0$ indicates that the media report completely ignores the central bank's communication, while $\lambda_{t} = 1$ describes a situation where the media only reproduces information from the central bank's communication. \\
+I assume that $\alpha_t$ and $\lambda_t$ both follow an AR(1) process with
+\begin{equation}
+\lambda_t = a_{\lambda} + \beta_{\lambda}*\lambda_{t-1} + \epsilon_{\lambda} \quad \epsilon_{\lambda} \sim N(0, \sigma_{\lambda})
+\end{equation}
+\begin{equation}
+\alpha_t = a_{\alpha} + \beta_{\alpha}*\alpha_{t-1} + \epsilon_{\alpha} \quad \epsilon_{\alpha} \sim N(0, \sigma_{\alpha})
+\end{equation}
 \\
-Given that $s_{\nu,t}$ is a linear combination of normal random variables and assuming that $\sigma^c_t$ and $\sigma^{sb}{\nu,t}$ are independent, the media sends a normally distributed signal about $\pi{t+1}$ with $s_{\nu,t} \sim N(\mu^s_{\nu,t}, \sigma^s_{\nu,t})$, where:
+Given that $s_{\nu,t}$ is a linear combination of normal random variables and assuming that $\sigma^c_t$ and $\sigma^{sb}{\nu,t}$ are independent, the media sends a normally distributed signal about $\pi_{t+1}$ with $s_{\nu,t} \sim N(\mu^s_{\nu,t}, \sigma^s_{\nu,t})$, where:
 \begin{equation} 
 \mu_{\nu,t}^s = (1-\lambda_{\nu,t}) (\alpha_t + \Psi_t) + \lambda_{\nu,t} \Theta_t 
 \end{equation}
