@@ -295,7 +295,7 @@ coeff_2 = max(data$ECB_News_res_inf_2_Reuter)/max(data$ECB_News_res_inf_0_Reuter
 ggplot(data, aes(x = time)) + 
   geom_hline(yintercept = 0) + 
   geom_line(aes(y = ECB_News_res_inf_1.role/coeff_1, color="ECB_News"), linetype = 1) +
-  geom_line(aes(y = ECB_News_res_inf_0_Reuter.role, color="ECB_Count"), linetype = 1) +
+  #geom_line(aes(y = ECB_News_res_inf_0_Reuter.role, color="ECB_Count"), linetype = 1) +
   geom_line(aes(y = ECB_News_res_inf_2_Reuter.role/coeff_2, color="News_Forecast"), linetype = 1) +
   scale_y_continuous(name = "Absolute Expectation Gap", sec.axis = sec_axis(~.*coeff-0.015, name = "Media Bias")) +
   scale_x_date(date_labels="%Y", breaks = unique(years), name = "") +
@@ -404,6 +404,30 @@ ggplot(data, aes(x = time)) +
         panel.grid.minor = element_blank(),
         panel.grid.major = element_blank())
 
+##### Residuals - Quant
+
+coeff_1 = max(data$ECB_News_res_inf_1)/max(ECB_News_res_inf_0_Quant)
+coeff_2 = max(data$ECB_News_res_inf_2_Quant)/max(ECB_News_res_inf_0_Quant)
+
+ggplot(data, aes(x = time)) + 
+  geom_hline(yintercept = 0) + 
+  geom_line(aes(y = ECB_News_res_inf_1.role/coeff_1, color="ECB_News"), linetype = 1) +
+  #geom_line(aes(y = ECB_News_res_inf_0_RWI.role, color="ECB_Count"), linetype = 1) +
+  geom_line(aes(y = ECB_News_res_inf_2_Quant.role/coeff_2, color="News_Forecast"), linetype = 1) +
+  scale_y_continuous(name = "Absolute Expectation Gap", sec.axis = sec_axis(~.*coeff-0.015, name = "Residuals from ECB Index on News Index")) +
+  scale_x_date(date_labels="%Y", breaks = unique(years), name = "") +
+  scale_color_manual(values=c("ECB_News"="blue", "ECB_Count"="red", "News_Forecast"="green"),
+                     name="Legend",
+                     labels=c("ECB_News", "ECB_Count", "News_Forecast")) +
+  theme_classic() + 
+  theme(axis.text.y.left = element_text(color = "red"),
+        axis.text.y.right = element_text(color = "blue"),
+        axis.title.y = element_text(color = "red"),
+        axis.title.y.right = element_text(color = "blue", vjust = 2),
+        axis.text.x = element_text(angle = 45, vjust = 0.5, size = 11),
+        panel.grid.minor = element_blank(),
+        panel.grid.major = element_blank())
+
 ############################################
 
 
@@ -412,7 +436,7 @@ ggplot(data, aes(x = time)) +
 
 ggplot(data, aes(x = time)) + 
   labs(y = "Inflation Expectation") +
-  #geom_line(aes(y = German.Absolute.Expectations.Gap.Stm.GD.role, colour = "Stm - GD", linetype = "Stm - GD")) +
+  geom_line(aes(y = German.Relative.Real.Inflation.Expectations.Gap.Quant.Real, colour = "Stm - GD", linetype = "Stm - GD")) +
   #geom_line(aes(y = German.Absolute.Expectations.Gap.Stm.RWI.role, colour = "Stm - RWI", linetype = "Stm - RWI")) +
   geom_line(aes(y = German.ECB.Absolute.Expectations.Gap.Stm.role, colour = "Stm - ECB", linetype = "Stm - ECB")) +
   #geom_line(aes(y = German.Inflation.Year.on.Year, colour = "Germany Inflation", linetype = "Germany Inflation"), size = 1) +
@@ -435,14 +459,32 @@ ggplot(data, aes(x = time)) +
 #############################################
 #############################################
 
-### Reuter Expectations Gap
+### Reuter Expectations Gap (Changed it to real)
 
-coeff = max(data$News.ECB.Count)/max(data$German.Absolute.Real.Inflation.Expectations.Gap.Berk5.Reuter)
+coeff = max(data$News.ECB.Count)/max(data$German.Relative.Real.Inflation.Expectations.Gap.Quant.Reuter)
 
 ggplot(data, aes(x = time)) + 
   geom_hline(yintercept = 0) + 
   geom_line(aes(y = News.ECB.Count.role/coeff+0.0/coeff), colour="blue", linetype = 1) +
-  geom_line(aes(y = German.Absolute.Real.Inflation.Expectations.Gap.Berk5.Reuter), colour="red", linetype = 2) +
+  geom_line(aes(y = German.Relative.Real.Inflation.Expectations.Gap.Quant.Reuter), colour="red", linetype = 2) +
+  scale_y_continuous(name = "Absolute Expectation Gap", sec.axis = sec_axis(~.*coeff-0.0, name = "News ECB Count")) +
+  scale_x_date(date_labels="%Y", breaks = unique(years), name = "") +
+  theme_classic() + 
+  theme(axis.text.y.left = element_text(color = "red"),
+        axis.text.y.right = element_text(color = "blue"),
+        axis.title.y = element_text(color = "red"),
+        axis.title.y.right = element_text(color = "blue", vjust = 2),
+        axis.text.x = element_text(angle = 45, vjust = 0.5, size = 11),
+        panel.grid.minor = element_blank(),
+        panel.grid.major = element_blank()) 
+
+
+coeff = max(data$News.ECB.Count)/max(data$German.Relative.Real.Inflation.Expectations.Gap.Quant.Real)
+
+ggplot(data, aes(x = time)) + 
+  geom_hline(yintercept = 0) + 
+  geom_line(aes(y = News.ECB.Count.role/coeff+0.0/coeff), colour="blue", linetype = 1) +
+  geom_line(aes(y = German.Relative.Real.Inflation.Expectations.Gap.Quant.Real), colour="red", linetype = 2) +
   scale_y_continuous(name = "Absolute Expectation Gap", sec.axis = sec_axis(~.*coeff-0.0, name = "News ECB Count")) +
   scale_x_date(date_labels="%Y", breaks = unique(years), name = "") +
   theme_classic() + 
@@ -526,6 +568,80 @@ ggplot(data, aes(x = time)) +
         axis.text.x = element_text(angle = 45, vjust = 0.5, size = 11),
         panel.grid.minor = element_blank(),
         panel.grid.major = element_blank()) 
+
+####
+
+coeff = max(data$ECB_News_res_inf_1.role)/max(data$German.Relative.Real.Inflation.Expectations.Gap.Quant.Real)
+
+ggplot(data, aes(x = time)) + 
+  geom_hline(yintercept = 0) + 
+  geom_line(aes(y = ECB_News_res_inf_1.role/coeff+0/coeff), colour="blue", linetype = 1) +
+  geom_line(aes(y = German.Relative.Real.Inflation.Expectations.Gap.Quant.Real), colour="red", linetype = 2) +
+  scale_y_continuous(name = "Absolute Expectation Gap (Quant - Real)", sec.axis = sec_axis(~.*coeff-0.0, name = "News Index Residuals")) +
+  scale_x_date(date_labels="%Y", breaks = unique(years), name = "") +
+  theme_classic() + 
+  theme(axis.text.y.left = element_text(color = "red"),
+        axis.text.y.right = element_text(color = "blue"),
+        axis.title.y = element_text(color = "red"),
+        axis.title.y.right = element_text(color = "blue", vjust = 2),
+        axis.text.x = element_text(angle = 45, vjust = 0.5, size = 11),
+        panel.grid.minor = element_blank(),
+        panel.grid.major = element_blank()) 
+
+coeff = max(data$ECB_News_res_inf_1.role)/max(data$German.Relative.Real.Inflation.Expectations.Gap.Quant.Reuter)
+
+ggplot(data, aes(x = time)) + 
+  geom_hline(yintercept = 0) + 
+  geom_line(aes(y = ECB_News_res_inf_1.role/coeff+0/coeff), colour="blue", linetype = 1) +
+  geom_line(aes(y = German.Relative.Real.Inflation.Expectations.Gap.Quant.Reuter), colour="red", linetype = 2) +
+  scale_y_continuous(name = "Absolute Expectation Gap (Quant - Real)", sec.axis = sec_axis(~.*coeff-0.0, name = "News Index Residuals")) +
+  scale_x_date(date_labels="%Y", breaks = unique(years), name = "") +
+  theme_classic() + 
+  theme(axis.text.y.left = element_text(color = "red"),
+        axis.text.y.right = element_text(color = "blue"),
+        axis.title.y = element_text(color = "red"),
+        axis.title.y.right = element_text(color = "blue", vjust = 2),
+        axis.text.x = element_text(angle = 45, vjust = 0.5, size = 11),
+        panel.grid.minor = element_blank(),
+        panel.grid.major = element_blank()) 
+
+####
+
+coeff = max(data$ECB_News_res_inf_1.role)/max(data$German.Relative.Real.Inflation.Expectations.Gap.Quant.Real)
+
+ggplot(data, aes(x = time)) + 
+  geom_hline(yintercept = 0) + 
+  geom_line(aes(y = ECB_News_res_inf_1.role/coeff+0/coeff), colour="blue", linetype = 1) +
+  geom_line(aes(y = German.Relative.Real.Inflation.Expectations.Gap.Quant.Real), colour="red", linetype = 2) +
+  scale_y_continuous(name = "Absolute Expectation Gap (Quant - Real)", sec.axis = sec_axis(~.*coeff-0.0, name = "News Index Residuals")) +
+  scale_x_date(date_labels="%Y", breaks = unique(years), name = "") +
+  theme_classic() + 
+  theme(axis.text.y.left = element_text(color = "red"),
+        axis.text.y.right = element_text(color = "blue"),
+        axis.title.y = element_text(color = "red"),
+        axis.title.y.right = element_text(color = "blue", vjust = 2),
+        axis.text.x = element_text(angle = 45, vjust = 0.5, size = 11),
+        panel.grid.minor = element_blank(),
+        panel.grid.major = element_blank()) 
+
+coeff = max(data$ECB_News_res_inf_2_Quant.role)/max(data$German.Relative.Real.Inflation.Expectations.Gap.Quant.Real)
+
+ggplot(data, aes(x = time)) + 
+  geom_hline(yintercept = 0) + 
+  geom_line(aes(y = ECB_News_res_inf_2_Quant.role/coeff+0/coeff), colour="blue", linetype = 1) +
+  geom_line(aes(y = German.Relative.Real.Inflation.Expectations.Gap.Quant.Real), colour="red", linetype = 2) +
+  scale_y_continuous(name = "Absolute Expectation Gap (Quant - Real)", sec.axis = sec_axis(~.*coeff-0.0, name = "News Index Residuals")) +
+  scale_x_date(date_labels="%Y", breaks = unique(years), name = "") +
+  theme_classic() + 
+  theme(axis.text.y.left = element_text(color = "red"),
+        axis.text.y.right = element_text(color = "blue"),
+        axis.title.y = element_text(color = "red"),
+        axis.title.y.right = element_text(color = "blue", vjust = 2),
+        axis.text.x = element_text(angle = 45, vjust = 0.5, size = 11),
+        panel.grid.minor = element_blank(),
+        panel.grid.major = element_blank()) 
+
+####
 
 data = data[30:dim(data)[1],]
 

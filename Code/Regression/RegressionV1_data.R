@@ -25,6 +25,7 @@ data = data[50:dim(data)[1],]
 
 data1 = data %>% select(Eurozone.Industrial.Production,
                         Eurozone.Inflation, 
+                        Eurozone.Inflation.12.Month.Ahead,
                         German.Industrial.Production, 
                         German.Inflation.Year.on.Year,
                         German.Inflation.Year.on.Year.Harmonised, 
@@ -112,6 +113,9 @@ ECB_News_res_inf_1 = fit$residuals
 fit = lm(News.Inflation.Count ~ Reuter.Poll.Forecast, data1)
 ECB_News_res_inf_0_Reuter = fit$residuals
 
+fit = lm(News.Inflation.Count ~ Eurozone.Inflation.12.Month.Ahead, data1)
+ECB_News_res_inf_0_Quant = fit$residuals
+
 fit = lm(News.Inflation.Count ~ Germany.Inflation.Professionell.Forecasts.RWI, data1)
 ECB_News_res_inf_0_RWI = fit$residuals
 
@@ -123,6 +127,9 @@ ECB_News_res_inf_0_eu = fit$residuals
 
 fit = lm(News.Inflation.Index*-1 ~ Reuter.Poll.Forecast, data1)
 ECB_News_res_inf_2_Reuter = fit$residuals
+
+fit = lm(News.Inflation.Index*-1 ~ Eurozone.Inflation.12.Month.Ahead, data1)
+ECB_News_res_inf_2_Quant = fit$residuals
 
 fit = lm(News.Inflation.Index*-1 ~ Germany.Inflation.Professionell.Forecasts.RWI, data1)
 ECB_News_res_inf_2_RWI = fit$residuals
@@ -156,6 +163,9 @@ ECB_News_res_inf_4_GD = fit$residuals
 
 fit = lm(News.Inflation.Direction.Index*-1 ~ Eurozone.Inflation.Professionell.Forecasts, data1)
 ECB_News_res_inf_4_eu = fit$residuals
+
+data1 = cbind(data1, ECB_News_res_inf_0_Quant)
+data1 = cbind(data1, ECB_News_res_inf_2_Quant)
 
 data1 = cbind(data1, ECB_News_res_inf_0_Reuter)
 data1 = cbind(data1, ECB_News_res_inf_2_Reuter)
