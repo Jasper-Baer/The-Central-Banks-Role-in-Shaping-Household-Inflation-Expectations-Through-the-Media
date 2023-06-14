@@ -64,7 +64,7 @@ lam = 0.5;
 //alpha = 0.000005;
 
 rho_alpha = 0.76;
-alpha_int = -0.000001;
+alpha_int = -0.0;
 
 // estimated parameters initialisation
 calfa=.24;
@@ -141,6 +141,7 @@ model(linear);
 // sticky price - wage economy
           
           alpha = alpha_int + rho_alpha*alpha(-1) + eps_alpha;
+          //lambda = lambda_int + rho_lambda*lambda(-1) + eps_lambda;
           Exp_inf = rho*pinf + (1-rho)*((1-lam)*(pinf(+1) + alpha) + lam*pinf(+1));
           Bias = Exp_inf - pinf(+1);
 
@@ -272,5 +273,5 @@ varobs dy dc dinve labobs pinfobs dw robs;
 
 options_.plot_priors=0;
 
-estimation(optim=('MaxIter',200),datafile=usmodel_data,mode_compute=0,mode_file=usmodel_mode,first_obs=71,presample=4,lik_init=2,prefilter=0,mh_replic=0,mh_nblocks=2,mh_jscale=0.20,mh_drop=0.2);
+estimation(optim=('MaxIter',200),datafile=SM_Germany_transformed_data,mode_compute=6,first_obs=1,presample=4,lik_init=2,prefilter=0,mh_replic=100,mh_nblocks=2,mh_jscale=0.20,mh_drop=0.2);
 stoch_simul(irf=20, irf_shocks=(eps_alpha)) dy dc pinf Bias Exp_inf;

@@ -154,21 +154,20 @@ I find that the inflation information in both news and ECB press conferences sha
 %A subbranch of this literature focuses on the connection between inflation expectations and central bank communication. \cite{Picaultetal2022} investigate how the reporting about the ECB in the media can be used to predict financial market inflation expectations. \\
 % Kurzer Abschnitt in der ich auf Media Biases eingehe (Media reacts to central bank communication, negativity bias)
 \section{Model}\label{sec:Model} 
-I extend the Bayesian learning model for inflation expectation by \cite{LamlaLein2014} by explicitly adding a channel for central bank communication to the media signal. I assume that the central bank sends a noisy signal for the future inflation $\pi_{t+1}$. 
-Let $c_t$ denote the signal that captures information about the central bank's inflation forecast that the central bank communicates to the media; that is, inflation-related information in press conferences. I further assume that the signal is normally distributed, $c_t \sim N(\pi_{t+1}, \sigma^c_t)$, with variance $\sigma^c_t$. This assumption implies that the central bank only sends one unambiguous signal at each period $t$ rather than multiple conflicting signals at the same period,i.e., conflicting information in press conferences.
+I extend the Bayesian learning model for inflation expectation by \cite{LamlaLein2014} by explicitly adding a channel for central bank communication to the media signal. I assume that the central bank sends a noisy signal for the future inflation $\pi_{t+1}$ of the Euro area. Let $c_t$ denote the signal that captures information about the central bank's inflation forecast that the central bank communicates to the media; that is, inflation-related information in press conferences. I further assume that the signal is normally distributed, $c_t \sim N(\pi_{t+1}, \sigma^c_t)$, with variance $\sigma^c_t$. This assumption implies that the central bank only sends one unambiguous signal at each period $t$ rather than multiple conflicting signals at the same period,i.e., conflicting information in press conferences.
 % In the case of the ECB this inflation forecast is equal to the ECB staff's inflation projection 
 %\\
 %$ c_t = \pi_{t+1} + \epsilon_t \quad \epsilon_t \sim N(0, \sigma^c_t)$
 %\\ 
 %where $\epsilon_t$ represents the noise in the central bank's observation. 
 %\\
-In the absence of the central bank's communication, the media sends a noisy "baseline" signal about the rational forecast of inflation for future inflation $\pi_{t+1}$ to households based on a number of media reports $V$, with $s^b_{\nu,t} \sim N(\pi_{t+1} + \alpha_t, \sigma^{sb}_t)$. Here, $\alpha_t$ captures the media bias. I assume that $\alpha_t$ follows an AR(1) process with 
+In the absence of the central bank's communication, the media sends a noisy "baseline" signal about the rational forecast of inflation for future inflation $\pi_{t+1}$ to households based on a number of media reports $V$, with $s^b_{\nu,t} \sim N(\pi_{t+1}, \sigma^{sb}_t)$ and a media bias $\alpha_t$. I assume that $\alpha_t$ follows an AR(1) process with 
 \begin{equation}
 \alpha_t = a_{\alpha} + \beta_{\alpha}*\alpha_{t-1} + \epsilon_{\alpha} \quad \epsilon_{\alpha} \sim N(0, \sigma_{\alpha})
 \end{equation}
 The media can decide how closely to follow the central bank's communication. Therefore, the media's inflation signal can be defined as:
 \begin{equation}
-s_{\nu,t} = (1-\lambda_{t}) s^b_{\nu,t} + \lambda_{t} c_t \quad 0\leq \lambda_{t} \leq 1
+s_{\nu,t} = (1-\lambda_{t}) (s^b_{\nu,t} + \alpha_t) + \lambda_{t} c_t \quad 0\leq \lambda_{t} \leq 1
 \end{equation}
 where $\lambda_{t}$ denotes the weight that the media report places on the central bank's signal $c_t$ relative to the "baseline" media signal $s^b_{\nu,t}$. A value of $\lambda_{t} = 0$ indicates that the media report completely ignores the central bank's communication, while $\lambda_{t} = 1$ describes a situation where the media only reproduces information from the central bank's communication. 
 Given that $s_{\nu,t}$ is a linear combination of normal random variables and assuming that $\sigma_{\alpha}$, $\sigma^c_t$ and $\sigma^{sb}_{\nu,t}$ are independent, the media sends a normally distributed signal about $\pi_{t+1}$ with $s_{\nu,t} \sim N(\mu^s_{\nu,t}, \sigma^s_{\nu,t})$, where:
@@ -817,5 +816,32 @@ $R^2$               & 0.034 & 0.381 & 0.409 & 0.382 & 0.409 \\
 
 
 \section{Additional Rules for Lexicon Text Classification}\label{sec:Additional Rules for Lexicon Text Classification}
+\newpage
+\section{Open Problems}
+\newpage
+\newpage 
+Assuming that agents can't observe $\alpha$ and $\lambda_t$ if they both follow an AR(1) process. Would I need to condition the likelihood on them and then also assume priors for $\alpha$ and $\lambda_t$ or cold I just ignore their time varying nature for the formation of my posterior? It would imply that households do not form expectations about the formation of alpha and lambda and simply take the as given.
+\\
+\\
+The steady state for 
+\begin{equation*}
+E(\pi_{t+1}) = (1-\lambda)*(\alpha_t + \Psi_t) + \lambda*\Psi_t
+\end{equation*}
+is only defined for a $\alpha_t$ without a constant ( steady state of zero), assuming that $\Psi_t = E(\pi_{t+1}) $.
+\\
+\\
+$\alpha_t$ can be exogenous and follow an AR(1) process. Hence, $\alpha_t$ would be following a normal distribution. However, would it follow the conditional (on previous $\alph_t$a) or unconditional normal distribution?
+\\
+\\
+If Lambda also follows an AR(1) process I have a problem with the normal distributions; Normal times normal. \textcolor{red}{Could I just ignore that and treat lambda as a parameter and change it to an AR(1) process after I formulated the mean with the Bayesian learning framework?}
+\\
+\textcolor{red}{Or come up with a conditional distribution and estimate mean numerically? Is that how you would do it for a DSGE model?} 
+\\
+\\ 
+Assuming that $V$ is not a constant but rather an exogenous variable which follows an AR(1) process.
+\begin{equation}
+V_t = V_const + rho_V*V_{t-1} + \epsilon_V 
+\end{equation}
+\textcolor{red}{Would it influence the posterior distribution? Would net log-linearization around steady state for inflation expectations.}
 
 \end{document}
