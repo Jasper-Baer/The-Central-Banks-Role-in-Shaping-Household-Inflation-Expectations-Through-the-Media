@@ -39,7 +39,9 @@ var labobs robs pinfobs dy dc dinve dw ewma epinfma zcapf rkf kf pkf cf
     invef yf labf wf rrf mc zcap rk k pk c inve y lab pinf w r a b g qs ms  
     spinf sw kpf kp 
     Exp_inf Bias 
-    alpha;    
+    alpha; 
+// alpha_obs;
+// lambda_obs;   
  
 varexo ea eb eg eqs em epinf ew eps_alpha;  
  
@@ -181,6 +183,8 @@ model(linear);
 	      sw = crhow*sw(-1) + ewma - cmaw*ewma(-1) ;
 	          ewma=ew; 
 	      kp =  (1-cikbar)*kp(-1)+cikbar*inve + cikbar*cgamma^2*csadjcost*qs ;
+//        al = crhoal*al(-1) + eal;
+//        lam = crholam*lam(-1) + elam;
 
 // measurment equations
 
@@ -191,6 +195,12 @@ dw=w-w(-1)+ctrend;
 pinfobs = 1*(pinf) + constepinf;
 robs =    1*(r) + conster;
 labobs = lab + constelab;
+
+// I could demean alpha which would mean that the steady state is also zero?
+// Lambda should not be demeaned?
+
+// alphaobs = alpha + constea;
+// lambdaobs = lambda + constel;
 
 end; 
 
@@ -206,6 +216,8 @@ dw=ctrend;
 pinfobs = constepinf;
 robs = (((1+constepinf/100)/((1/(1+constebeta/100))*(1+ctrend/100)^(-csigma)))-1)*100;
 labobs = constelab;
+// alphaobs = constea;
+// lambdaobs = constel;
 end;
 
 shocks;
@@ -238,6 +250,8 @@ stderr eqs,0.46017,0.01,3,INV_GAMMA_PDF,0.1,2;
 stderr em,0.2397,0.01,3,INV_GAMMA_PDF,0.1,2;
 stderr epinf,0.1455,0.01,3,INV_GAMMA_PDF,0.1,2;
 stderr ew,0.2089,0.01,3,INV_GAMMA_PDF,0.1,2;
+// stderr eal, INV_GAMMA_PDF, 0.1, 2;
+// stderr elam, INV_GAMMA_PDF, 0.1, 2;
 crhoa,.9676 ,.01,.9999,BETA_PDF,0.5,0.20;
 crhob,.2703,.01,.9999,BETA_PDF,0.5,0.20;
 crhog,.9930,.01,.9999,BETA_PDF,0.5,0.20;
@@ -245,6 +259,8 @@ crhoqs,.5724,.01,.9999,BETA_PDF,0.5,0.20;
 crhoms,.3,.01,.9999,BETA_PDF,0.5,0.20;
 crhopinf,.8692,.01,.9999,BETA_PDF,0.5,0.20;
 crhow,.9546,.001,.9999,BETA_PDF,0.5,0.20;
+// crhoal, BETA_PDF, 0.5,0.20;
+// crholam, BETA_PDF, 0.5, 0.20;
 cmap,.7652,0.01,.9999,BETA_PDF,0.5,0.2;
 cmaw,.8936,0.01,.9999,BETA_PDF,0.5,0.2;
 csadjcost,6.3325,2,15,NORMAL_PDF,4,1.5;
@@ -270,6 +286,7 @@ calfa,0.24,0.01,1.0,NORMAL_PDF,0.3,0.05;
 end;
 
 varobs dy dc dinve labobs pinfobs dw robs;
+// alphaobs lambdaobs 
 
 options_.plot_priors=0;
 
