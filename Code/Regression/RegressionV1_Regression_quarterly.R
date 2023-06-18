@@ -61,3 +61,17 @@ stargazer(fit1, fit2, fit3, fit4, fit5, type = "text",
           title = "Regression Results",
           header = FALSE, 
           align = TRUE)
+
+results = coeftest(fit5, vcov.=NeweyWest(fit5, lag=0, prewhite=TRUE, adjust=TRUE, verbose=TRUE))
+
+# Get the coefficients
+coefficients <- coef(results)
+
+coefficients["ECB_News_res_inf_0_Reuter"]
+
+# Get the names of the coefficients
+names <- names(coefficients)
+
+coefficients["ECB_News_res_inf_0_Reuter"]*sd(data$ECB_News_res_inf_0_Reuter)/sd(data$German.Relative.Real.Inflation.Expectations.Gap.Quant.Real)
+coefficients["ECB_News_res_inf_1"]*sd(data$ECB_News_res_inf_1)/sd(data$German.Relative.Real.Inflation.Expectations.Gap.Quant.Real)
+coefficients["News.ECB.Count"]*sd(data$News.ECB.Count)/sd(data$German.Relative.Real.Inflation.Expectations.Gap.Quant.Real)

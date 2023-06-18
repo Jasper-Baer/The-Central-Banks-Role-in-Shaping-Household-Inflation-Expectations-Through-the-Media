@@ -87,16 +87,19 @@ PR_lex_sent = prepare_lex(PR_lex_sent)
 data_dir = create_index(data.copy(), PR_lex_dir, neg_window = 2, language = "german")
 data_sent = create_index(data.copy(), PR_lex_sent, neg_window = 2, language = "german")
 
-data_dir.to_csv('D:\Studium\PhD\Github\Single-Author\Data\Regression\PR_news_direction_results.csv')
-data_sent.to_csv('D:\Studium\PhD\Github\Single-Author\Data\Regression\PR_news_sentiment_results.csv')
+data_dir.to_csv('D:\Studium\PhD\Github\Single-Author\Data\Regression\PR_news_direction_results_final.csv')
+data_sent.to_csv('D:\Studium\PhD\Github\Single-Author\Data\Regression\PR_news_sentiment_results_final.csv')
 
 ##############################################################################
 
-data_dir = pd.read_csv('D:\Studium\PhD\Github\Single-Author\Data\Regression\PR_news_direction_results.csv')
+data_dir = pd.read_csv('D:\Studium\PhD\Github\Single-Author\Data\Regression\PR_news_direction_results_final.csv')
 data_dir["date"] = pd.to_datetime(data_dir["date"], format='%Y-%m-%d')
 
-data_sent = pd.read_csv('D:\Studium\PhD\Github\Single-Author\Data\Regression\PR_news_sentiment_results.csv')
+data_sent = pd.read_csv('D:\Studium\PhD\Github\Single-Author\Data\Regression\PR_news_sentiment_results_final.csv')
 data_sent["date"] = pd.to_datetime(data_sent["date"], format='%Y-%m-%d')
+
+data_dir = data_dir[['date', 'pos share', 'neu share', 'neg share', 'pos share PMI', 'neu share PMI', 'neg share PMI', 'index', 'index PMI']]
+data_sent = data_sent[['date', 'pos share', 'neu share', 'neg share', 'pos share PMI', 'neu share PMI', 'neg share PMI', 'index', 'index PMI']]
 
 def prepare_date(data):
     

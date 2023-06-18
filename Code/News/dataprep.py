@@ -14,7 +14,6 @@ import pandas as pd
 from torch.utils.data import TensorDataset, DataLoader
 import torch
 import numpy as np
-import treetaggerwrapper
 from nltk.corpus import stopwords
 from sklearn.feature_extraction.text import TfidfVectorizer 
 import spacy

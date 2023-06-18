@@ -380,6 +380,8 @@ ea_inf_exp_quant_q = pd.DataFrame(ea_inf_exp_quant_q)
 # Create a new DataFrame with the same columns and the new index
 extended_data_q = pd.DataFrame(index=new_index, columns=ea_inf_exp_quant_q.columns)
 
+extended_data_q.index = pd.to_datetime(extended_data_q.index)
+
 # Fill the new DataFrame with 0 values for the additional four years
 extended_data_q.loc[:first_date + pd.DateOffset(years=4, months=-3), :] = 0
 
@@ -404,6 +406,8 @@ forecast_df_m = pd.DataFrame(forecast_df_m)
 
 # Create a new DataFrame with the same columns and the new index
 extended_data = pd.DataFrame(index=new_index, columns=forecast_df_m.columns)
+
+extended_data.index = pd.to_datetime(extended_data.index)
 
 # Fill the new DataFrame with 0 values for the additional four years
 extended_data.loc[:first_date + pd.DateOffset(years=5, months=-1), :] = 0
@@ -435,6 +439,8 @@ forecast_q = pd.DataFrame(forecast_q)
 
 # Create a new DataFrame with the same columns and the new index
 extended_data_q = pd.DataFrame(index=new_index, columns=forecast_q.columns)
+
+extended_data_q.index = pd.to_datetime(extended_data_q.index)
 
 # Fill the new DataFrame with 0 values for the additional four years
 extended_data_q.loc[:first_date + pd.DateOffset(years=6, months=-3), :] = 0
