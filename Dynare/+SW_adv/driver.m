@@ -14,7 +14,7 @@ tic0 = tic;
 % Define global variables.
 global M_ options_ oo_ estim_params_ bayestopt_ dataset_ dataset_info estimation_info ys0_ ex0_
 options_ = [];
-M_.fname = 'SW_base';
+M_.fname = 'SW_adv';
 M_.dynare_version = '5.4';
 oo_.dynare_version = '5.4';
 options_.dynare_version = '5.4';
@@ -46,12 +46,12 @@ M_.exo_names_long(6) = {'epinf'};
 M_.exo_names(7) = {'ew'};
 M_.exo_names_tex(7) = {'ew'};
 M_.exo_names_long(7) = {'ew'};
-M_.exo_names(8) = {'eps_alpha'};
-M_.exo_names_tex(8) = {'eps\_alpha'};
-M_.exo_names_long(8) = {'eps_alpha'};
-M_.endo_names = cell(43,1);
-M_.endo_names_tex = cell(43,1);
-M_.endo_names_long = cell(43,1);
+M_.exo_names(8) = {'eal'};
+M_.exo_names_tex(8) = {'eal'};
+M_.exo_names_long(8) = {'eal'};
+M_.endo_names = cell(45,1);
+M_.endo_names_tex = cell(45,1);
+M_.endo_names_long = cell(45,1);
 M_.endo_names(1) = {'labobs'};
 M_.endo_names_tex(1) = {'labobs'};
 M_.endo_names_long(1) = {'labobs'};
@@ -181,10 +181,16 @@ M_.endo_names_long(42) = {'Bias'};
 M_.endo_names(43) = {'alpha'};
 M_.endo_names_tex(43) = {'alpha'};
 M_.endo_names_long(43) = {'alpha'};
+M_.endo_names(44) = {'alphaobs'};
+M_.endo_names_tex(44) = {'alphaobs'};
+M_.endo_names_long(44) = {'alphaobs'};
+M_.endo_names(45) = {'al'};
+M_.endo_names_tex(45) = {'al'};
+M_.endo_names_long(45) = {'al'};
 M_.endo_partitions = struct();
-M_.param_names = cell(43,1);
-M_.param_names_tex = cell(43,1);
-M_.param_names_long = cell(43,1);
+M_.param_names = cell(45,1);
+M_.param_names_tex = cell(45,1);
+M_.param_names_long = cell(45,1);
 M_.param_names(1) = {'curvw'};
 M_.param_names_tex(1) = {'curvw'};
 M_.param_names_long(1) = {'curvw'};
@@ -314,14 +320,20 @@ M_.param_names_long(42) = {'alpha_int'};
 M_.param_names(43) = {'rho_alpha'};
 M_.param_names_tex(43) = {'rho\_alpha'};
 M_.param_names_long(43) = {'rho_alpha'};
+M_.param_names(44) = {'constea'};
+M_.param_names_tex(44) = {'constea'};
+M_.param_names_long(44) = {'constea'};
+M_.param_names(45) = {'crhoal'};
+M_.param_names_tex(45) = {'crhoal'};
+M_.param_names_long(45) = {'crhoal'};
 M_.param_partitions = struct();
 M_.exo_det_nbr = 0;
 M_.exo_nbr = 8;
-M_.endo_nbr = 43;
-M_.param_nbr = 43;
-M_.orig_endo_nbr = 43;
+M_.endo_nbr = 45;
+M_.param_nbr = 45;
+M_.orig_endo_nbr = 45;
 M_.aux_vars = [];
-options_.varobs = cell(7, 1);
+options_.varobs = cell(8, 1);
 options_.varobs(1)  = {'dy'};
 options_.varobs(2)  = {'dc'};
 options_.varobs(3)  = {'dinve'};
@@ -329,7 +341,8 @@ options_.varobs(4)  = {'labobs'};
 options_.varobs(5)  = {'pinfobs'};
 options_.varobs(6)  = {'dw'};
 options_.varobs(7)  = {'robs'};
-options_.varobs_id = [ 4 5 6 1 3 7 2  ];
+options_.varobs(8)  = {'alphaobs'};
+options_.varobs_id = [ 4 5 6 1 3 7 2 44  ];
 M_ = setup_solvers(M_);
 M_.Sigma_e = zeros(8, 8);
 M_.Correlation_matrix = eye(8, 8);
@@ -346,8 +359,8 @@ options_.bytecode = false;
 options_.use_dll = false;
 M_.nonzero_hessian_eqs = [];
 M_.hessian_eq_zero = isempty(M_.nonzero_hessian_eqs);
-M_.orig_eq_nbr = 43;
-M_.eq_nbr = 43;
+M_.orig_eq_nbr = 45;
+M_.eq_nbr = 45;
 M_.ramsey_eq_nbr = 0;
 M_.set_auxiliary_variables = exist(['./+' M_.fname '/set_auxiliary_variables.m'], 'file') == 2;
 M_.epilogue_names = {};
@@ -372,26 +385,26 @@ M_.lead_lag_incidence = [
  1 29 0;
  2 30 0;
  0 31 0;
- 0 32 65;
+ 0 32 67;
  0 33 0;
- 0 34 66;
- 3 35 67;
- 4 36 68;
+ 0 34 68;
+ 3 35 69;
+ 4 36 70;
  5 37 0;
- 0 38 69;
+ 0 38 71;
  0 39 0;
  0 40 0;
  0 41 0;
  0 42 0;
- 0 43 70;
+ 0 43 72;
  0 44 0;
- 0 45 71;
- 6 46 72;
- 7 47 73;
+ 0 45 73;
+ 6 46 74;
+ 7 47 75;
  8 48 0;
- 0 49 74;
- 9 50 75;
- 10 51 76;
+ 0 49 76;
+ 9 50 77;
+ 10 51 78;
  11 52 0;
  12 53 0;
  13 54 0;
@@ -404,8 +417,10 @@ M_.lead_lag_incidence = [
  20 61 0;
  0 62 0;
  0 63 0;
- 21 64 0;]';
-M_.nstatic = 16;
+ 0 64 0;
+ 0 65 0;
+ 21 66 0;]';
+M_.nstatic = 18;
 M_.nfwrd   = 6;
 M_.npred   = 15;
 M_.nboth   = 6;
@@ -452,21 +467,23 @@ M_.equations_tags = {
   34 , 'name' , 'sw' ;
   35 , 'name' , 'ewma' ;
   36 , 'name' , 'kp' ;
-  37 , 'name' , 'dy' ;
-  38 , 'name' , 'dc' ;
-  39 , 'name' , 'dinve' ;
-  40 , 'name' , 'dw' ;
-  41 , 'name' , 'pinfobs' ;
-  42 , 'name' , 'robs' ;
-  43 , 'name' , 'labobs' ;
+  37 , 'name' , 'al' ;
+  38 , 'name' , 'dy' ;
+  39 , 'name' , 'dc' ;
+  40 , 'name' , 'dinve' ;
+  41 , 'name' , 'dw' ;
+  42 , 'name' , 'pinfobs' ;
+  43 , 'name' , 'robs' ;
+  44 , 'name' , 'labobs' ;
+  45 , 'name' , 'alphaobs' ;
 };
-M_.mapping.labobs.eqidx = [43 ];
-M_.mapping.robs.eqidx = [42 ];
-M_.mapping.pinfobs.eqidx = [41 ];
-M_.mapping.dy.eqidx = [37 ];
-M_.mapping.dc.eqidx = [38 ];
-M_.mapping.dinve.eqidx = [39 ];
-M_.mapping.dw.eqidx = [40 ];
+M_.mapping.labobs.eqidx = [44 ];
+M_.mapping.robs.eqidx = [43 ];
+M_.mapping.pinfobs.eqidx = [42 ];
+M_.mapping.dy.eqidx = [38 ];
+M_.mapping.dc.eqidx = [39 ];
+M_.mapping.dinve.eqidx = [40 ];
+M_.mapping.dw.eqidx = [41 ];
 M_.mapping.ewma.eqidx = [34 35 ];
 M_.mapping.epinfma.eqidx = [32 33 ];
 M_.mapping.zcapf.eqidx = [2 4 8 ];
@@ -484,13 +501,13 @@ M_.mapping.zcap.eqidx = [16 18 22 ];
 M_.mapping.rk.eqidx = [15 16 17 20 ];
 M_.mapping.k.eqidx = [17 18 23 ];
 M_.mapping.pk.eqidx = [19 20 ];
-M_.mapping.c.eqidx = [21 22 25 38 ];
-M_.mapping.inve.eqidx = [19 22 36 39 ];
-M_.mapping.y.eqidx = [22 23 26 37 ];
-M_.mapping.lab.eqidx = [17 21 23 25 43 ];
-M_.mapping.pinf.eqidx = [13 14 24 25 26 41 ];
-M_.mapping.w.eqidx = [15 17 25 40 ];
-M_.mapping.r.eqidx = [20 21 26 42 ];
+M_.mapping.c.eqidx = [21 22 25 39 ];
+M_.mapping.inve.eqidx = [19 22 36 40 ];
+M_.mapping.y.eqidx = [22 23 26 38 ];
+M_.mapping.lab.eqidx = [17 21 23 25 44 ];
+M_.mapping.pinf.eqidx = [13 14 24 25 26 42 ];
+M_.mapping.w.eqidx = [15 17 25 41 ];
+M_.mapping.r.eqidx = [20 21 26 43 ];
 M_.mapping.a.eqidx = [1 9 15 23 27 ];
 M_.mapping.b.eqidx = [6 7 20 21 28 ];
 M_.mapping.g.eqidx = [8 22 29 ];
@@ -502,7 +519,9 @@ M_.mapping.kpf.eqidx = [4 11 ];
 M_.mapping.kp.eqidx = [18 36 ];
 M_.mapping.Exp_inf.eqidx = [13 14 20 21 24 25 ];
 M_.mapping.Bias.eqidx = [14 ];
-M_.mapping.alpha.eqidx = [12 13 ];
+M_.mapping.alpha.eqidx = [12 13 45 ];
+M_.mapping.alphaobs.eqidx = [45 ];
+M_.mapping.al.eqidx = [12 37 ];
 M_.mapping.ea.eqidx = [27 29 ];
 M_.mapping.eb.eqidx = [28 ];
 M_.mapping.eg.eqidx = [29 ];
@@ -510,22 +529,22 @@ M_.mapping.eqs.eqidx = [30 ];
 M_.mapping.em.eqidx = [31 ];
 M_.mapping.epinf.eqidx = [33 ];
 M_.mapping.ew.eqidx = [35 ];
-M_.mapping.eps_alpha.eqidx = [12 ];
+M_.mapping.eal.eqidx = [37 ];
 M_.static_and_dynamic_models_differ = false;
 M_.has_external_function = false;
-M_.state_var = [8 9 14 15 16 25 26 27 29 30 31 32 33 34 35 36 37 38 39 40 43 ];
+M_.state_var = [8 9 14 15 16 25 26 27 29 30 31 32 33 34 35 36 37 38 39 40 45 ];
 M_.exo_names_orig_ord = [1:8];
 M_.maximum_lag = 1;
 M_.maximum_lead = 1;
 M_.maximum_endo_lag = 1;
 M_.maximum_endo_lead = 1;
-oo_.steady_state = zeros(43, 1);
+oo_.steady_state = zeros(45, 1);
 M_.maximum_exo_lag = 0;
 M_.maximum_exo_lead = 0;
 oo_.exo_steady_state = zeros(8, 1);
-M_.params = NaN(43, 1);
-M_.endo_trends = struct('deflator', cell(43, 1), 'log_deflator', cell(43, 1), 'growth_factor', cell(43, 1), 'log_growth_factor', cell(43, 1));
-M_.NNZDerivatives = [170; 0; -1; ];
+M_.params = NaN(45, 1);
+M_.endo_trends = struct('deflator', cell(45, 1), 'log_deflator', cell(45, 1), 'growth_factor', cell(45, 1), 'log_growth_factor', cell(45, 1));
+M_.NNZDerivatives = [174; 0; -1; ];
 M_.static_tmp_nbr = [18; 2; 0; 0; ];
 M_.model_local_variables_static_tt_idxs = {
 };
@@ -604,22 +623,12 @@ M_.params(7) = 0;
 cmaw = M_.params(7);
 M_.params(4) = 0;
 constelab = M_.params(4);
-%
-% INITVAL instructions
-%
-options_.initval_file = false;
-oo_.steady_state(43) = 0;
-if M_.exo_nbr > 0
-	oo_.exo_simul = ones(M_.maximum_lag,1)*oo_.exo_steady_state';
-end
-if M_.exo_det_nbr > 0
-	oo_.exo_det_simul = ones(M_.maximum_lag,1)*oo_.exo_det_steady_state';
-end
+M_.params(44) = 0;
+constea = M_.params(44);
 %
 % SHOCKS instructions
 %
 M_.exo_det_length = 0;
-M_.Sigma_e(8, 8) = 0.25;
 M_.Sigma_e(1, 1) = (0.4618)^2;
 M_.Sigma_e(2, 2) = (1.8513)^2;
 M_.Sigma_e(3, 3) = (0.6090)^2;
@@ -639,6 +648,7 @@ estim_params_.var_exo = [estim_params_.var_exo; 4, 0.46017, 0.01, 3, 4, 0.1, 2, 
 estim_params_.var_exo = [estim_params_.var_exo; 5, 0.2397, 0.01, 3, 4, 0.1, 2, NaN, NaN, NaN ];
 estim_params_.var_exo = [estim_params_.var_exo; 6, 0.1455, 0.01, 3, 4, 0.1, 2, NaN, NaN, NaN ];
 estim_params_.var_exo = [estim_params_.var_exo; 7, 0.2089, 0.01, 3, 4, 0.1, 2, NaN, NaN, NaN ];
+estim_params_.var_exo = [estim_params_.var_exo; 8, NaN, NaN, NaN, 4, 0.1, 2, NaN, NaN, NaN ];
 estim_params_.param_vals = [estim_params_.param_vals; 29, .9676, .01, .9999, 1, 0.5, 0.20, NaN, NaN, NaN ];
 estim_params_.param_vals = [estim_params_.param_vals; 31, .2703, .01, .9999, 1, 0.5, 0.20, NaN, NaN, NaN ];
 estim_params_.param_vals = [estim_params_.param_vals; 32, .9930, .01, .9999, 1, 0.5, 0.20, NaN, NaN, NaN ];
@@ -646,6 +656,7 @@ estim_params_.param_vals = [estim_params_.param_vals; 34, .5724, .01, .9999, 1, 
 estim_params_.param_vals = [estim_params_.param_vals; 35, .3, .01, .9999, 1, 0.5, 0.20, NaN, NaN, NaN ];
 estim_params_.param_vals = [estim_params_.param_vals; 36, .8692, .01, .9999, 1, 0.5, 0.20, NaN, NaN, NaN ];
 estim_params_.param_vals = [estim_params_.param_vals; 37, .9546, .001, .9999, 1, 0.5, 0.20, NaN, NaN, NaN ];
+estim_params_.param_vals = [estim_params_.param_vals; 45, NaN, NaN, NaN, 1, 0.5, 0.20, NaN, NaN, NaN ];
 estim_params_.param_vals = [estim_params_.param_vals; 8, .7652, 0.01, .9999, 1, 0.5, 0.2, NaN, NaN, NaN ];
 estim_params_.param_vals = [estim_params_.param_vals; 7, .8936, 0.01, .9999, 1, 0.5, 0.2, NaN, NaN, NaN ];
 estim_params_.param_vals = [estim_params_.param_vals; 11, 6.3325, 2, 15, 3, 4, 1.5, NaN, NaN, NaN ];
@@ -669,25 +680,21 @@ estim_params_.param_vals = [estim_params_.param_vals; 38, 0.3982, 0.1, 0.8, 3, 0
 estim_params_.param_vals = [estim_params_.param_vals; 2, 0.05, 0.01, 2.0, 3, 0.5, 0.25, NaN, NaN, NaN ];
 estim_params_.param_vals = [estim_params_.param_vals; 9, 0.24, 0.01, 1.0, 3, 0.3, 0.05, NaN, NaN, NaN ];
 options_.plot_priors=0;
+M_.params;
 options_.lik_init = 2;
 options_.mh_drop = 0.2;
 options_.mh_jscale = 0.20;
 options_.mh_nblck = 2;
-options_.mh_replic = 100;
+options_.mh_replic = 10;
 options_.mode_compute = 6;
 options_.prefilter = 0;
 options_.presample = 4;
 options_.datafile = 'SM_Germany_transformed_data';
 options_.optim_opt = '''MaxIter'',200';
-options_.first_obs = 1;
+options_.first_obs = 6;
 options_.order = 1;
 var_list_ = {};
 oo_recursive_=dynare_estimation(var_list_);
-options_.irf = 20;
-options_.order = 2;
-options_.irf_shocks = {'eps_alpha'};
-var_list_ = {'dy';'dc';'pinf';'Bias';'Exp_inf'};
-[info, oo_, options_, M_] = stoch_simul(M_, options_, oo_, var_list_);
 
 
 oo_.time = toc(tic0);
@@ -695,26 +702,26 @@ disp(['Total computing time : ' dynsec2hms(oo_.time) ]);
 if ~exist([M_.dname filesep 'Output'],'dir')
     mkdir(M_.dname,'Output');
 end
-save([M_.dname filesep 'Output' filesep 'SW_base_results.mat'], 'oo_', 'M_', 'options_');
+save([M_.dname filesep 'Output' filesep 'SW_adv_results.mat'], 'oo_', 'M_', 'options_');
 if exist('estim_params_', 'var') == 1
-  save([M_.dname filesep 'Output' filesep 'SW_base_results.mat'], 'estim_params_', '-append');
+  save([M_.dname filesep 'Output' filesep 'SW_adv_results.mat'], 'estim_params_', '-append');
 end
 if exist('bayestopt_', 'var') == 1
-  save([M_.dname filesep 'Output' filesep 'SW_base_results.mat'], 'bayestopt_', '-append');
+  save([M_.dname filesep 'Output' filesep 'SW_adv_results.mat'], 'bayestopt_', '-append');
 end
 if exist('dataset_', 'var') == 1
-  save([M_.dname filesep 'Output' filesep 'SW_base_results.mat'], 'dataset_', '-append');
+  save([M_.dname filesep 'Output' filesep 'SW_adv_results.mat'], 'dataset_', '-append');
 end
 if exist('estimation_info', 'var') == 1
-  save([M_.dname filesep 'Output' filesep 'SW_base_results.mat'], 'estimation_info', '-append');
+  save([M_.dname filesep 'Output' filesep 'SW_adv_results.mat'], 'estimation_info', '-append');
 end
 if exist('dataset_info', 'var') == 1
-  save([M_.dname filesep 'Output' filesep 'SW_base_results.mat'], 'dataset_info', '-append');
+  save([M_.dname filesep 'Output' filesep 'SW_adv_results.mat'], 'dataset_info', '-append');
 end
 if exist('oo_recursive_', 'var') == 1
-  save([M_.dname filesep 'Output' filesep 'SW_base_results.mat'], 'oo_recursive_', '-append');
+  save([M_.dname filesep 'Output' filesep 'SW_adv_results.mat'], 'oo_recursive_', '-append');
 end
-disp('Note: 36 warning(s) encountered in the preprocessor')
+disp('Note: 37 warning(s) encountered in the preprocessor')
 if ~isempty(lastwarn)
   disp('Note: warning(s) encountered in MATLAB/Octave code')
 end

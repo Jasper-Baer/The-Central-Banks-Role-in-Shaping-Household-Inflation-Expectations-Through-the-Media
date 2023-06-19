@@ -37,7 +37,8 @@ WARNING: in the 'steady_state_model' block, variable 'kp' is not assigned a valu
 WARNING: in the 'steady_state_model' block, variable 'Exp_inf' is not assigned a value
 WARNING: in the 'steady_state_model' block, variable 'Bias' is not assigned a value
 WARNING: in the 'steady_state_model' block, variable 'alpha' is not assigned a value
-Found 43 equation(s).
+WARNING: in the 'steady_state_model' block, variable 'al' is not assigned a value
+Found 45 equation(s).
 Evaluating expressions...done
 Computing static model derivatives (order 1).
 Computing dynamic model derivatives (order 2).
@@ -50,11 +51,27 @@ You did not declare endogenous variables after the estimation/calib_smoother com
 [Warning: Some of the parameters have no value (ccs, cinvs, crdpi) when using initial_estimation_checks. If these parameters are not initialized in a steadystate file or a
 steady_state_model-block, Dynare may not be able to solve the model. Note that simul, perfect_foresight_setup, and perfect_foresight_solver do not automatically call the
 steady state file.] 
-Initial value of the log posterior (or likelihood): -7862.6313
+Initial value of the log posterior (or likelihood): -8165.8206
 [Warning: gmhmaxlik: Unknown option (MaxIter)!] 
 [> In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('gmhmaxlik', 'C:\dynare\5.4\matlab\optimization\gmhmaxlik.m', 59)" style="font-weight:bold">gmhmaxlik</a> (<a href="matlab: opentoline('C:\dynare\5.4\matlab\optimization\gmhmaxlik.m',59,0)">line 59</a>)
 In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('dynare_minimize_objective', 'C:\dynare\5.4\matlab\optimization\dynare_minimize_objective.m', 336)" style="font-weight:bold">dynare_minimize_objective</a> (<a href="matlab: opentoline('C:\dynare\5.4\matlab\optimization\dynare_minimize_objective.m',336,0)">line 336</a>)
 In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('dynare_estimation_1', 'C:\dynare\5.4\matlab\dynare_estimation_1.m', 221)" style="font-weight:bold">dynare_estimation_1</a> (<a href="matlab: opentoline('C:\dynare\5.4\matlab\dynare_estimation_1.m',221,0)">line 221</a>)
 In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('dynare_estimation', 'C:\dynare\5.4\matlab\dynare_estimation.m', 118)" style="font-weight:bold">dynare_estimation</a> (<a href="matlab: opentoline('C:\dynare\5.4\matlab\dynare_estimation.m',118,0)">line 118</a>)
-In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('SW_base.driver', 'D:\Single Author\Github_fresh\Single_Author_fresh\Dynare\+SW_base\driver.m', 685)" style="font-weight:bold">SW_base.driver</a> (<a href="matlab: opentoline('D:\Single Author\Github_fresh\Single_Author_fresh\Dynare\+SW_base\driver.m',685,0)">line 685</a>)
+In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('SW_adv.driver', 'D:\Single Author\Github_fresh\Single_Author_fresh\Dynare\+SW_adv\driver.m', 697)" style="font-weight:bold">SW_adv.driver</a> (<a href="matlab: opentoline('D:\Single Author\Github_fresh\Single_Author_fresh\Dynare\+SW_adv\driver.m',697,0)">line 697</a>)
 In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('dynare', 'C:\dynare\5.4\matlab\dynare.m', 278)" style="font-weight:bold">dynare</a> (<a href="matlab: opentoline('C:\dynare\5.4\matlab\dynare.m',278,0)">line 278</a>)] 
+
+==========================================================
+   Change in the posterior covariance matrix = 3.9995.
+   Change in the posterior mean = 3.4758.
+   Current mode = 784.0025
+   Mode improvement = 7381.8181
+   New value of jscale = 0.011691
+==========================================================
+
+==========================================================
+   Change in the posterior covariance matrix = 0.2057.
+   Change in the posterior mean = 4.1428.
+   Current mode = 867.6183
+   Mode improvement = 83.6158
+   New value of jscale = 0.046958
+==========================================================

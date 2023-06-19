@@ -11,8 +11,11 @@ library("writexl")
 
 #####################################################################################
 
-data = read_excel('D:/Studium/PhD/Github/Single-Author/Data/Regression/regression_data_quarterly.xlsx')
-#data = read_excel('D:/Single Author/Github/Single-Author/Data/Regression/regression_data_monthly_2.xlsx')
+#data = read_excel('D:/Studium/PhD/Github/Single-Author/Data/Regression/regression_data_quarterly.xlsx')
+#data = read_excel('D:/Studium/PhD/Github/Single-Author/Data/Regression/regression_data_monthly_2.xlsx')
+data = read_excel('D:/Single Author/Github_fresh/Single_Author_fresh/Data/Regression/regression_data_quarterly.xlsx')
+#data = read_excel('D:/Single Author/Github_fresh/Single_Author_fresh/Data/Regression/regression_data_monthly_2.xlsx')
+
 data = data.frame(data)
 
 
@@ -21,9 +24,10 @@ data = data.frame(data)
 #data = data[9:dim(data)[1],]
 #data = data[23:dim(data)[1],]
 
-data = data[17:dim(data)[1],]
+#data = data[17:dim(data)[1],]
 
-data1 = data %>% select(German.Industrial.Production, 
+data1 = data %>% select(PRINTO01DEQ659S,
+                        German.Industrial.Production, 
                         German.Inflation.Year.on.Year,
                         News.Inflation.Index, 
                         News.Inflation.Sentiment.Index, 
@@ -72,7 +76,7 @@ data1 = cbind(data1, ECB_News_res_inf_1)
 
 ###### Lags
 
-lag_order = 12
+lag_order = 4
 nvar = dim(data1)[2]
 
 data_lags = data.frame(matrix(nrow = (dim(data1) - lag_order), ncol = (lag_order*nvar)))
@@ -109,5 +113,15 @@ data1 = data1[step:dim(data1)[1],]
 
 data1$time = as.Date(strptime(data1$time, "%Y-%m-%d"))
 
-write_xlsx(data1, 'D:/Studium/PhD/Github/Single-Author/Code/Regression/Regession_data_quarterly_processed.xlsx')
-#write_xlsx(data1, 'D:/Single Author/Github/Single-Author/Data/Regression/Regession_data_monthly_2_processed.xlsx')
+###
+
+# Add Whatever it takes Dummy
+
+data1$whatever <- ifelse(data1$time > as.Date("2012-07-01"), 1, 0)
+
+###
+
+#write_xlsx(data1, 'D:/Studium/PhD/Github/Single-Author/Code/Regression/Regession_data_quarterly_processed.xlsx')
+#write_xlsx(data1, 'D:/Studium/PhD/Github/Single-Author/Code/Regression/Regession_data_monthly_processed.xlsx')
+write_xlsx(data1, 'D:/Single Author/Github_fresh/Single_Author_fresh/Data/Regression/Regession_data_quarterly_processed.xlsx')
+#write_xlsx(data1, 'D:/Single Author/Github_fresh/Single_Author_fresh/Data/Regression/Regession_data_monthly_processed.xlsx')

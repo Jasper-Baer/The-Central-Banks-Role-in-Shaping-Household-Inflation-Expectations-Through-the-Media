@@ -11,11 +11,17 @@ library("lmtest")
 library("sandwich")
 library("stargazer")
 
-data = read_excel('D:/Studium/PhD/Github/Single-Author/Code/Regression/Regession_data_quarterly_processed.xlsx')
-#data = read_excel('D:/Single Author/Github/Single-Author/Data/Regression/Regession_data_monthly_2_processed.xlsx')
+#data = read_excel('D:/Studium/PhD/Github/Single-Author/Code/Regression/Regession_data_quarterly_processed.xlsx')
+data = read_excel('D:/Single Author/Github_fresh/Single_Author_fresh/Data/Regression/Regession_data_quarterly_processed.xlsx')
+#data = read_excel('D:/Single Author/Github_fresh/Single_Author_fresh/Data/Regression/Regession_data_monthly_2_processed.xlsx')
+
 data = data.frame(data)
 
 data$time = as.Date(strptime(data$time, "%Y-%m-%d"))
+
+#data = data[3:dim(data)[1],]
+#data = data[11:dim(data)[1],]
+data = data[19:dim(data)[1],]
 
 #data <- data[data$ECB_News_res_inf_1 < 0,]
 #data <- data[data$ECB_News_res_inf_1 > 0,]
@@ -31,7 +37,7 @@ fit1 <- lm(German.Relative.Real.Inflation.Expectations.Gap.Quant.Reuter ~ ECB_Ne
 fit2 <- lm(German.Relative.Real.Inflation.Expectations.Gap.Quant.Reuter ~ ECB_News_res_inf_0_Reuter + German.Absolute.Real.Inflation.Expectations.Gap.Quant.Reuter + German.Inflation.Year.on.Year.Lag1, data)
 fit3 <- lm(German.Relative.Real.Inflation.Expectations.Gap.Quant.Reuter ~ ECB_News_res_inf_0_Reuter + ECB_News_res_inf_1 + German.Absolute.Real.Inflation.Expectations.Gap.Quant.Reuter.Lag1 + German.Inflation.Year.on.Year.Lag1, data)
 fit4 <- lm(German.Relative.Real.Inflation.Expectations.Gap.Quant.Reuter ~ ECB_News_res_inf_0_Reuter + News.ECB.Count + German.Absolute.Real.Inflation.Expectations.Gap.Quant.Reuter.Lag1 + German.Inflation.Year.on.Year.Lag1, data)
-fit5 <- lm(German.Relative.Real.Inflation.Expectations.Gap.Quant.Reuter ~ ECB_News_res_inf_0_Reuter + ECB_News_res_inf_1 * News.ECB.Count + German.Absolute.Real.Inflation.Expectations.Gap.Quant.Reuter.Lag1 + German.Inflation.Year.on.Year.Lag1, data)
+fit5 <- lm(German.Relative.Real.Inflation.Expectations.Gap.Quant.Reuter ~ ECB_News_res_inf_0_Reuter + ECB_News_res_inf_1 * News.ECB.Count + German.Absolute.Real.Inflation.Expectations.Gap.Quant.Reuter.Lag1 + German.Inflation.Year.on.Year.Lag1 + German.Industrial.Production.Lag1 , data)
 
 stargazer(fit1, fit2, fit3, fit4, fit5, type = "text",
           se = list(coeftest(fit1, vcov.=NeweyWest(fit1, lag=0, prewhite=TRUE, adjust=TRUE, verbose=TRUE))[, "Std. Error"],
@@ -43,6 +49,8 @@ stargazer(fit1, fit2, fit3, fit4, fit5, type = "text",
           header = FALSE, 
           align = TRUE)
 
+print(coeftest(fit5, vcov.=NeweyWest(fit5, lag=0, prewhite=TRUE, adjust=TRUE, verbose=TRUE)))
+
 # Quant - Real
 
 # Run the regressions
@@ -50,7 +58,7 @@ fit1 <- lm(German.Relative.Real.Inflation.Expectations.Gap.Quant.Real ~ ECB_News
 fit2 <- lm(German.Relative.Real.Inflation.Expectations.Gap.Quant.Real ~ ECB_News_res_inf_0_Reuter + German.Absolute.Real.Inflation.Expectations.Gap.Quant.Real + German.Inflation.Year.on.Year.Lag1, data)
 fit3 <- lm(German.Relative.Real.Inflation.Expectations.Gap.Quant.Real ~ ECB_News_res_inf_0_Reuter + ECB_News_res_inf_1 + German.Absolute.Real.Inflation.Expectations.Gap.Quant.Real.Lag1 + German.Inflation.Year.on.Year.Lag1, data)
 fit4 <- lm(German.Relative.Real.Inflation.Expectations.Gap.Quant.Real ~ ECB_News_res_inf_0_Reuter + News.ECB.Count + German.Absolute.Real.Inflation.Expectations.Gap.Quant.Real.Lag1 + German.Inflation.Year.on.Year.Lag1, data)
-fit5 <- lm(German.Relative.Real.Inflation.Expectations.Gap.Quant.Real ~ ECB_News_res_inf_0_Reuter + ECB_News_res_inf_1 * News.ECB.Count + German.Absolute.Real.Inflation.Expectations.Gap.Quant.Real.Lag1 + German.Inflation.Year.on.Year.Lag1, data)
+fit5 <- lm(German.Relative.Real.Inflation.Expectations.Gap.Quant.Real ~ ECB_News_res_inf_0_Reuter + ECB_News_res_inf_1 * News.ECB.Count + German.Absolute.Real.Inflation.Expectations.Gap.Quant.Real.Lag1 + German.Inflation.Year.on.Year.Lag1 + German.Industrial.Production.Lag1 + whatever, data)
 
 stargazer(fit1, fit2, fit3, fit4, fit5, type = "text",
           se = list(coeftest(fit1, vcov.=NeweyWest(fit1, lag=0, prewhite=TRUE, adjust=TRUE, verbose=TRUE))[, "Std. Error"],
@@ -63,6 +71,8 @@ stargazer(fit1, fit2, fit3, fit4, fit5, type = "text",
           align = TRUE)
 
 results = coeftest(fit5, vcov.=NeweyWest(fit5, lag=0, prewhite=TRUE, adjust=TRUE, verbose=TRUE))
+
+print(coeftest(fit5, vcov.=NeweyWest(fit5, lag=0, prewhite=TRUE, adjust=TRUE, verbose=TRUE)))
 
 # Get the coefficients
 coefficients <- coef(results)
