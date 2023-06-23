@@ -115,9 +115,18 @@ data1$time = as.Date(strptime(data1$time, "%Y-%m-%d"))
 
 ###
 
-# Add Whatever it takes Dummy
+# Add time effect dummies
 
-data1$whatever <- ifelse(data1$time > as.Date("2012-07-01"), 1, 0)
+data1$GR = ifelse(data1$time > as.Date("2008-09-15"), 1, 0)
+data1$debt = ifelse(data1$time > as.Date("2010-01-01"), 1, 0)
+data1$whatever = ifelse(data1$time > as.Date("2012-07-01"), 1, 0)
+data1$ni = ifelse(data1$time > as.Date("2014-06-05"), 1, 0)
+data1$qe = ifelse(data1$time > as.Date("2015-01-22"), 1, 0)
+data1$brexit = ifelse(data1$time > as.Date("2016-06-23"), 1, 0)
+
+data1$trichet = ifelse(data1$time >= as.Date("2003-11-01") & data1$time <= as.Date("2011-10-31"), 1, 0)
+data1$draghi = ifelse(data1$time >= as.Date("2011-11-01") & data1$time <= as.Date("2019-10-31"), 1, 0)
+data1$lagarde = ifelse(data1$time >= as.Date("2019-11-01"), 1, 0)
 
 ###
 

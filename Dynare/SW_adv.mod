@@ -64,8 +64,8 @@ rho = 0.5;
 lam = 0.5;
 //alpha = 0.000005;
 
-rho_alpha = 0.76;
-alpha_int = -0.0;
+// rho_alpha = 0.76;
+alpha_int = 0.0;
 
 // estimated parameters initialisation
 calfa=.24;
@@ -100,7 +100,7 @@ cmap = 0;
 cmaw  = 0;
 
 constelab=0;
-constea = 0;
+//constea = 0;
 
 model(linear); 
 //deal with parameter dependencies; taken from usmodel_stst.mod 
@@ -142,8 +142,8 @@ model(linear);
 
 // sticky price - wage economy
           
-          //alpha = alpha_int + rho_alpha*alpha(-1) + al;
-            alpha = al;
+          alpha = alpha_int + rho_alpha*alpha(-1) + al;
+          //alpha = al;
           //lambda = lambda_int + rho_lambda*lambda(-1) + eps_lambda;
           Exp_inf = rho*pinf + (1-rho)*((1-lam)*(pinf(+1) + alpha) + lam*pinf(+1));
           Bias = Exp_inf - pinf(+1);
@@ -256,6 +256,8 @@ crhopinf,.8692,.01,.9999,BETA_PDF,0.5,0.20;
 crhow,.9546,.001,.9999,BETA_PDF,0.5,0.20;
 crhoal,,,,BETA_PDF, 0.5,0.20;
 // crholam, BETA_PDF, 0.5, 0.20;
+rho_alpha,,,,BETA_PDF, 0.5, 0.20;
+alpha_int,,,, NORMAL_PDF, 0,2;
 cmap,.7652,0.01,.9999,BETA_PDF,0.5,0.2;
 cmaw,.8936,0.01,.9999,BETA_PDF,0.5,0.2;
 csadjcost,6.3325,2,15,NORMAL_PDF,4,1.5;
@@ -286,10 +288,15 @@ varobs dy dc dinve labobs pinfobs dw robs alphaobs;
 
 //model_diagnostics(M_,options_,oo_)
 options_.plot_priors=0;
-M_.params;
+//M_.params;
 
-estimation(optim=('MaxIter',200),datafile=SM_Germany_transformed_data,mode_compute=6,first_obs=6,presample=4,lik_init=2,prefilter=0,mh_replic=10,mh_nblocks=2,mh_jscale=0.20,mh_drop=0.2);
-//stoch_simul(irf=20, irf_shocks=(eal)) dy dc pinf Bias Exp_inf;
+//estimation(optim=('MaxIter',200),datafile=SM_Germany_transformed_data,mode_file = SW_adv_mh_history_0,mode_compute=0,first_obs=6,presample=4,lik_init=2,prefilter=0,mh_replic=10,mh_nblocks=2,mh_jscale=0.20,mh_drop=0.2);
 
-//alphaobs = constea;
+//estimation(optim=('MaxIter',200),datafile=SM_Germany_transformed_data,mode_file = 'D:\\Single Author\\Github_fresh\\Single_Author_fresh\\Dynare\\SW_adv\\metropolis\\SW_adv_mh_history_0',mode_compute=0,first_obs=6,presample=4,lik_init=2,prefilter=0,mh_replic=10,mh_nblocks=2,mh_jscale=0.20,mh_drop=0.2);
+
+estimation(optim=('MaxIter',200),datafile=SM_Germany_transformed_data,mode_compute=6,first_obs=6,presample=4,lik_init=2,prefilter=0,mh_replic=0,mh_nblocks=2,mh_jscale=0.20,mh_drop=0.2);
+
+stoch_simul(irf=20, irf_shocks=(eal)) dy dc pinf Bias Exp_inf;
+
+// alphaobs = constea;
 // lambdaobs = constel;

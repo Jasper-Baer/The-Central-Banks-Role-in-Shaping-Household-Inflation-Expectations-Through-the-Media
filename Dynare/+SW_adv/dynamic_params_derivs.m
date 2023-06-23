@@ -53,7 +53,7 @@ function [rp, gp, rpp, gpp, hp, g3p] = dynamic_params_derivs(y, x, params, stead
 
 T = NaN(0,1);
 rp = zeros(45, 45);
-gp = zeros(45, 86, 45);
+gp = zeros(45, 87, 45);
 if nargout >= 3
 rpp = zeros(0,4);
 gpp = zeros(0,5);
