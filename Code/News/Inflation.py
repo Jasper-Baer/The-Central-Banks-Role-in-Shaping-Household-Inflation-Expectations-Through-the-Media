@@ -469,7 +469,7 @@ n2 = 5
 
 matching_files = []
 
-for file in news_data_full['file'].unique():
+for file in tqdm(news_data_full['file'].unique()):
 
     ecb_count = (ecb_data['file'] == file).sum()
     news_count = (news_data_full['file'] == file).sum()
@@ -489,6 +489,8 @@ else:
 potential_sentences_full = news_data_full[news_data_full['file'].isin(matching_files)]
 potential_sentences_ecb = ecb_data[ecb_data['file'].isin(matching_files)]
 potential_articles = data[data['file'].isin(matching_files)]
+
+potential_articles_search = data[data['file'].isin(news_data_full['file'])]
 
 
 ####
