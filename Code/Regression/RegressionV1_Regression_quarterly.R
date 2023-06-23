@@ -21,7 +21,9 @@ data$time = as.Date(strptime(data$time, "%Y-%m-%d"))
 
 #data = data[3:dim(data)[1],]
 #data = data[11:dim(data)[1],]
+#data = data[15:dim(data)[1],]
 data = data[19:dim(data)[1],]
+#data = data[23:dim(data)[1],]
 
 #data <- data[data$ECB_News_res_inf_1 < 0,]
 #data <- data[data$ECB_News_res_inf_1 > 0,]
@@ -34,10 +36,10 @@ data = data[19:dim(data)[1],]
 
 # Run the regressions
 fit1 <- lm(German.Relative.Real.Inflation.Expectations.Gap.Quant.Reuter ~ ECB_News_res_inf_0_Reuter, data)
-fit2 <- lm(German.Relative.Real.Inflation.Expectations.Gap.Quant.Reuter ~ ECB_News_res_inf_0_Reuter + German.Absolute.Real.Inflation.Expectations.Gap.Quant.Reuter + German.Inflation.Year.on.Year.Lag1, data)
-fit3 <- lm(German.Relative.Real.Inflation.Expectations.Gap.Quant.Reuter ~ ECB_News_res_inf_0_Reuter + ECB_News_res_inf_1 + German.Absolute.Real.Inflation.Expectations.Gap.Quant.Reuter.Lag1 + German.Inflation.Year.on.Year.Lag1, data)
-fit4 <- lm(German.Relative.Real.Inflation.Expectations.Gap.Quant.Reuter ~ ECB_News_res_inf_0_Reuter + News.ECB.Count + German.Absolute.Real.Inflation.Expectations.Gap.Quant.Reuter.Lag1 + German.Inflation.Year.on.Year.Lag1, data)
-fit5 <- lm(German.Relative.Real.Inflation.Expectations.Gap.Quant.Reuter ~ ECB_News_res_inf_0_Reuter + ECB_News_res_inf_1 * News.ECB.Count + German.Absolute.Real.Inflation.Expectations.Gap.Quant.Reuter.Lag1 + German.Inflation.Year.on.Year.Lag1 + German.Industrial.Production.Lag1 , data)
+fit2 <- lm(German.Relative.Real.Inflation.Expectations.Gap.Quant.Reuter ~ ECB_News_res_inf_0_Reuter + German.Relative.Real.Inflation.Expectations.Gap.Quant.Reuter + German.Inflation.Year.on.Year.Lag1, data)
+fit3 <- lm(German.Relative.Real.Inflation.Expectations.Gap.Quant.Reuter ~ ECB_News_res_inf_0_Reuter + ECB_News_res_inf_1 + German.Relative.Real.Inflation.Expectations.Gap.Quant.Reuter.Lag1 + German.Inflation.Year.on.Year.Lag1, data)
+fit4 <- lm(German.Relative.Real.Inflation.Expectations.Gap.Quant.Reuter ~ ECB_News_res_inf_0_Reuter + News.ECB.Count + German.Relative.Real.Inflation.Expectations.Gap.Quant.Reuter.Lag1 + German.Inflation.Year.on.Year.Lag1, data)
+fit5 <- lm(German.Relative.Real.Inflation.Expectations.Gap.Quant.Reuter ~ ECB_News_res_inf_0_Reuter + ECB_News_res_inf_1 * News.ECB.Count + German.Relative.Real.Inflation.Expectations.Gap.Quant.Reuter.Lag1 + German.Inflation.Year.on.Year.Lag1 + German.Industrial.Production.Lag1 + whatever , data)
 
 stargazer(fit1, fit2, fit3, fit4, fit5, type = "text",
           se = list(coeftest(fit1, vcov.=NeweyWest(fit1, lag=0, prewhite=TRUE, adjust=TRUE, verbose=TRUE))[, "Std. Error"],
@@ -50,6 +52,24 @@ stargazer(fit1, fit2, fit3, fit4, fit5, type = "text",
           align = TRUE)
 
 print(coeftest(fit5, vcov.=NeweyWest(fit5, lag=0, prewhite=TRUE, adjust=TRUE, verbose=TRUE)))
+
+fit6 <- lm(German.Relative.Real.Inflation.Expectations.Gap.Quant.Reuter ~ ECB_News_res_inf_0_Reuter + ECB_News_res_inf_1 * News.ECB.Count + German.Relative.Real.Inflation.Expectations.Gap.Quant.Reuter.Lag1 + German.Inflation.Year.on.Year.Lag1 + German.Industrial.Production.Lag1 + whatever + trichet, data)
+
+print(coeftest(fit6, vcov.=NeweyWest(fit6, lag=0, prewhite=TRUE, adjust=TRUE, verbose=TRUE)))
+
+fit7 <- lm(German.Relative.Real.Inflation.Expectations.Gap.Quant.Reuter ~ ECB_News_res_inf_0_Reuter + ECB_News_res_inf_1 * News.ECB.Count + German.Relative.Real.Inflation.Expectations.Gap.Quant.Reuter.Lag1 + German.Inflation.Year.on.Year.Lag1 + German.Industrial.Production.Lag1 + whatever, data)
+
+print(coeftest(fit7, vcov.=NeweyWest(fit7, lag=0, prewhite=TRUE, adjust=TRUE, verbose=TRUE)))
+
+summary_fit7 <- summary(fit7)
+print(summary_fit7$r.squared)
+
+fit8 <- lm(German.Relative.Real.Inflation.Expectations.Gap.Quant.Reuter ~ ECB_News_res_inf_0_Reuter + ECB_News_res_inf_2_Reuter * News.ECB.Count + German.Relative.Real.Inflation.Expectations.Gap.Quant.Reuter.Lag1 + German.Inflation.Year.on.Year.Lag1 + German.Industrial.Production.Lag1 + whatever, data)
+
+print(coeftest(fit8, vcov.=NeweyWest(fit8, lag=0, prewhite=TRUE, adjust=TRUE, verbose=TRUE)))
+
+summary_fit8 <- summary(fit8)
+print(summary_fit8$r.squared)
 
 # Quant - Real
 
@@ -73,6 +93,27 @@ stargazer(fit1, fit2, fit3, fit4, fit5, type = "text",
 results = coeftest(fit5, vcov.=NeweyWest(fit5, lag=0, prewhite=TRUE, adjust=TRUE, verbose=TRUE))
 
 print(coeftest(fit5, vcov.=NeweyWest(fit5, lag=0, prewhite=TRUE, adjust=TRUE, verbose=TRUE)))
+
+fit6 <- lm(German.Relative.Real.Inflation.Expectations.Gap.Quant.Real ~ ECB_News_res_inf_0_Reuter + ECB_News_res_inf_1 * News.ECB.Count + German.Relative.Real.Inflation.Expectations.Gap.Quant.Real.Lag1 + German.Inflation.Year.on.Year.Lag1 + German.Industrial.Production.Lag1 + whatever + trichet, data)
+
+print(coeftest(fit6, vcov.=NeweyWest(fit6, lag=0, prewhite=TRUE, adjust=TRUE, verbose=TRUE)))
+
+fit7 <- lm(German.Relative.Real.Inflation.Expectations.Gap.Quant.Real ~ ECB_News_res_inf_0_Reuter + ECB_News_res_inf_1 * News.ECB.Count + German.Relative.Real.Inflation.Expectations.Gap.Quant.Real.Lag1 + German.Inflation.Year.on.Year.Lag1 + German.Industrial.Production.Lag1 + whatever, data)
+
+print(coeftest(fit7, vcov.=NeweyWest(fit7, lag=0, prewhite=TRUE, adjust=TRUE, verbose=TRUE)))
+
+summary_fit7 <- summary(fit7)
+print(summary_fit7$r.squared)
+
+fit8 <- lm(German.Relative.Real.Inflation.Expectations.Gap.Quant.Real ~ ECB_News_res_inf_0_Reuter + ECB_News_res_inf_2_Reuter * News.ECB.Count + German.Relative.Real.Inflation.Expectations.Gap.Quant.Real.Lag1 + German.Inflation.Year.on.Year.Lag1 + German.Industrial.Production.Lag1 + whatever, data)
+
+print(coeftest(fit8, vcov.=NeweyWest(fit8, lag=0, prewhite=TRUE, adjust=TRUE, verbose=TRUE)))
+
+summary_fit8 <- summary(fit8)
+print(summary_fit8$r.squared)
+
+library(usdm)
+vif(fit8)
 
 # Get the coefficients
 coefficients <- coef(results)

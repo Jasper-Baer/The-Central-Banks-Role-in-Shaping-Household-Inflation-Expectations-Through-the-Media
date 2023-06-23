@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (MiKTeX 20.10) (preloaded format=pdflatex 2020.10.27)  11 JUN 2023 17:17
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (MiKTeX 20.10) (preloaded format=pdflatex 2020.10.27)  21 JUN 2023 18:35
 entering extended mode
 **./First_Draw.tex
 (First_Draw.tex
@@ -621,13 +621,13 @@ Underfull \hbox (badness 10000) in paragraph at lines 829--842
 
  []
 
-[27]
+[27] [28]
 Overfull \hbox (1.547pt too wide) in paragraph at lines 844--846
 []\OT1/cmr/m/n/10 Would it in-flu-ence the pos-te-rior dis-tri-bu-tion? Would n
 et log-linearization around
  []
 
-[28] [29] [30] (First_Draw.aux)
+[29] [30] (First_Draw.aux)
 Package rerunfilecheck Info: File `First_Draw.out' has not changed.
 (rerunfilecheck)             Checksum: 6ECFC19836AB230AAF9FD6702E7A6453;2596.
 
@@ -667,7 +667,7 @@ ers/Matthis/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmti10
 .pfb><C:/Users/Matthis/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfont
 s/cm/cmti8.pfb><C:/Users/Matthis/AppData/Local/Programs/MiKTeX/fonts/type1/publ
 ic/amsfonts/cm/cmtt8.pfb>
-Output written on First_Draw.pdf (30 pages, 404156 bytes).
+Output written on First_Draw.pdf (30 pages, 404637 bytes).
 PDF statistics:
  475 PDF objects out of 1000 (max. 8388607)
  111 named destinations out of 1000 (max. 500000)
