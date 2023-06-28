@@ -55,7 +55,7 @@ data_News = r'D:\Studium\PhD\Single Author\Data\inflation_lemmas_example.xlsx'
 data_ECB = pd.read_excel(data_ECB)
 data_ECB = data_ECB[0:2000]
 data_News = pd.read_excel(data_News)
-data_News = data_News[0:2000]
+data_News = data_News[0:3000]
 
 data_ECB['sentence'] = data_ECB['sentence'].apply(lambda x: [x])
 data_News['sentence'] = data_News['sentence'].apply(lambda x: [x])
@@ -67,7 +67,7 @@ data_ECB['tokens'] = data_ECB['tokens'].apply(lambda x: x[0])
 data_News['tokens'] = data_News['tokens'].apply(lambda x: x[0])
 
 labels_ECB = ['monetary', 'outlook', 'inflation']
-labels_News = ['direction', 'sentiment']
+labels_News = ['Direction', 'Sentiment']
 
 lexicon_ECB = [process_label(data_ECB, label) for label in labels_ECB]
 lexicon_News = [process_label(data_News, label) for label in labels_News]

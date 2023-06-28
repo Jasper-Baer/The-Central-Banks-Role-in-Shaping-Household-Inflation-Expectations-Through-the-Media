@@ -9,15 +9,15 @@ library("ggplot2")
 
 #####################################################################################
 
-#data = read_excel('D:/Studium/PhD/Github/Single-Author/Code/Regression/Regession_data_monthly_2_processed.xlsx')
-data = read_excel('D:/Single Author/Github/Single-Author/Data/Regression/Regession_data_monthly_2_processed.xlsx')
+data = read_excel('D:/Studium/PhD/Github/Single-Author/Code/Regression/Regession_data_monthly_2_processed.xlsx')
+#data = read_excel('D:/Single Author/Github/Single-Author/Data/Regression/Regession_data_monthly_2_processed.xlsx')
 data = data.frame(data)
 #data = data[24:dim(data)[1],]
 #data = data[9:dim(data)[1],]
 
 data$time = as.Date(strptime(data$time, "%Y-%m-%d"))
 #years = as.Date(strptime(c(2002:2019), '%Y'))
-years = as.Date(strptime(c(2003:2019), '%Y'))
+years = as.Date(strptime(c(2004:2019), '%Y'))
 
 ###############################################
 # Plots Paper
@@ -52,7 +52,7 @@ ggplot(data, aes(x = time)) +
 
 ##### INI
 
-coeff = max(data$News.Inflation.Index.role*-1)/max(data$German.Inflation.Year.on.Year)
+coeff = max(data$News.Inflation.Index.role)/max(data$German.Inflation.Year.on.Year)
 
 ggplot(data, aes(x = time)) + 
   geom_rect(data = recessions, aes(xmin = start, xmax = end, ymin = -Inf, ymax = Inf),
@@ -317,6 +317,33 @@ ggplot(data, aes(x = time)) +
         legend.box.background = element_rect(color = "white", size = 0.5, linetype = "solid"),
         legend.text = element_text(size = 10)) +
   guides(color = guide_legend(nrow = 1, byrow = TRUE, title = NULL))
+
+###
+
+coeff = max(data$ECB_News_diff_inf_2 )/max(data$German.Relative.Real.Inflation.Expectations.Gap.Berk5.Reuter)
+
+ggplot(data, aes(x = time)) + 
+  labs(y = "Inflation Expectation") +
+  geom_line(aes(y = German.Absolute.Real.Inflation.Expectations.Gap.Berk5.Reuter, colour = "Stm - Reuter", linetype = "Stm - Reuter")) +
+  #geom_line(aes(y = German.Absolute.Expectations.Gap.Stm.RWI.role, colour = "Stm - RWI", linetype = "Stm - RWI")) +
+  geom_line(aes(y = ECB_News_diff_inf_2 /coeff, colour = "Stm - ECB", linetype = "Stm - ECB")) +
+  #geom_line(aes(y = German.Inflation.Year.on.Year, colour = "Germany Inflation", linetype = "Germany Inflation"), size = 1) +
+  scale_x_date(date_labels="%Y", breaks = unique(years), name = "") +
+  scale_color_manual(values = c("Stm - Reuter" = "red", "Stm - RWI" = "blue", "Stm - ECB" = "black", "Germany Inflation" = "darkorange")) +
+  scale_linetype_manual(values = c("Stm - Reuter" = 1, "Stm - RWI" = 1, "Stm - ECB" = 1, "Germany Inflation" = 3)) +
+  theme_classic() + 
+  theme(axis.text.x = element_text(angle = 45, vjust = 0.5, size = 11),
+        panel.grid.minor = element_blank(),
+        panel.grid.major = element_blank(),
+        legend.position = c(0.98, 0.98),
+        legend.justification = c("right", "top"),
+        legend.box.just = "right",
+        legend.margin = margin(6, 6, 6, 6),
+        legend.box.background = element_rect(color = "white", size = 0.5, linetype = "solid"),
+        legend.text = element_text(size = 8)) +
+  guides(color = guide_legend(nrow = 2, byrow = TRUE, title = NULL), linetype = guide_legend(nrow = 2, byrow = TRUE, title = NULL))
+
+
 
 ####
 

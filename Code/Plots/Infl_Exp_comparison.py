@@ -169,20 +169,72 @@ data_ECB_index_ec = pd.read_csv(PATH + '\PR_ecb_outlook_results.csv')[['date', '
 data_inf_exp_eu = pd.read_excel(PATH + '\Infl_Exp.xlsx', index_col = 0)
 #ger_oecd_inf_exp = pd.read_csv(PATH + '\OECD_INF_FOR.csv', index_col = 0)
 
-dire_senti_m = pd.read_excel(PATH + '\\news_index_dire_senti_lex.xlsx')
-dire_m = pd.read_excel(PATH + '\\news_index_dire_lex.xlsx')
-sent_m = pd.read_excel(PATH + '\\news_index_senti_lex.xlsx')
 count_rel_m = pd.read_csv(PATH + '\\monthly_inflation_count.csv')
-
-dire_senti_q = pd.read_excel(PATH + '\\news_index_dire_senti_lex_q.xlsx')
-dire_q = pd.read_excel(PATH + '\\news_index_dire_lex_q.xlsx')
-sent_q = pd.read_excel(PATH + '\\news_index_senti_lex_q.xlsx')
 count_rel_q = pd.read_csv(PATH + '\\quarterly_inflation_count.csv')
+
+# dire_senti_m = pd.read_excel(PATH + '\\news_index_dire_senti_lex.xlsx')
+# dire_m = pd.read_excel(PATH + '\\news_index_dire_lex.xlsx')
+# sent_m = pd.read_excel(PATH + '\\news_index_senti_lex.xlsx')
+
+# dire_senti_q = pd.read_excel(PATH + '\\news_index_dire_senti_lex_q.xlsx')
+# dire_q = pd.read_excel(PATH + '\\news_index_dire_lex_q.xlsx')
+# sent_q = pd.read_excel(PATH + '\\news_index_senti_lex_q.xlsx')
+
+# dire_senti_m = pd.read_excel(PATH + '\\news_index_dire_senti_lex_PMI.xlsx')
+# dire_m = pd.read_excel(PATH + '\\news_index_dire_lex_PMI.xlsx')
+# sent_m = pd.read_excel(PATH + '\\news_index_senti_lex_PMI.xlsx')
+
+# dire_senti_q = pd.read_excel(PATH + '\\news_index_dire_senti_lex_PMI_q.xlsx')
+# dire_q = pd.read_excel(PATH + '\\news_index_dire_lex_PMI_q.xlsx')
+# sent_q = pd.read_excel(PATH + '\\news_index_senti_lex_PMI_q.xlsx')
+
+dire_senti_m = pd.read_excel(PATH + '\\news_index_dire_senti_BERT_m.xlsx')
+dire_m = pd.read_excel(PATH + '\\news_index_dire_BERT_m.xlsx')
+sent_m = pd.read_excel(PATH + '\\news_index_senti_BERT_m.xlsx')
+
+dire_senti_q = pd.read_excel(PATH + '\\news_index_dire_senti_BERT_q.xlsx')
+dire_q = pd.read_excel(PATH + '\\news_index_dire_BERT_q.xlsx')
+sent_q = pd.read_excel(PATH + '\\news_index_senti_BERT_q.xlsx')
+
+###
+
+def get_last_day_of_month(year_month_str):
+    # Convert the string to a datetime object (first day of the month)
+    dt = pd.to_datetime(year_month_str)
+    
+    # Add one month and subtract one day to get the last day of the month
+    last_day = dt + relativedelta(day=1, months=1) - relativedelta(days=1)
+    
+    return last_day
+
+dire_senti_m.iloc[:,0] = dire_senti_m.iloc[:,0].apply(get_last_day_of_month)
+dire_senti_m.index = dire_senti_m.iloc[:,0]
+dire_senti_m = dire_senti_m.loc[(dire_senti_m.index >= start_date) & (dire_senti_m.index <= end_date)]
+
+#dire_senti_q.index = dire_senti_q['date'] + pd.DateOffset(months=3)
+dire_senti_q.index = dire_senti_q['date']
+dire_senti_q = dire_senti_q.loc[(dire_senti_q.index >= start_date) & (dire_senti_q.index <= end_date)]
+
+dire_m.iloc[:,0] = dire_m.iloc[:,0].apply(get_last_day_of_month)
+dire_m.index = dire_m.iloc[:,0]
+dire_m = dire_m.loc[(dire_m.index >= start_date) & (dire_m.index <= end_date)]
+
+#dire_q.index = dire_q['date'] + pd.DateOffset(months=3)
+dire_q.index = dire_q['date']
+dire_q = dire_q.loc[(dire_q.index >= start_date) & (dire_q.index <= end_date)]
+
+sent_m.iloc[:,0] = sent_m.iloc[:,0].apply(get_last_day_of_month)
+sent_m.index = sent_m.iloc[:,0]
+sent_m = sent_m.loc[(sent_m.index >= start_date) & (sent_m.index <= end_date)]
+
+#sent_q.index = sent_q['date'] + pd.DateOffset(months=3)
+sent_q.index = sent_q['date']
+sent_q = sent_q.loc[(sent_q.index >= start_date) & (sent_q.index <= end_date)]
 
 ###############################################################################
 
 ea_inf_exp_quant = pd.read_excel(PATH + "\consumer_inflation_quantitative_estimates.xlsx", sheet_name = "EU_Q61")
-ea_inf_exp_quant = ea_inf_exp_quant[['Unnamed: 0', 'Median', 'Mean']]
+ea_inf_exp_quant = ea_inf_exp_quant[['Unnamed: 0', 'Median', 'Mean', '1st Quartile', '3rd Quartile']]
 
 cont = 'DE'
 #cont = 'EU'
@@ -197,6 +249,15 @@ inf_exp_inc_rap = inf_exp_surv[["TOT", "CONS." + cont + ".TOT.6.PP.M"]]
 inf_exp_miss = inf_exp_surv[["TOT", "CONS." + cont + ".TOT.6.N.M"]]
 
 inf_exp_balanced = inf_exp_surv[["TOT", "CONS." + cont + ".TOT.6.B.M"]]
+inf_exp_balanced_ea = inf_exp_surv[["TOT", "CONS." + "EA" + ".TOT.6.B.M"]]
+
+# plt.plot(inf_exp_balanced.iloc[227:-15,1])
+# plt.plot(ea_inf_exp_quant.iloc[:-15,1])
+
+inf_exp_balanced['TOT'] = pd.to_datetime(inf_exp_balanced['TOT'])
+inf_exp_balanced_ea['TOT'] = pd.to_datetime(inf_exp_balanced_ea['TOT'])
+
+
 
 inf_per_surv = pd.read_excel(PATH + "\consumer_subsectors_nsa_q5_nace2.xlsx", sheet_name = "TOT")
 
@@ -334,7 +395,7 @@ stm_lam_df = stm(initial_params, scaling, hist_ger_inflation_m, inflation_ger_m)
 ea_inf_exp_quant['Unnamed: 0'] = pd.to_datetime(ea_inf_exp_quant['Unnamed: 0'])
 ea_inf_exp_quant.set_index('Unnamed: 0', inplace=True)
 
-ea_inf_exp_quant_m = ea_inf_exp_quant['Median'].resample('M').mean().interpolate(method='linear')
+ea_inf_exp_quant_m = ea_inf_exp_quant.resample('M').mean().interpolate(method='linear')
 
 first_date = ea_inf_exp_quant_m.index.min() - pd.DateOffset(years=5)
 last_date = ea_inf_exp_quant_m.index.max()
@@ -359,7 +420,8 @@ ea_inf_exp_quant_m = ea_inf_exp_quant_m.loc[(ea_inf_exp_quant_m.index >= start_d
 
 ea_inf_exp_quant_q = ea_inf_exp_quant
 
-ea_inf_exp_quant_q = ea_inf_exp_quant_q['Median']
+#ea_inf_exp_quant_q = ea_inf_exp_quant_q['Median']
+#ea_inf_exp_quant_q = ea_inf_exp_quant_q['Mean']
 
 first_date = ea_inf_exp_quant_q.index.min() - pd.DateOffset(years=5)
 last_date = ea_inf_exp_quant_q.index.max()
@@ -513,35 +575,6 @@ ecb_dfr.loc[pd.to_datetime('2000-01-01')] = {'Unnamed: 1': 2.0}
 ecb_dfr = ecb_dfr.sort_index()
 
 # Function to get the last day of the month
-def get_last_day_of_month(year_month_str):
-    # Convert the string to a datetime object (first day of the month)
-    dt = pd.to_datetime(year_month_str)
-    
-    # Add one month and subtract one day to get the last day of the month
-    last_day = dt + relativedelta(day=1, months=1) - relativedelta(days=1)
-    
-    return last_day
-
-dire_senti_m.iloc[:,0] = dire_senti_m.iloc[:,0].apply(get_last_day_of_month)
-dire_senti_m.index = dire_senti_m.iloc[:,0]
-dire_senti_m = dire_senti_m.loc[(dire_senti_m.index >= start_date) & (dire_senti_m.index <= end_date)]
-
-dire_senti_q.index = dire_senti_q['date'] + pd.DateOffset(months=3)
-dire_senti_q = dire_senti_q.loc[(dire_senti_q.index >= start_date) & (dire_senti_q.index <= end_date)]
-
-dire_m.iloc[:,0] = dire_m.iloc[:,0].apply(get_last_day_of_month)
-dire_m.index = dire_m.iloc[:,0]
-dire_m = dire_m.loc[(dire_m.index >= start_date) & (dire_m.index <= end_date)]
-
-dire_q.index = dire_q['date'] + pd.DateOffset(months=3)
-dire_q = dire_q.loc[(dire_q.index >= start_date) & (dire_q.index <= end_date)]
-
-sent_m.iloc[:,0] = sent_m.iloc[:,0].apply(get_last_day_of_month)
-sent_m.index = sent_m.iloc[:,0]
-sent_m = sent_m.loc[(sent_m.index >= start_date) & (sent_m.index <= end_date)]
-
-sent_q.index = sent_q['date'] + pd.DateOffset(months=3)
-sent_q = sent_q.loc[(sent_q.index >= start_date) & (sent_q.index <= end_date)]
 
 count_rel_m.iloc[:,0] = pd.to_datetime(count_rel_m.iloc[:,0])
 count_rel_m.index = count_rel_m.iloc[:,0]
@@ -617,7 +650,10 @@ def absolute_errors(quant_surv, proff_fore):
     ger_abslolute_exp_gap_m = abs(ger_relative_exp_gap_m)
     
     return(ger_relative_exp_gap_m, ger_abslolute_exp_gap_m)
- 
+
+exp_inf_berk_5_var_mean.iloc[:,0] = exp_inf_berk_5_var_mean.iloc[:,0] + 3
+#stm_lam_df.iloc[:,0] = stm_lam_df.iloc[:,0] + 3
+
 ger_relative_exp_gap_m_role_RWI, ger_abslolute_exp_gap_m_role_RWI = absolute_errors(scaling['German Inflation Expectations'], RWI_inflation_m['One-Year-Ahead'])   
 ger_relative_exp_gap_m_role_GD, ger_abslolute_exp_gap_m_role_GD = absolute_errors(scaling['German Inflation Expectations'], GD_inflation_m['One-Year-Ahead'])
 ger_eu_relative_exp_gap_m_role, ger_eu_abslolute_exp_gap_m_role =  absolute_errors(scaling['German Inflation Expectations'], data_inf_exp_eu.iloc[:,0])
@@ -764,13 +800,41 @@ Regression_data_m.to_excel(PATH + '\\regression_data_monthly_2.xlsx')
 
 ###############################################################################
 
-ger_relative_exp_gap_q_quant_Reuter, ger_abslolute_exp_gap_q_quant_Reuter = absolute_errors(ea_inf_exp_quant_q['Median'], forecast_q['Median'])
+ger_relative_exp_gap_q_quant_median_Reuter, ger_abslolute_exp_gap_q_quant_median_Reuter = absolute_errors(ea_inf_exp_quant_q['Median'], forecast_q['Median'])
+ger_relative_exp_gap_q_quant_mean_Reuter, ger_abslolute_exp_gap_q_quant_mean_Reuter = absolute_errors(ea_inf_exp_quant_q['Mean'], forecast_q['Median'])
+ger_relative_exp_gap_q_quant_1stQuartile_Reuter, ger_abslolute_exp_gap_q_quant_1stQuartile_Reuter = absolute_errors(ea_inf_exp_quant_q['1st Quartile'], forecast_q['Median'])
+ger_relative_exp_gap_q_quant_3rdQuartile_Reuter, ger_abslolute_exp_gap_q_quant_3rdQuartile_Reuter = absolute_errors(ea_inf_exp_quant_q['3rd Quartile'], forecast_q['Median'])
 
 ####
 
-ger_relative_exp_gap_q_quant_real, ger_abslolute_exp_gap_q_quant_real = absolute_errors(ea_inf_exp_quant_q['Median'], inflation_ger_q_12_month_ahead.iloc[:,1])
+ger_relative_exp_gap_q_quant_median_real, ger_abslolute_exp_gap_q_quant_median_real = absolute_errors(ea_inf_exp_quant_q['Median'], inflation_ger_q_12_month_ahead.iloc[:,1])
+ger_relative_exp_gap_q_quant_mean_real, ger_abslolute_exp_gap_q_quant_mean_real = absolute_errors(ea_inf_exp_quant_q['Mean'], inflation_ger_q_12_month_ahead.iloc[:,1])
+ger_relative_exp_gap_q_quant_1stQuartile_real, ger_abslolute_exp_gap_q_quant_1stQuartile_real = absolute_errors(ea_inf_exp_quant_q['1st Quartile'], inflation_ger_q_12_month_ahead.iloc[:,1])
+ger_relative_exp_gap_q_quant_3rdQuartile_real, ger_abslolute_exp_gap_q_quant_3rdQuartile_real = absolute_errors(ea_inf_exp_quant_q['3rd Quartile'], inflation_ger_q_12_month_ahead.iloc[:,1])
 
 ###############################################################################
+
+stm_lam_df_q = stm_lam_df.resample('Q').mean()
+
+import pandas as pd
+import numpy as np
+
+# Create a DataFrame with zeros
+zero_row = pd.DataFrame(np.zeros((1,len(stm_lam_df_q.columns))), columns=stm_lam_df_q.columns)
+
+# Concatenate the zero row to the top of your DataFrame
+stm_lam_df_q = pd.concat([zero_row, stm_lam_df_q])
+
+# Reset the index
+stm_lam_df_q.reset_index(drop=True, inplace=True)
+
+# Remove the last row
+stm_lam_df_q = stm_lam_df_q.iloc[:-1]
+
+ger_relative_exp_gap_q_stm_Reuter, ger_abslolute_exp_gap_q_stm_Reuter = absolute_errors(stm_lam_df_q.iloc[:,0], forecast_q['Median'])
+ger_relative_exp_gap_q_stm_real, ger_abslolute_exp_gap_q_stm_real = absolute_errors(stm_lam_df_q.iloc[:,0], inflation_ger_q_12_month_ahead.iloc[:,1])
+
+####
 
 Regression_data_q = pd.DataFrame()
 Regression_data_q['German Industrial Production'] = ip_ger_q.iloc[:,1]
@@ -783,15 +847,36 @@ Regression_data_q['News ECB Count'] = list(quarterly_ecb_count.iloc[:,1])
 Regression_data_q['ECB Inflation Index'] = list(data_ECB_index_inf_q.iloc[:,0])
 Regression_data_q['ECB Monetary Index'] = list(data_ECB_index_mon_q.iloc[:,0])
 Regression_data_q['ECB Economic Index'] = list(data_ECB_index_ec_q.iloc[:,0])
-Regression_data_q['German Absolute Real Inflation Expectations Gap Quant Reuter'] = list(ger_abslolute_exp_gap_q_quant_Reuter)
-Regression_data_q['German Relative Real Inflation Expectations Gap Quant Reuter'] = list(ger_relative_exp_gap_q_quant_Reuter)
-Regression_data_q['German Absolute Real Inflation Expectations Gap Quant Real'] = list(ger_abslolute_exp_gap_q_quant_real)
-Regression_data_q['German Relative Real Inflation Expectations Gap Quant Real'] = list(ger_relative_exp_gap_q_quant_real)
+Regression_data_q['German Absolute Real Inflation Expectations Gap Quant Mean Reuter'] = list(ger_abslolute_exp_gap_q_quant_mean_Reuter)
+Regression_data_q['German Relative Real Inflation Expectations Gap Quant Mean Reuter'] = list(ger_relative_exp_gap_q_quant_mean_Reuter)
+Regression_data_q['German Absolute Real Inflation Expectations Gap Quant Mean Real'] = list(ger_abslolute_exp_gap_q_quant_mean_real)
+Regression_data_q['German Relative Real Inflation Expectations Gap Quant Mean Real'] = list(ger_relative_exp_gap_q_quant_mean_real)
+Regression_data_q['German Absolute Real Inflation Expectations Gap Quant Median Reuter'] = list(ger_abslolute_exp_gap_q_quant_median_Reuter)
+Regression_data_q['German Relative Real Inflation Expectations Gap Quant Median Reuter'] = list(ger_relative_exp_gap_q_quant_median_Reuter)
+Regression_data_q['German Absolute Real Inflation Expectations Gap Quant Median Real'] = list(ger_abslolute_exp_gap_q_quant_median_real)
+Regression_data_q['German Relative Real Inflation Expectations Gap Quant Median Real'] = list(ger_relative_exp_gap_q_quant_median_real)
+Regression_data_q['German Absolute Real Inflation Expectations Gap Quant 1stQuartile Reuter'] = list(ger_abslolute_exp_gap_q_quant_1stQuartile_Reuter)
+Regression_data_q['German Relative Real Inflation Expectations Gap Quant 1stQuartile Reuter'] = list(ger_relative_exp_gap_q_quant_1stQuartile_Reuter)
+Regression_data_q['German Absolute Real Inflation Expectations Gap Quant 1stQuartile Real'] = list(ger_abslolute_exp_gap_q_quant_1stQuartile_real)
+Regression_data_q['German Relative Real Inflation Expectations Gap Quant 1stQuartile Real'] = list(ger_relative_exp_gap_q_quant_1stQuartile_real)
+Regression_data_q['German Absolute Real Inflation Expectations Gap Quant 3rdQuartile Reuter'] = list(ger_abslolute_exp_gap_q_quant_3rdQuartile_Reuter)
+Regression_data_q['German Relative Real Inflation Expectations Gap Quant 3rdQuartile Reuter'] = list(ger_relative_exp_gap_q_quant_3rdQuartile_Reuter)
+Regression_data_q['German Absolute Real Inflation Expectations Gap Quant 3rdQuartile Real'] = list(ger_abslolute_exp_gap_q_quant_3rdQuartile_real)
+Regression_data_q['German Relative Real Inflation Expectations Gap Quant 3rdQuartile Real'] = list(ger_relative_exp_gap_q_quant_3rdQuartile_real)
+Regression_data_q['German Absolute Real Inflation Expectations Gap Stm Reuter'] = list(ger_abslolute_exp_gap_q_stm_Reuter)
+Regression_data_q['German Relative Real Inflation Expectations Gap Stm Reuter'] = list(ger_relative_exp_gap_q_stm_Reuter)
+Regression_data_q['German Absolute Real Inflation Expectations Gap Stm Real'] = list(ger_abslolute_exp_gap_q_stm_real)
+Regression_data_q['German Relative Real Inflation Expectations Gap Stm Real'] = list(ger_relative_exp_gap_q_stm_real)
 Regression_data_q['Reuter Poll Forecast'] = list(forecast_q['One-Year-Ahead'])
 
 Regression_data_q.to_excel(PATH + '\\regression_data_quarterly.xlsx')
 
 import pylab as plt
+
+plt.plot(ger_relative_exp_gap_q_stm_Reuter.index, ger_relative_exp_gap_q_stm_Reuter)
+plt.plot(ger_relative_exp_gap_m_berk_stm_Reuter.index, ger_relative_exp_gap_m_berk_stm_Reuter)
+
+###
 
 plt.plot(inflation_ger_q.index, inflation_ger_q.iloc[:,1])
 plt.plot(inflation_ger_m.index, inflation_ger_m.iloc[:,1])
@@ -799,9 +884,42 @@ plt.plot(inflation_ger_m.index, inflation_ger_m.iloc[:,1])
 plt.show()
 
 plt.plot(forecast_df_m.index, forecast_df_m['One-Year-Ahead'])
-plt.plot(forecast_q.index, forecast_q['One-Year-Ahead'])
+plt.plot(forecast_q.index[16:], forecast_q['One-Year-Ahead'][16:])
 
 plt.show()
+
+###
+
+import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
+
+# Assuming forecast_q is the DataFrame containing your data
+
+# Set the figure size
+plt.figure(figsize=(10, 6))
+
+# Plot the data
+plt.plot(forecast_q.index[16:], forecast_q['One-Year-Ahead'][16:], marker='o')
+
+# Set x-axis tick labels to display only one label per year
+years = mdates.YearLocator()
+plt.gca().xaxis.set_major_locator(years)
+plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%Y'))
+
+# Set labels for the x-axis and y-axis
+plt.xlabel('Year')
+plt.ylabel('One-Year-Ahead Forecast')
+
+# Set the title for the plot
+plt.title('One-Year-Ahead Forecast over Time')
+
+# Rotate x-axis tick labels for better visibility
+plt.xticks(rotation=45)
+
+# Display the plot
+plt.show()
+
+###
 
 plt.plot(dire_senti_q.index, dire_senti_q.iloc[:,1])
 plt.plot(dire_senti_m.index, dire_senti_m.iloc[:,1])
@@ -1105,3 +1223,313 @@ plt.show()
 
 # result = least_squares(objective_function, initial_params, args=(scaled_perc_weight, scaled_st, scaled_pi_t))
 
+import matplotlib.pyplot as plt
+
+fig, ax = plt.subplots()
+
+ax.plot(inf_exp_balanced['TOT'][227:-15], inf_exp_balanced['CONS.DE.TOT.6.B.M'][227:-15])
+ax.plot(inf_exp_balanced_ea['TOT'][227:-15], inf_exp_balanced_ea['CONS.EA.TOT.6.B.M'][227:-15])
+
+ax.set_title('CONS.DE.TOT.6.B.M über die Zeit')
+ax.set_xlabel('Datum')
+ax.set_ylabel('CONS.DE.TOT.6.B.M')
+
+plt.show()
+
+mean_value = (inf_exp_balanced['CONS.DE.TOT.6.B.M'][227:-15] - inf_exp_balanced_ea['CONS.EA.TOT.6.B.M'][227:-15]).mean()
+
+fig, ax = plt.subplots()
+
+ax.plot(inf_exp_balanced['TOT'][227:-15], inf_exp_balanced['CONS.DE.TOT.6.B.M'][227:-15])
+ax.plot(inf_exp_balanced['TOT'][227:-15], inf_exp_balanced_ea['CONS.EA.TOT.6.B.M'][227:-15])
+
+ax.axhline(y=mean_value, color='r', linestyle='--')
+
+ax.set_title('Data over Time with Mean Line')
+ax.set_xlabel('Date')
+ax.set_ylabel('Value')
+
+plt.show()
+
+fig, ax1 = plt.subplots()
+
+# Zeichnen Sie die Daten für CONS.DE.TOT.6.B.M
+ax1.plot(inf_exp_balanced['TOT'][227:-15], inf_exp_balanced['CONS.DE.TOT.6.B.M'][227:-15], color='blue')
+ax1.set_xlabel('Datum')
+ax1.set_ylabel('CONS.DE.TOT.6.B.M', color='blue')
+ax1.tick_params(axis='y', labelcolor='blue')
+
+# Erstellen Sie eine zweite y-Achse
+ax2 = ax1.twinx()
+
+# Zeichnen Sie die Daten für den Median von ea_inf_exp_quant
+ax2.plot(ea_inf_exp_quant['Median'], color='red')
+ax2.set_ylabel('Median of ea_inf_exp_quant', color='red')
+ax2.tick_params(axis='y', labelcolor='red')
+
+
+fig.suptitle('CONS.DE.TOT.6.B.M und Median of ea_inf_exp_quant über die Zeit')
+
+
+plt.show()
+
+from sklearn.preprocessing import StandardScaler
+
+
+scaler = StandardScaler()
+
+
+inf_exp_balanced_scaled = scaler.fit_transform(inf_exp_balanced['CONS.DE.TOT.6.B.M'][227:-15].values.reshape(-1, 1))
+ea_inf_exp_quant_scaled = scaler.fit_transform(ea_inf_exp_quant['Median'].values.reshape(-1, 1))
+
+# Erstellen Sie eine neue Figur und eine Achse
+fig, ax = plt.subplots()
+
+# Zeichnen Sie die standardisierten Daten
+ax.plot(inf_exp_balanced['TOT'][227:-15], inf_exp_balanced_scaled, label='CONS.DE.TOT.6.B.M')
+ax.plot(ea_inf_exp_quant.index, ea_inf_exp_quant_scaled, label='Median of ea_inf_exp_quant')
+
+# Setzen Sie den Titel und die Beschriftungen
+ax.set_title('Standardized CONS.DE.TOT.6.B.M and Median of ea_inf_exp_quant over Time')
+ax.set_xlabel('Date')
+ax.set_ylabel('Standardized Value')
+
+# Fügen Sie eine Legende hinzu
+ax.legend()
+
+# Zeigen Sie das Diagramm an
+plt.show()
+
+###
+
+scaler = StandardScaler()
+
+
+inf_exp_balanced_scaled = scaler.fit_transform(inf_exp_balanced_ea['CONS.EA.TOT.6.B.M'][227:-15].values.reshape(-1, 1))
+ea_inf_exp_quant_scaled = scaler.fit_transform(ea_inf_exp_quant['Median'].values.reshape(-1, 1))
+
+# Erstellen Sie eine neue Figur und eine Achse
+fig, ax = plt.subplots()
+
+# Zeichnen Sie die standardisierten Daten
+ax.plot(inf_exp_balanced['TOT'][227:-15], inf_exp_balanced_scaled, label='CONS.EA.TOT.6.B.M')
+ax.plot(ea_inf_exp_quant.index, ea_inf_exp_quant_scaled, label='Median of ea_inf_exp_quant')
+
+# Setzen Sie den Titel und die Beschriftungen
+ax.set_title('Standardized CONS.EA.TOT.6.B.M and Median of ea_inf_exp_quant over Time')
+ax.set_xlabel('Date')
+ax.set_ylabel('Standardized Value')
+
+# Fügen Sie eine Legende hinzu
+ax.legend()
+
+# Zeigen Sie das Diagramm an
+plt.show()
+
+###
+
+import matplotlib.pyplot as plt
+
+# Calculate the mean value
+mean_value = (inf_exp_balanced['CONS.DE.TOT.6.B.M'][227:-15] - inf_exp_balanced_ea['CONS.EA.TOT.6.B.M'][227:-15]).mean()
+
+# Create a new figure and an axes
+fig, ax1 = plt.subplots()
+
+# Plot the data on the first axes
+line1, = ax1.plot(inf_exp_balanced['TOT'][227:-15], inf_exp_balanced['CONS.DE.TOT.6.B.M'][227:-15], color='b', label='CONS.DE.TOT.6.B.M')
+line2, = ax1.plot(inf_exp_balanced['TOT'][227:-15], inf_exp_balanced_ea['CONS.EA.TOT.6.B.M'][227:-15], color='g', label='CONS.EA.TOT.6.B.M')
+
+# Create a second axes that shares the same x-axis
+ax2 = ax1.twinx()
+
+# Plot the data on the second axes
+line3, = ax2.plot(ea_inf_exp_quant_q['Median'].index, ea_inf_exp_quant_q['Median'], color='r', label='ea_inf_exp_quant_q Median')
+line4, = ax2.plot(forecast_q['Median'].index, forecast_q['Median'], color='c', label='forecast_q Median')
+
+# Draw the average line on the first axes
+ax1.axhline(y=mean_value, color='r', linestyle='--')
+
+# Set the title and labels
+ax1.set_title('Data over Time with Mean Line')
+ax1.set_xlabel('Date')
+ax1.set_ylabel('Value 1', color='b')
+ax2.set_ylabel('Value 2', color='r')
+
+# Create a legend
+lines = [line1, line2, line3, line4]
+labels = [l.get_label() for l in lines]
+#ax1.legend(lines, labels, loc='upper left')
+
+# Show the plot
+plt.show()
+
+###
+
+# Create a new figure and an axes
+fig, ax1 = plt.subplots()
+
+# Plot the first data series
+line1, = ax1.plot(inf_exp_balanced['TOT'][227:-15], inf_exp_balanced['CONS.DE.TOT.6.B.M'][227:-15], color='b', label='CONS.DE.TOT.6.B.M')
+
+# Create a second axes that shares the same x-axis
+ax2 = ax1.twinx()
+
+# Plot the second data series
+line2, = ax2.plot(forecast_q.index[16:], forecast_q['Median'][16:], color='r', label='forecast_q Median')
+
+# Set the title and labels
+ax1.set_title('Data over Time')
+ax1.set_xlabel('Date')
+ax1.set_ylabel('CONS.DE.TOT.6.B.M', color='b')
+ax2.set_ylabel('forecast_q Median', color='r')
+
+# Create a legend
+lines = [line1, line2]
+labels = [l.get_label() for l in lines]
+#ax1.legend(lines, labels, loc='upper left')
+
+# Show the plot
+plt.show()
+
+###
+
+# Create a new figure and an axes
+fig, ax1 = plt.subplots()
+
+# Plot the first data series
+line1, = ax1.plot(inf_exp_balanced['TOT'][227:-15], inf_exp_balanced_ea['CONS.EA.TOT.6.B.M'][227:-15], color='b', label='CONS.EA.TOT.6.B.M')
+
+# Create a second axes that shares the same x-axis
+ax2 = ax1.twinx()
+
+# Plot the second data series
+line2, = ax2.plot(forecast_q.index[16:], forecast_q['Median'][16:], color='r', label='forecast_q Median')
+
+# Set the title and labels
+ax1.set_title('Data over Time')
+ax1.set_xlabel('Date')
+ax1.set_ylabel('CONS.EA.TOT.6.B.M', color='b')
+ax2.set_ylabel('forecast_q Median', color='r')
+
+# Create a legend
+lines = [line1, line2]
+labels = [l.get_label() for l in lines]
+#ax1.legend(lines, labels, loc='upper left')
+
+# Show the plot
+plt.show()
+
+####
+
+ea_inf_exp_quant_q['Median'].mean()
+
+plt.plot(ea_inf_exp_quant_q)
+
+plt.plot(ea_inf_exp_quant['Median'])
+plt.plot(ea_inf_exp_quant['Mean'])
+
+# Ensure that the index is a datetime
+stm_lam_df.index = pd.to_datetime(stm_lam_df.index)
+
+# Resample to quarterly frequency, taking the mean
+stm_lam_df_q = stm_lam_df.resample('Q').mean()
+
+plt.plot(stm_lam_df_q.iloc[15:-1,0].index, np.array(stm_lam_df_q.iloc[15:-1,0]+2)-np.array(forecast_q['Median'][16:]))
+
+###
+
+# Create a new figure and an axes
+fig, ax1 = plt.subplots()
+
+# Plot the first data series
+line1, = ax1.plot(inf_exp_balanced['TOT'][227:-15], inf_exp_balanced['CONS.DE.TOT.6.B.M'][227:-15], color='b', label='CONS.DE.TOT.6.B.M')
+
+# Create a second axes that shares the same x-axis
+ax2 = ax1.twinx()
+
+# Plot the second data series
+line2, = ax2.plot(forecast_q[12:].index, forecast_q[12:]['Median'], color='r', label='forecast_q Median')
+
+# Set the title and labels
+ax1.set_title('Data over Time')
+ax1.set_xlabel('Date')
+ax1.set_ylabel('CONS.DE.TOT.6.B.M', color='b')
+ax2.set_ylabel('forecast_q Median', color='r')
+
+# Adjust the y-axis limits to shift the plot
+ax1.set_ylim(bottom=ax1.get_ylim()[0] - 10, top=ax1.get_ylim()[1] - 10)
+
+# # Create a legend
+# lines = [line1, line2]
+# labels = [l.get_label() for l in lines]
+# ax1.legend(lines, labels, loc='upper left')
+
+# Show the plot
+plt.show()
+
+###
+
+# Create a new figure and an axes
+fig, ax1 = plt.subplots()
+
+# Plot the first data series
+line1, = ax1.plot(inf_exp_balanced['TOT'][227:-15], inf_exp_balanced_ea['CONS.EA.TOT.6.B.M'][227:-15], color='b', label='CONS.EA.TOT.6.B.M')
+
+# Create a second axes that shares the same x-axis
+ax2 = ax1.twinx()
+
+# Plot the second data series
+line2, = ax2.plot(forecast_q[12:].index, forecast_q[12:]['Median'], color='r', label='forecast_q Median')
+
+# Set the title and labels
+ax1.set_title('Data over Time')
+ax1.set_xlabel('Date')
+ax1.set_ylabel('CONS.EA.TOT.6.B.M', color='b')
+ax2.set_ylabel('forecast_q Median', color='r')
+
+# Adjust the y-axis limits to shift the plot
+ax1.set_ylim(bottom=ax1.get_ylim()[0] - 10, top=ax1.get_ylim()[1] - 10)
+
+# # Create a legend
+# lines = [line1, line2]
+# labels = [l.get_label() for l in lines]
+# ax1.legend(lines, labels, loc='upper left')
+
+# Show the plot
+plt.show()
+
+#
+
+import statsmodels.api as sm
+
+# Ensure that the index is a datetime index
+inf_exp_balanced_ea.index = pd.to_datetime(inf_exp_balanced_ea.index)
+
+inf_exp_balanced_ea.index = inf_exp_balanced['TOT']
+
+# Resample the data to quarterly frequency, taking the mean of each quarter
+inf_exp_balanced_ea_quarterly = inf_exp_balanced_ea['CONS.EA.TOT.6.B.M'][227:-44].resample('Q').mean()
+
+# Now you can perform the regression with the resampled data
+X = sm.add_constant(np.array(inf_exp_balanced_ea_quarterly))
+
+# Define the independent variable. Add a constant to the independent variable
+y = np.array(pd.to_numeric(ea_inf_exp_quant_q['Median'][16:]))
+
+# Perform the regression
+model = sm.OLS(y, X, missing='drop')  # 'drop' to ignore any NaN or missing values
+results = model.fit()
+
+# Print the coefficients
+print(results.params)
+
+fit = results.params[0] + results.params[1]*inf_exp_balanced_ea['CONS.EA.TOT.6.B.M'][227:-44].resample('Q').mean()
+fit2 = results.params[0] + results.params[1]*inf_exp_balanced_ea['CONS.DE.TOT.6.B.M'][227:-44].resample('Q').mean()
+
+import matplotlib.pyplot as plt
+
+plt.plot(fit)
+plt.plot(ea_inf_exp_quant_q['Median'][16:])
+
+plt.plot(fit2)

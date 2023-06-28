@@ -193,6 +193,8 @@ word_list_ecb = [
     "EZB-Präsidentin", 
     "EZB-Vizepräsident",
     "EZB-Rat",
+    "Direktoriumsmitglied",
+    "Notenbankchef"
     "Währungshüter",
     "Duisenberg",
     "Trichet",
@@ -343,7 +345,7 @@ dependency_df = pd.read_csv(r'D:\Studium\PhD\Single Author\Data\dependencies1306
 
 filtered_ecb_sentences = []
 
-reporting_verbs = ['sagen', 'sagt', 'betont', 'sehen', 'gehen', 'berichten', 'meinen', 'erwarten', 'vorhergesagen', 'rechnen', 'mahnen', 'warnen']
+reporting_verbs = ['sagen', 'sagt', 'deutet', 'betont', 'sehen', 'gehen', 'berichten', 'meinen', 'erwarten', 'vorhergesagen', 'rechnen', 'mahnen', 'warnen']
 
 def filter_rows(row):
     deps = row['dependencies']
@@ -354,6 +356,7 @@ def filter_rows(row):
 
         if dep[2] in ["nsubj", "nsubjpass"]:
             subj = dep
+            print(subj)
             if subj[0] in word_list_ecb or (prev_dep == "europa" and subj[0] == "zentralbank"):
                 sent_in_ecb = True
 
@@ -365,6 +368,29 @@ def filter_rows(row):
                     
         prev_dep = dep[0]
 
+    if sent_in_ecb:
+        return row
+    
+def filter_rows(row):
+    deps = row['dependencies']
+    sent_in_ecb = False
+    prev_dep = ""
+    
+    for dep in deps:
+    
+        if dep[2] in ["nsubj", "nsubjpass"]:
+            subj = dep
+            if subj[0] in word_list_ecb or (prev_dep == "europa" and subj[0] == "zentralbank"):
+                sent_in_ecb = True
+    
+        elif dep[2] in ['obj', 'iobj']:
+            if dep[0].lower() in word_list_ecb or (prev_dep == "europa" and dep[0] == "zentralbank"):
+                obj_dep = dep[1]
+                if deps[obj_dep] in reporting_verbs and subj[0] == deps[obj_dep][0]:
+                    sent_in_ecb = True
+                    
+        prev_dep = dep[0]
+    
     if sent_in_ecb:
         return row
 
@@ -465,7 +491,7 @@ articles_ecb = artilces[artilces['file'].isin(ecb_data['file'])]
 most_common_file = None
 
 n1 = 3 
-n2 = 5  
+n2 = 0 
 
 matching_files = []
 
@@ -492,6 +518,9 @@ potential_articles = data[data['file'].isin(matching_files)]
 
 potential_articles_search = data[data['file'].isin(news_data_full['file'])]
 
+file = "36534602.xml"
+
+example = ecb_data[ecb_data['file'] == file]
 
 ####
 
