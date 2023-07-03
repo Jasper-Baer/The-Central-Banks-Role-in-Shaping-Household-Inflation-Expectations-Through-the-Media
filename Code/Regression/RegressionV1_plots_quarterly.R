@@ -8,8 +8,8 @@ library("ggplot2")
 
 #####################################################################################
 
-data = read_excel('D:/Studium/PhD/Github/Single-Author/Code/Regression/Regession_data_quarterly_processed.xlsx')
-#data = read_excel('D:/Single Author/Github_fresh/Single_Author_fresh/Data/Regression/Regession_data_quarterly_processed.xlsx')
+#data = read_excel('D:/Studium/PhD/Github/Single-Author/Code/Regression/Regession_data_quarterly_processed.xlsx')
+data = read_excel('D:/Single Author/Github_fresh/Single_Author_fresh/Data/Regression/Regession_data_quarterly_processed.xlsx')
 data = data.frame(data)
 #data = data[24:dim(data)[1],]
 #data = data[9:dim(data)[1],]
@@ -52,13 +52,13 @@ ggplot(data, aes(x = time)) +
 
 ###
 
-coeff = max(data$ECB_News_diff_inf_1)/max(data$German.Relative.Real.Inflation.Expectations.Gap.Quant.Mean.Real)
+coeff = max(data$ECB_News_diff_inf_1)/max(data$German.Relative.Real.Inflation.Expectations.Gap.Quant.Mean.Reuter)
 
 ggplot(data, aes(x = time)) + 
   labs(y = "Inflation Expectation") +
-  geom_line(aes(y = German.Relative.Real.Inflation.Expectations.Gap.Quant.Mean.Real, colour = "Stm - GD", linetype = "Stm - GD")) +
+  geom_line(aes(y = German.Relative.Real.Inflation.Expectations.Gap.Quant.Mean.Reuter, colour = "Stm - GD", linetype = "Stm - GD")) +
   #geom_line(aes(y = German.Absolute.Expectations.Gap.Stm.RWI.role, colour = "Stm - RWI", linetype = "Stm - RWI")) +
-  geom_line(aes(y = ECB_News_diff_inf_1/coeff, colour = "Stm - ECB", linetype = "Stm - ECB")) +
+  geom_line(aes(y = ECB_News_diff_inf_1.rolling/coeff, colour = "Stm - ECB", linetype = "Stm - ECB")) +
   #geom_line(aes(y = German.Inflation.Year.on.Year, colour = "Germany Inflation", linetype = "Germany Inflation"), size = 1) +
   scale_x_date(date_labels="%Y", breaks = unique(years), name = "") +
   scale_color_manual(values = c("Stm - GD" = "red", "Stm - RWI" = "blue", "Stm - ECB" = "black", "Germany Inflation" = "darkorange")) +

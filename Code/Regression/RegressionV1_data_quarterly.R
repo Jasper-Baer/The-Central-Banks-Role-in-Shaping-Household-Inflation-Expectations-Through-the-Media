@@ -11,9 +11,9 @@ library("writexl")
 
 #####################################################################################
 
-data = read_excel('D:/Studium/PhD/Github/Single-Author/Data/Regression/regression_data_quarterly.xlsx')
+#data = read_excel('D:/Studium/PhD/Github/Single-Author/Data/Regression/regression_data_quarterly.xlsx')
 #data = read_excel('D:/Studium/PhD/Github/Single-Author/Data/Regression/regression_data_monthly_2.xlsx')
-#data = read_excel('D:/Single Author/Github_fresh/Single_Author_fresh/Data/Regression/regression_data_quarterly.xlsx')
+data = read_excel('D:/Single Author/Github_fresh/Single_Author_fresh/Data/Regression/regression_data_quarterly.xlsx')
 #data = read_excel('D:/Single Author/Github_fresh/Single_Author_fresh/Data/Regression/regression_data_monthly_2.xlsx')
 
 data = data.frame(data)
@@ -65,7 +65,10 @@ data1$News.Inflation.Index = data1$News.Inflation.Index*-1
 
 ECB_News_diff_inf_1 = scale(data1$ECB.Inflation.Index) - scale(data1$News.Inflation.Index)
 
-fit = lm(scale(ECB.Inflation.Index) ~ scale(News.Inflation.Index), data1)
+# fit = lm(scale(ECB.Inflation.Index) ~ scale(News.Inflation.Index), data1)
+# ECB_News_diff_inf_2 = fit$residuals
+
+fit = lm(ECB.Inflation.Index ~ News.Inflation.Index, data1)
 ECB_News_diff_inf_2 = fit$residuals
 
 ECB_News_res_inf_1 = lm(ECB.Inflation.Index ~ Reuter.Poll.Forecast, data1)
@@ -179,7 +182,7 @@ data1$lagarde = ifelse(data1$time >= as.Date("2019-11-01"), 1, 0)
 
 ###
 
-write_xlsx(data1, 'D:/Studium/PhD/Github/Single-Author/Code/Regression/Regession_data_quarterly_processed.xlsx')
+#write_xlsx(data1, 'D:/Studium/PhD/Github/Single-Author/Code/Regression/Regession_data_quarterly_processed.xlsx')
 #write_xlsx(data1, 'D:/Studium/PhD/Github/Single-Author/Code/Regression/Regession_data_monthly_processed.xlsx')
-#write_xlsx(data1, 'D:/Single Author/Github_fresh/Single_Author_fresh/Data/Regression/Regession_data_quarterly_processed.xlsx')
+write_xlsx(data1, 'D:/Single Author/Github_fresh/Single_Author_fresh/Data/Regression/Regession_data_quarterly_processed.xlsx')
 #write_xlsx(data1, 'D:/Single Author/Github_fresh/Single_Author_fresh/Data/Regression/Regession_data_monthly_processed.xlsx')
