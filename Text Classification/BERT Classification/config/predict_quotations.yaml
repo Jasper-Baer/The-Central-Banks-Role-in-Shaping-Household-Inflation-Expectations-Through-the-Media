@@ -1,0 +1,36 @@
+# ===================================================================
+# PREDICTION TASK CONFIGURATION
+# ===================================================================
+# This configuration loads a pre-trained "quotations" model and applies it
+# to a dataset of ECB-related sentences from news articles.
+# -------------------------------------------------------------------
+
+# --- Data Parameters ---
+
+input_data_path: "D:/Studium/PhD/Github/Single-Author/Data/Regression/news_dpa_ecb_inflation_sentences_final_2.csv"
+
+# The name of the column containing the text.
+text_column: "text"
+
+# A map to rename columns if needed. Here we rename 'texts' to 'text' for the pre_processing function.
+column_rename_map:
+  texts: "text"
+
+
+# --- Model Parameters ---
+
+word_embedding: "deepset/gbert-base"
+num_labels: 2 
+
+# --- Runtime Parameters ---
+max_len: 100
+batch_size: 32
+train_on_gpu: true
+
+
+# Path to the fine-tuned model.
+saved_model_path: "D:/Studium/PhD/Github/Single-Author/Data/ECB_news_quotations.pt"
+
+
+# --- Output Path ---
+output_prediction_path: "outputs/predictions/ecb_sentences_with_quotation_labels.csv"

@@ -1,0 +1,48 @@
+# --- Experiment Description ---
+# This configuration file defines a training experiment for an
+# inflation direction classifier based on German news data.
+
+# --- Data Parameters ---
+# Path to the labeled training data file.
+input_data_path: "D:/Studium/PhD/Single Author/Data/inflation_lemmas_example.xlsx"
+# The name of the column containing the text sentences.
+text_column: "Sentences"
+# The name of the column containing the integer labels.
+label_column: "Label"
+# (Optional) A map to rename columns to the standard format if needed.
+column_rename_map:
+  sentence: "Sentences"
+  Direction: "Label"
+# (Optional) Limit the number of rows to use for quick testing. Set to null to use all rows.
+limit_rows: null
+
+# --- Model Parameters ---
+# The name of the pre-trained model from Hugging Face.
+word_embedding: "deepset/gbert-base"
+# The number of distinct classes for the classifier.
+num_labels: 3
+
+# --- Training Hyperparameters ---
+# Number of training epochs.
+epochs: 4
+# Batch size for training and evaluation.
+batch_size: 32
+# Maximum sequence length for tokenization. Sentences longer than this will be truncated.
+max_len: 100
+# Learning rate for the AdamW optimizer.
+learning_rate: 0.00002 
+
+# --- Runtime Parameters ---
+# Set a specific random seed for reproducibility.
+random_seed: 0
+# Whether to use the GPU for training if available.
+train_on_gpu: true
+
+# Path to the fine-tuned model you want to load and reuse.
+saved_model_path: "models/inflation_news_model.pt"
+
+# --- Output Paths ---
+# Directory where outputs like the confusion matrix will be saved.
+output_dir: "outputs/inflation_news"
+# Full path where the best trained model checkpoint (.pt file) will be saved.
+output_model_path: "models/inflation_news_model.pt"

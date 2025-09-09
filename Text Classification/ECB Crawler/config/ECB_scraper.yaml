@@ -1,0 +1,2 @@
+base_url: "https://www.ecb.europa.eu/press/pressconf/html/index.en.html"
+output_path: "data/press_conferences.json"

@@ -1,0 +1,248 @@
+title_filters:
+  # A list of regex patterns. If a title matches any of these, the article is dropped.
+  drop_patterns:
+    - 'Londoner Edelmetallpreise'
+    - 'Tageskalender'
+    - '\(Tabelle\)'
+    - 'SPORT'
+    - 'Sport'
+    - 'KORREKTUR'
+    - 'Impressum'
+    - 'Testmeldung'
+    - 'Kurse A[^a-z]'
+    - 'Kurse B[^a-z]'
+    - 'Kurse C[^a-z]'
+    - 'Kurse D[^a-z]'
+    - 'KURSE A'
+    - 'KURSE B'
+    - 'KURSE C'
+    - 'KURSE DREI'
+    - 'Kurse drei'
+    - 'KURSE Drei'
+    - 'Kurse/drei'
+    - 'DGAP-DD'
+    - 'New Yorker Aktien-Schlusskurse'
+    - 'VERMISCHTES'
+    - 'Angekündigte US-Quartalszahlen'
+    - 'Terminvorschau'
+    - 'Aus der Landespolitik'
+    - 'Die Woche in Berlin'
+    - 'Die Woche in Bonn'
+    - 'Die politische Woche'
+    - 'Notizen aus der Politik'
+    - 'NOTIZEN AUS DER POLITIK'
+    - 'ÜBERBLICK: Analysten-Umstufungen'
+    - 'TABELLE:'
+    - 'Chronologie'
+    - 'CHRONOLOGIE'
+    - 'dpa-Landesdienst'
+    - 'Die Top-Themen am Aktienmarkt'
+    - 'Aktien Asien Schluss\.'
+    - 'Börsentag auf einen Blick'
+    - 'US-Quartalszahlen vom Vortag'
+    - 'Achtung - Sonderdisposition'
+    - 'dpa-Vorausmeldungen kompakt'
+    - 'Aktien-Schlußkurse'
+    - 'Tabelle Kurse'
+    - 'Tabelle Die Gewinner und Verlierer'
+    - 'Auf und ab im EWS'
+    - 'Der Verfassungsschutzbericht in Zahlen'
+    - 'Die Toten des Jahres'
+    - 'Spendenkonten für Jugoslawien-Hilfe'
+    - 'Kontonummern für die Ruanda-Hilfe'
+    - 'Extra Zahlreiche Hilfsorganisationen'
+    - 'dpa-Schwerpunkt Spendenkonten'
+    - 'Tabelle Weltbörsen und Finanzmärkte auf einen Blick'
+    - 'Interbanken-Kurse und Metallnotierungen'
+    - 'Hintergrund'
+    - 'Chronik eins'
+    - 'Chronik zwei'
+    - 'Chronik drei'
+    - 'Chronik vier'
+    - 'Chronik fünf'
+    - 'Chronik sechs'
+    - 'Chronik sieben'
+    - 'Chronik acht'
+    - 'Chronik neun'
+    - 'Chronik zehn'
+    - 'Chronik elf'
+    - 'Chronik zwölf'
+    - 'Liste eins'
+    - 'Liste zwei'
+    - 'Liste drei'
+    - 'Liste vier'
+    - 'Liste fünf'
+    - 'Subventionsliste eins'
+    - 'Subventionsliste zwei'
+    - 'TecDAX:'
+    - 'EuroStoxx 50:'
+    - 'DAX:'
+    - 'MDAX:'
+    - 'SDAX:'
+    - 'Bundesliga'
+    - 'Fußball'
+    - 'Tennis'
+    - 'Handball'
+    - 'Skispringen'
+    - 'Schwimmen'
+    - 'Leichtathletik'
+    - 'Biathlon'
+  
+  # A list of exceptions. If a title matches a drop pattern BUT ALSO matches an exception, it is kept.
+  keep_exceptions:
+    - 'TRANSPORT'
+    - 'INTERSPORT'
+    - 'PASSPORT'
+    - 'Sportartikel'
+    - 'SPORTARTIKLER'
+    - 'Sportmodelle'
+    - 'Sportswear'
+
+# Rules for splitting multi-article documents
+multi_article_split_titles:
+  - 'dpa-Nachrichtenüberblick'
+  - 'Nachrichtenüberblick'
+  - 'Kurznachrichten Wirtschaft'
+  - 'Kurnachrichten Wirtschaft'
+  - 'Analysten-Einstufungen'
+  - 'ANALYSTEN-EINSTUFENGEN'
+
+inflation_word_list:
+  - 'Deflation'
+  - 'Deflationsgefahr'
+  - 'Geldwert'
+  - 'Geldwertverfall'
+  - 'Geldwertverlust'
+  - 'Hyperinflation'
+  - 'Inflation'
+  - 'Inflationsausgleich'
+  - 'Inflationsbekämpfung'
+  - 'Inflationsbereinigt'
+  - 'Inflationsdruck'
+  - 'Inflationsfaktor'
+  - 'Inflationsgefahr'
+  - 'Inflationsindikator'
+  - 'Inflationserwartung'
+  - 'Inflationskorrektur'
+  - 'Inflationsrate'
+  - 'Inflationsschutz'
+  - 'Inflationsursache'
+  - 'Inflationsziel'
+  - 'Kaufkraft'
+  - 'Kaufkraftverlust'
+  - 'Lebenshaltungskosten'
+  - 'Preis'
+  - 'Preise'
+  - 'Preisanstieg'
+  - 'Preisdruck'
+  - 'Preiserhöhung'
+  - 'Preisindex'
+  - 'Preisniveau'
+  - 'Preisstabilität'
+  - 'Preissteigerung'
+  - 'Preissturz'
+  - 'Stagflation'
+  - 'Teuerung'
+  - 'Teuerungsrate'
+  - 'Verbraucherpreisindex'
+  - 'Verbraucherpreis'
+  - 'Verbraucherpreise'
+  - 'Verteuerung'
+  - 'Warenkorb'
+
+ecb_word_list_no_names:
+  - 'Direktoriumsmitglied'
+  - 'EZB'
+  - 'EZB-Präsident'
+  - 'EZB-Vizepräsident'
+  - 'EZB-Rat'
+  - 'Leitzinsen'
+  - 'Leitzins'
+  - 'Geldpolitik'
+  - 'Notenbankchef'
+  - 'Notenbank'
+  - 'Negativzinsen'
+  - 'Negativzins'
+  - 'Währungsabwertung'
+  - 'Währungsaufwertung'
+  - 'Währungshüter'
+  - 'Zentralbankpolitik'
+  - 'Zinserhöhung'
+  - 'Zinsanhebung'
+  - 'Zinssenkung'
+  - 'Zins'
+  - 'Zinsen'
+  - 'Zinssatz'
+  - 'Zinswende'
+
+ecb_word_list_full:
+  - 'Direktoriumsmitglied'
+  - 'EZB'
+  - 'EZB-Präsident'
+  - 'EZB-Vizepräsident'
+  - 'EZB-Rat'
+  - 'Leitzinsen'
+  - 'Leitzins'
+  - 'Geldpolitik'
+  - 'Notenbankchef'
+  - 'Notenbank'
+  - 'Negativzinsen'
+  - 'Negativzins'
+  - 'Währungsabwertung'
+  - 'Währungsaufwertung'
+  - 'Währungshüter'
+  - 'Zentralbankpolitik'
+  - 'Zinserhöhung'
+  - 'Zinsanhebung'
+  - 'Zinssenkung'
+  - 'Zins'
+  - 'Zinsen'
+  - 'Zinssatz'
+  - 'Zinswende'
+  - "Duisenberg"
+  - "Trichet"
+  - "Draghi"
+  - "Noyer"
+  - "Papademos"
+  - "Constâncio"
+  - "de Guindos"
+  - "Hämäläinen"
+  - "Padoa-Schioppa"
+  - "Domingo Solans"
+  - "Issing"
+  - "González-Páramo"
+  - "Bini Smaghi"
+  - "Praet"
+  - "Asmussen"
+  - "Lautenschläger"
+  - "Cœuré"
+  - "Mersch"
+
+# Dictionary mapping ECB member names to their tenure dates
+ecb_tenure:
+  duisenberg: ["1998-06-01", "2003-10-31"]
+  trichet: ["2003-11-01", "2011-10-31"]
+  draghi: ["2011-11-01", "2019-10-31"]
+  noyer: ["1998-06-01", "2002-05-31"]
+  papademos: ["2002-06-01", "2010-05-31"]
+  constancio: ["2010-06-01", "2018-05-31"]
+  deguindos: ["2018-06-01", "2026-05-31"]
+  hamalainen: ["1998-06-01", "2003-05-31"]
+  padoaschioppa: ["1998-06-01", "2005-05-31"]
+  domingosolans: ["1998-06-01", "2004-05-31"]
+  issing: ["1998-06-01", "2006-05-31"]
+  gonzalezparamo: ["2004-06-01", "2012-05-31"]
+  binismaghi: ["2005-06-01", "2011-12-31"]
+  stark: ["2006-06-01", "2011-12-31"]
+  praet: ["2011-06-01", "2019-05-31"]
+  asmussen: ["2012-01-01", "2014-01-08"]
+  lautenschlager: ["2014-01-27", "2019-10-31"]
+  coeuré: ["2012-01-01", "2019-12-31"]
+  mersch: ["2012-12-15", "2020-12-14"]
+  guindos: ["2018-06-01", "2026-05-31"]
+  lane: ["2019-06-01", "2027-05-31"]
+  panetta: ["2020-01-01", "2023-10-31"]
+  lagarde: ["2019-11-01", "2027-10-31"]
+  schnabel: ["2020-01-01", "2027-12-31"]
+  elderson: ["2020-12-15", "2028-12-14"]
+  cipollone: ["2023-11-01", "2032-10-31"]

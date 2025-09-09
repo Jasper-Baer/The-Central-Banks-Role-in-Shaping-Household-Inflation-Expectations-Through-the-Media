@@ -1,0 +1,41 @@
+# ===================================================================
+# TIME-SERIES INDEX CREATION CONFIGURATION
+# ===================================================================
+# This file defines the inputs and parameters for aggregating
+# classified sentences into final time-series indices.
+# -------------------------------------------------------------------
+
+# --- Base Path ---
+base_path: "D:/Studium/PhD/Single Author/Data"
+
+
+# --- Input Files ---
+# This file provides the survey dates that define the start of each aggregation period.
+reference_dates_file: "{base_path}/ECB/ECB_sents_prepared.xlsx"
+
+classified_inputs:
+  dpa_inflation:
+    old: "{base_path}/dpa/sent_inf_label_BERTv3.xlsx"
+    new: "{base_path}/dpa/sent_inf_label_BERTv3_new_dpa.xlsx"
+  dpa_sentiment:
+    old: "{base_path}/dpa/sent_sent_label_BERTv3.xlsx"
+    new: "{base_path}/dpa/sent_sent_label_BERTv3_new_dpa.xlsx"
+  dpa_monetary:
+    old: "{base_path}/dpa/sent_mon_label_BERTv3.xlsx"
+    new: "{base_path}/dpa/sent_mon_label_BERTv3_new_dpa.xlsx"
+  dpa_monetary_sentiment:
+    old: "{base_path}/dpa/sent_sentmon_label_BERTv3.xlsx"
+    new: "{base_path}/dpa/sent_sentmon_label_BERTv3_new_dpa.xlsx"
+  
+  ecb_inflation: "{base_path}/ECB/press_sents_full_index_labeled_inf_2.xlsx"
+  ecb_monetary: "{base_path}/ECB/press_sents_full_index_labeled_mon.xlsx"
+  ecb_outlook: "{base_path}/ECB/press_sents_full_index_labeled_out.xlsx"
+
+# --- Aggregation Parameters ---
+# The time window in days after a reference date during which sentences are included.
+aggregation_window_days: 14
+
+
+# --- Output Path ---
+# All final time-series index .xlsx files will be saved in this directory.
+output_dir: "outputs/indices"

@@ -1,0 +1,66 @@
+# Rules for the initial cleaning of the full press conference text
+initial_cleaning:
+  # Regex patterns to remove.
+  patterns_to_remove:
+    - 'Frankfurt am Main, \\d{1,2} \\w+ \\d{4}'
+    - 'We will now report on the outcome of the meeting of the Governing Council, which was also attended by the Commission Executive Vice-President,(.{,30}?)\\.|Let me report on the outcome of our meeting, which was also attended by (.{,30}?)\\.|The meeting was also attended by(.{0,30}?)\\.|We will now report on the outcome of today’s meeting of the Governing Council, which was also attended by the Commission Executive Vice-President,(.{,30}?)\\.|I would like to thank Governor (.{,30}?) for his kind hospitality and express our special gratitude to his staff for the excellent organisation of today’s meeting of the Governing Council.|(I|We) will now report on the outcome of today’s meeting of the Governing Council, which was also attended by the Commission Vice-President,(.{,30}?)\\.|We will now report on the outcome of today’s meeting of the Governing Council, which was also attended by the President of the Eurogroup,(.{,30}?), and by the Commission Vice-President,(.{,30}?)\\.'
+  
+  # Strings to remove from the text
+  strings_to_replace:
+    - "Click here for the transcript of questions and answers."
+    - "With the transcript of the questions and answers"
+    - "With a transcript of the questions and answers"
+    - "Welcome address by Jean-Claude Trichet, Governor of the Banque de France"
+    - "It is intended to release this report during the next couple of weeks."
+    - "We are at your disposal for any further questions."
+    - "Reproduction is permitted provided that the source is acknowledged."
+    - "Slides: pdf 36 kB."
+    - "Amsterdam, 9 June 2022,"
+    - "Jump to the transcript of the questions and answers"
+    - "Amsterdam, 9 June 2022"
+    - "Please note that related topic tags are currently available for selected content only."
+    - "Let me wish you all a Happy New Year."
+    - "The Vice‑President and I will now report on the outcome of today’s meeting of the Governing Council of the ECB"
+    - "Today, I am very pleased to welcome you to the ECB for the opening of the euro banknote design exhibition."
+    - "The Vice-President and I are very pleased to welcome you to our press conference."
+    - "We will now report on the outcome of today’s meeting of the Governing Council, which was also attended by the Commission Vice-President, Mr Dombrovskis, and the incoming President, Ms Lagarde."
+    - "We will now report on the outcome of today’s meeting of the Governing Council."
+    - "We will now report on the outcome of today’s meeting."
+    - "We will now report on the outcome of today’s meeting of the Governing Council, which was also attended by the Commission Vice-President, Mr Dombrovskis."
+    - "Let me wish you all a very Happy New Year."
+    - "The Vice-President and I will now report on the outcome of today's meeting of the Governing Council of the ECB."
+
+# Rules for splitting the speech from the Q&A session
+qa_splitting:
+  # Generic strings that mark the beginning of the Q&A
+  start_strings:
+    - 'We are now ready to take your questions.'
+    - 'We are now at your disposal, should you have any questions.'
+    - 'Click here for the transcript of questions and answers.'
+    - 'We stand ready to answer any questions you may have.'
+    - 'We stand ready to take any questions you might have.'
+    - 'We are at your disposal for any further questions.'
+    - 'We are at your disposal for further questions.'
+    - 'I am now at your disposal for questions.'
+    - 'I am now open to questions.'
+    - 'I am now at your disposal for questions.'
+    - 'We are now at your disposal should you have any questions.'
+    - 'We are now at your disposal for questions.'
+
+  # Special cases where a unique string must be used.
+  special_cases:
+    38: 'Before we take your questions, we would like to express our profound gratitude to all those who are dedicating their time and efforts in saving lives and containing the spread of the coronavirus.'
+    82: 'My question would be on how credible these tests are.'
+    86: 'Question: Mr Draghi, you also reminded us that you intensified your work on the ABS programme or the potential programme.'
+    117: '* * *  Question: You have mentioned again today this fiscal compact which we heard you mention for the first time earlier this month.'
+    223: 'Question: A question to the three of you: with the definition of price stability you released today, namely to maintain inflation rates close to 2% over the medium term, would you have had a different monetary policy in the last four years?'
+    226: 'Question: Given the fact that the inflation rate looks benign and that there are still downside risks to growth, which impediments do you have to cutting rates?'
+    238: 'Question: I have got two questions.'
+    243: 'Question: Mr. Duisenberg, what can European policy makers actually do to help the European economy?'
+    244: 'Question: Mr. Duisenberg, can you tell us whether your monetary policy now has an easing bias or, indeed, whether you think that interest rates will be on hold for some time to come?'
+    252: 'Question (translation): President Duisenberg, how would you comment on the statement Alan Greenspan made on 6 December.'
+    269: 'Question (translation): President Duisenberg, for months and weeks there has repeatedly been great excitement; the value of the euro vis-à-vis the US dollar has been dropping constantly.'
+    270: 'Question: Mr President, a few weeks ago at this press conference you were asked whether you would consider it possible that the euro could go below USD 1 and you said: "certainly not".'
+    290: 'Question: I would be very interested if you had anything to say about the exchange rate of the euro, if the central bankers of Europe seem comfortable with it.'
+    273: 'Question (translation): Mr. President, what, in your view, are the reasons for the weak euro?'
+    277: 'Question: President Duisenberg, I have a question with respect to point 5 in your statement that says that you decided on a reference rate rather than on a range, and the reason you gave was that the Council believes that announcing a reference range might be falsely interpreted by the public as implying that interest rates would be changed automatically.'

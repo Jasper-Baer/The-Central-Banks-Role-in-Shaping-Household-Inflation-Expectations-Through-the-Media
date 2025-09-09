@@ -1,0 +1,6 @@
+pandas
+PyYAML
+tqdm
+nltk
+thefuzz
+openpyxl
