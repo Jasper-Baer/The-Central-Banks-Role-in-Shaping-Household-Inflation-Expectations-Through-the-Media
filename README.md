@@ -32,15 +32,17 @@ The repository is organized into the following folders:
 - **`Text Classification/Data Processing/06_run_filtering.py`** – Select all sentences referring to inflation and monetary news based on lemmas. 
 
 ### 2. Text Classification/BERT Classification  
-- **`src/classification/`** – WIP
-- **Models**:   
+- **`Text Classification/BERT Classification/config`** – YAML configs for paths and training parameters
+- **`Text Classification/BERT Classification/src`** – Scripts for loading data, training and model initialization
+
+- **`Text Classification/BERT Classification/run_training.py`** – Scripts for to training models and test them  
 
 
 ### 3. Text Classification/ECB Crawler  
-- **`config/`** – YAML configs for paths and preprocessing options. 
-- **`src/`**: Scripts for scraping, loading, and preprocessing of ECB press conferences.
-- **`scraper.py`**: Main function for running the scraper for ECB press conferences.
-- **`process_data.py`**: Script for preprocessing ECB press conferences.
+- **`Text Classification/ECB Crawler/config/`** – YAML configs for paths and preprocessing options. 
+- **`Text Classification/ECB Crawler/src/`**: Scripts for scraping, loading, and preprocessing of ECB press conferences.
+- **`Text Classification/ECB Crawler/scraper.py`**: Main function for running the scraper for ECB press conferences.
+- **`Text Classification/ECB Crawler/process_data.py`**: Script for preprocessing ECB press conferences.
 
 ### 4. Regression ### This folder contains the code for the regressions done in sections 5 and 6 in the paper.
 - **`Regression/Data Transformation`** – Scripts for final data transformation of news and ECB press conference indicators for regressions.
