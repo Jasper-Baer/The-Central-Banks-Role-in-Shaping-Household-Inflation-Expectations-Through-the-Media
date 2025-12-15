@@ -12,9 +12,10 @@ library(sandwich)
 data <- read_excel('D:/Studium/PhD/Github/Single-Author/Code/Regression/Regession_data_monthly_2_processed_inf.xlsx')
 data <- data.frame(data)
 
-data <- data[12:nrow(data), ]
+START_DATE <- as.Date("2003-02-28")
 
 data$time <- as.Date(strptime(data$time, "%Y-%m-%d"))
+data <- data |> dplyr::filter(time >= START_DATE)
 
 numeric_columns <- sapply(data, is.numeric)
 dont_scale_names <- c("draghi", "negative", "trichet", "whatever", "Unmon")
@@ -58,9 +59,10 @@ fit_all_controls_quotes_prim <- lm(
     News.Monetary.Quote.Dovish_stored_1 +
     News.Monetary.Quote.Pos._stored_1 +
     News.Monetary.Quote.Neg._stored_1 +
-    Germany.Future.Un.difference +
-    Germany.Future.Eco +
-    Germany.Future.Fin.difference +
+    Germany.Conf.difference + 
+    # Germany.Future.Un.difference +
+    # Germany.Future.Eco +
+    # Germany.Future.Fin.difference +
     German.Inflation.Year.on.Year.difference +
     Reuter.Poll.Forecast.difference +
     German.Industrial.Production.Gap +
@@ -106,9 +108,10 @@ fit_all_controls_quotes_secon <- lm(
     News.Monetary.Quote.Dovish_stored_1 +
     News.Monetary.Quote.Pos._stored_1 +
     News.Monetary.Quote.Neg._stored_1 +
-    Germany.Future.Un.difference +
-    Germany.Future.Eco +
-    Germany.Future.Fin.difference +
+    Germany.Conf.difference + 
+    # Germany.Future.Un.difference +
+    # Germany.Future.Eco +
+    # Germany.Future.Fin.difference +
     German.Inflation.Year.on.Year.difference +
     Reuter.Poll.Forecast.difference +
     German.Industrial.Production.Gap +
@@ -154,9 +157,10 @@ fit_all_controls_quotes_furth <- lm(
     News.Monetary.Quote.Dovish_stored_1 +
     News.Monetary.Quote.Pos._stored_1 +
     News.Monetary.Quote.Neg._stored_1 +
-    Germany.Future.Un.difference +
-    Germany.Future.Eco +
-    Germany.Future.Fin.difference +
+    Germany.Conf.difference + 
+    # Germany.Future.Un.difference +
+    # Germany.Future.Eco +
+    # Germany.Future.Fin.difference +
     German.Inflation.Year.on.Year.difference +
     Reuter.Poll.Forecast.difference +
     German.Industrial.Production.Gap +
@@ -297,10 +301,11 @@ var_lab <- c(
   "Reuter.Poll.Forecast.difference"          = "$\\Delta$ Prof. Inflation Forecast",
   "German.Industrial.Production.Gap"         = "Industrial Production Gap",
   "Germany.Unemployment.difference"          = "$\\Delta$ Unemployment Rate",
-  "Germany.Future.Un.difference"             = "$\\Delta$ Unemployment Expectations",
-  "Germany.Future.Fin.difference"            = "$\\Delta$ Financial Expectations",
-  "Germany.Future.Eco"                       = "Economic Expectations",
-  "ECB.MRO.difference"                       = "$\\Delta i$",
+  "Germany.Conf.difference"                  = "$\\Delta$ Confidence",
+  # "Germany.Future.Un.difference"             = "$\\Delta$ Unemployment Expectations",
+  # "Germany.Future.Fin.difference"            = "$\\Delta$ Financial Expectations",
+  # "Germany.Future.Eco"                       = "Economic Expectations",
+  "ECB.MRO.difference"                       = "$\\Delta$ MRO Rate",
   "draghi"                                   = "Draghi",
   "lagarde"                                  = "Lagarde",
   "negative"                                 = "Negative Rate",
@@ -331,12 +336,14 @@ all_vars <- c(
   
   "German.Industrial.Production.Gap",
   "Germany.Unemployment.difference",
-  "Germany.Future.Un.difference",
-  "Germany.Future.Fin.difference",
-  "Germany.Future.Eco",
+ # "Germany.Future.Un.difference",
+  #"Germany.Future.Fin.difference",
+ # "Germany.Future.Eco",
   
+  "Germany.Conf.difference",   
   "ECB.MRO.difference",
-  "draghi", "lagarde", "negative", "whatever",
+  "draghi", #"lagarde",
+  "negative", "whatever",
   "ECB.MRO.POS", "ECB.MRO.NEG",
   "Unmon",
   "DAX.difference", "VDAX", "ED.Exchange.Rate.difference",

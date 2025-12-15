@@ -8,25 +8,38 @@ library("sandwich")
 library("stats")
 library("zoo")
 library("stargazer")
-library('car')
+library("car")
 library("tseries")
 
 ################################################################################
 # Data Loading and Preparation
 ################################################################################
-# !!! IMPORTANT: Replace this with the correct path to your Excel file.
-data = read_excel('D:/Studium/PhD/Github/Single-Author/Code/Regression/Regession_data_monthly_2_processed_ECB_2_og.xlsx')
-data = data.frame(data)
+data <- read_excel('D:/Studium/PhD/Github/Single-Author/Code/Regression/Regession_data_monthly_2_processed_ECB_2_og.xlsx')
+data <- data.frame(data)
 
-data <- data[12:(nrow(data)), ]
+# Parse time and filter start
+data$time <- as.Date(strptime(data$time, "%Y-%m-%d"))
+data <- data %>% filter(time >= as.Date("2003-02-28"))
 
-data$time = as.Date(strptime(data$time, "%Y-%m-%d"))
+# Build 2022 month dummies (Feb–Dec)
+rec_months <- seq(as.Date("2022-02-01"), as.Date("2022-12-01"), by = "month")
+rec_labels <- paste0("REC_", format(rec_months, "%Y_%m"))
+month_tag  <- format(data$time, "%Y-%m")
+rec_tags   <- format(rec_months, "%Y-%m")
+rec_df     <- as.data.frame(sapply(rec_tags, function(m) as.integer(month_tag == m)))
+names(rec_df) <- rec_labels
+data <- dplyr::bind_cols(data, rec_df)
 
 numeric_columns <- sapply(data, is.numeric)
-dont_scale_names = c("draghi", "negative", "trichet", "whatever", "Unmon")
+dont_scale_names <- c("draghi","negative","trichet","whatever","Unmon",
+                      "REC_2022_03","REC_2022_04","REC_2022_05",
+                      "REC_2022_06","REC_2022_07","REC_2022_08")
 numeric_columns[dont_scale_names] <- FALSE
 data[numeric_columns] <- scale(data[numeric_columns])
 
+################################################################################
+# Canonicalize ECB PC variables (levels vs diffs)
+################################################################################
 canonize_ecb_pc <- function(df, use_diffs_infeco = FALSE, use_diffs_mp = FALSE) {
   pick <- function(level, diff, use) if (use) diff else level
   df[["ECB.PC.Inflation.Inc."]] <- df[[ pick("ECB.PC.Inflation.Inc.", "ECB.PC.Inflation.Inc..difference", use_diffs_infeco) ]]
@@ -41,7 +54,6 @@ canonize_ecb_pc <- function(df, use_diffs_infeco = FALSE, use_diffs_mp = FALSE) 
 ################################################################################
 # Helper Functions for LaTeX Table Generation
 ################################################################################
-
 make_var_labels <- function(use_diffs_infeco, use_diffs_mp) {
   v <- c(
     "ECB.PC.Inflation.Inc." = "$\\mathrm{ECB \\ Inflation_t^{Increasing}}$",
@@ -54,9 +66,7 @@ make_var_labels <- function(use_diffs_infeco, use_diffs_mp) {
     "Reuter.Poll.Forecast.difference"          = "$\\Delta$Prof. inflation forecast",
     "German.Industrial.Production.Gap" = "Output Gap",
     "Germany.Unemployment.difference"  = "$\\Delta$ Unemployment Rate",
-    "Germany.Future.Un.difference"     = "$\\Delta$ Unemployment Expectations",
-    "Germany.Future.Fin.difference"    = "$\\Delta$ Financial Expectations",
-    "Germany.Future.Eco"               = "Economic Expectations",
+    "Germany.Conf.difference"          = "$\\Delta$Confidence",
     "ECB.MRO.difference"               = "$\\Delta$ MRO rate",
     "whatever"                         = "Whatever it Takes",
     "negative"                         = "Negative Rate",
@@ -68,6 +78,14 @@ make_var_labels <- function(use_diffs_infeco, use_diffs_mp) {
     "ED.Exchange.Rate.difference"      = "$\\Delta$ EURUSD",
     "(Intercept)"                      = "Constant"
   )
+  # add labels for the six regression dummies
+  v[["REC_2022_03"]] <- "REC 2022-03"
+  v[["REC_2022_04"]] <- "REC 2022-04"
+  v[["REC_2022_05"]] <- "REC 2022-05"
+  v[["REC_2022_06"]] <- "REC 2022-06"
+  v[["REC_2022_07"]] <- "REC 2022-07"
+  v[["REC_2022_08"]] <- "REC 2022-08"
+  
   if (use_diffs_infeco) {
     v[["ECB.PC.Inflation.Inc."]] <- "$\\Delta\\,\\mathrm{ECB \\ Inflation_t^{Increasing}}$"
     v[["ECB.PC.Inflation.Dec."]] <- "$\\Delta\\,\\mathrm{ECB \\ Inflation_t^{Decreasing}}$"
@@ -81,26 +99,27 @@ make_var_labels <- function(use_diffs_infeco, use_diffs_mp) {
   v
 }
 
-fmt_est_se <- function(e, s, p) { if (!length(e) || is.na(e)) list(est="", se="") else { sc <- if(p<.01)"***" else if(p<.05)"**" else if(p<.1)"*" else ""; list(est=sprintf("%.3f%s",e,sc), se=sprintf("(%.3f)",s)) }}
+fmt_est_se <- function(e, s, p) {
+  if (!length(e) || is.na(e)) list(est = "", se = "") else {
+    sc <- if (p < .01) "***" else if (p < .05) "**" else if (p < .1) "*" else ""
+    list(est = sprintf("%.3f%s", e, sc), se = sprintf("(%.3f)", s))
+  }
+}
 
 make_lag_row <- function(label_text, var1, var2, var3, res_inc_list, res_dec_list, res_idx_list) {
   get_formatted_results <- function(res_list, var_name) {
     r1 <- res_list[[1]][res_list[[1]]$varname == var_name, ]
     r2 <- res_list[[2]][res_list[[2]]$varname == var_name, ]
     r3 <- res_list[[3]][res_list[[3]]$varname == var_name, ]
-    
     f1 <- fmt_est_se(r1$estimate, r1$se, r1$pval)
     f2 <- fmt_est_se(r2$estimate, r2$se, r2$pval)
     f3 <- fmt_est_se(r3$estimate, r3$se, r3$pval)
-    
     list(f1 = f1, f2 = f2, f3 = f3)
   }
-  
   f_inc <- get_formatted_results(res_inc_list, var1)
   f_dec <- get_formatted_results(res_dec_list, var2)
   f_idx <- get_formatted_results(res_idx_list, var3)
   
-  # This order matches the desired table structure (grouped by dependent variable)
   row1 <- paste0(label_text, " & ",
                  f_inc$f1$est, " & ", f_inc$f2$est, " & ", f_inc$f3$est, " & ",
                  f_dec$f1$est, " & ", f_dec$f2$est, " & ", f_dec$f3$est, " & ",
@@ -109,7 +128,6 @@ make_lag_row <- function(label_text, var1, var2, var3, res_inc_list, res_dec_lis
                  f_inc$f1$se, " & ", f_inc$f2$se, " & ", f_inc$f3$se, " & ",
                  f_dec$f1$se, " & ", f_dec$f2$se, " & ", f_dec$f3$se, " & ",
                  f_idx$f1$se, " & ", f_idx$f2$se, " & ", f_idx$f3$se, " \\\\")
-  
   paste(row1, row2, sep = "\n")
 }
 
@@ -117,14 +135,18 @@ make_single_row <- function(var, label_text, res_inc_list, res_dec_list, res_idx
   make_lag_row(label_text, var, var, var, res_inc_list, res_dec_list, res_idx_list)
 }
 
+# Check whether a variable appears in ANY of the 9 models (across all 3 DV blocks × 3 specs)
+var_in_any_model <- function(var, res_inc_list, res_dec_list, res_idx_list) {
+  appears <- function(res_list) any(sapply(res_list, function(df) any(df$varname == var)))
+  appears(res_inc_list) || appears(res_dec_list) || appears(res_idx_list)
+}
+
 ################################################################################
 # Main Function to Build LaTeX Table
 ################################################################################
-
-build_infl_dir_table <- function(df, use_diffs_infeco, use_diffs_mp, caption_note="") {
+build_infl_dir_table <- function(df, use_diffs_infeco, use_diffs_mp, caption_note = "") {
   
-  # --- Define and run all regression models ---
-  # (Regression model definitions are unchanged)
+  # --- Regressions ---
   fit_no_controls_inc <- lm(
     News.Inflation.Inc. ~ News.Inflation.Inc..Lag1 + News.Inflation.Inc..Lag2 + News.Inflation.Inc..Lag3 +
       ECB.PC.Outlook.Up + ECB.PC.Outlook.Down + ECB.PC.Monetary.Haw. + ECB.PC.Monetary.Dov. +
@@ -134,15 +156,19 @@ build_infl_dir_table <- function(df, use_diffs_infeco, use_diffs_mp, caption_not
   fit_macro_inc <- lm(
     News.Inflation.Inc. ~ News.Inflation.Inc..Lag1 + News.Inflation.Inc..Lag2 + News.Inflation.Inc..Lag3 +
       ECB.PC.Inflation.Inc. + ECB.PC.Inflation.Dec. + ECB.PC.Monetary.Haw. + ECB.PC.Monetary.Dov. +
-      ECB.PC.Outlook.Up + ECB.PC.Outlook.Down + Germany.Future.Un.difference + Germany.Future.Eco +
-      Germany.Future.Fin.difference + German.Inflation.Year.on.Year.difference + Reuter.Poll.Forecast.difference +
+      ECB.PC.Outlook.Up + ECB.PC.Outlook.Down +
+      Germany.Conf.difference +
+      REC_2022_03 + REC_2022_04 + REC_2022_05 + REC_2022_06 + REC_2022_07 + REC_2022_08 +
+      German.Inflation.Year.on.Year.difference + Reuter.Poll.Forecast.difference +
       German.Industrial.Production.Gap + Germany.Unemployment.difference, df)
   
   fit_all_controls_inc <- lm(
     News.Inflation.Inc. ~ News.Inflation.Inc..Lag1 + News.Inflation.Inc..Lag2 + News.Inflation.Inc..Lag3 +
       ECB.PC.Outlook.Up + ECB.PC.Outlook.Down + ECB.PC.Monetary.Haw. + ECB.PC.Monetary.Dov. +
-      ECB.PC.Inflation.Inc. + ECB.PC.Inflation.Dec. + Germany.Future.Un.difference + Germany.Future.Eco +
-      Germany.Future.Fin.difference + German.Inflation.Year.on.Year.difference + Reuter.Poll.Forecast.difference +
+      ECB.PC.Inflation.Inc. + ECB.PC.Inflation.Dec. +
+      Germany.Conf.difference +
+      REC_2022_03 + REC_2022_04 + REC_2022_05 + REC_2022_06 + REC_2022_07 + REC_2022_08 +
+      German.Inflation.Year.on.Year.difference + Reuter.Poll.Forecast.difference +
       German.Industrial.Production.Gap + Germany.Unemployment.difference + ECB.MRO.difference + draghi + negative +
       whatever + ECB.MRO.POS + ECB.MRO.NEG + ED.Exchange.Rate.difference + DAX.difference + VDAX + Unmon, df)
   
@@ -155,15 +181,19 @@ build_infl_dir_table <- function(df, use_diffs_infeco, use_diffs_mp, caption_not
   fit_macro_dec <- lm(
     News.Inflation.Dec. ~ News.Inflation.Dec..Lag1 + News.Inflation.Dec..Lag2 + News.Inflation.Dec..Lag3 +
       ECB.PC.Outlook.Up + ECB.PC.Outlook.Down + ECB.PC.Monetary.Haw. + ECB.PC.Monetary.Dov. +
-      ECB.PC.Inflation.Inc. + ECB.PC.Inflation.Dec. + Germany.Future.Un.difference + Germany.Future.Eco +
-      Germany.Future.Fin.difference + German.Inflation.Year.on.Year.difference + Reuter.Poll.Forecast.difference +
+      ECB.PC.Inflation.Inc. + ECB.PC.Inflation.Dec. +
+      Germany.Conf.difference +
+      REC_2022_03 + REC_2022_04 + REC_2022_05 + REC_2022_06 + REC_2022_07 + REC_2022_08 +
+      German.Inflation.Year.on.Year.difference + Reuter.Poll.Forecast.difference +
       German.Industrial.Production.Gap + Germany.Unemployment.difference, df)
   
   fit_all_controls_dec <- lm(
     News.Inflation.Dec. ~ News.Inflation.Dec..Lag1 + News.Inflation.Dec..Lag2 + News.Inflation.Dec..Lag3 +
       ECB.PC.Outlook.Up + ECB.PC.Outlook.Down + ECB.PC.Monetary.Haw. + ECB.PC.Monetary.Dov. +
-      ECB.PC.Inflation.Inc. + ECB.PC.Inflation.Dec. + Germany.Future.Un.difference + Germany.Future.Eco +
-      Germany.Future.Fin.difference + German.Inflation.Year.on.Year.difference + Reuter.Poll.Forecast.difference +
+      ECB.PC.Inflation.Inc. + ECB.PC.Inflation.Dec. +
+      Germany.Conf.difference +
+      REC_2022_03 + REC_2022_04 + REC_2022_05 + REC_2022_06 + REC_2022_07 + REC_2022_08 +
+      German.Inflation.Year.on.Year.difference + Reuter.Poll.Forecast.difference +
       German.Industrial.Production.Gap + Germany.Unemployment.difference + ECB.MRO.difference + draghi + negative +
       whatever + ECB.MRO.POS + ECB.MRO.NEG + DAX.difference + VDAX + ED.Exchange.Rate.difference + Unmon, df)
   
@@ -176,31 +206,40 @@ build_infl_dir_table <- function(df, use_diffs_infeco, use_diffs_mp, caption_not
   fit_macro_ind <- lm(
     News.Inflation.Direction.Index ~ News.Inflation.Direction.Index.Lag1 + News.Inflation.Direction.Index.Lag2 +
       News.Inflation.Direction.Index.Lag3 + ECB.PC.Outlook.Up + ECB.PC.Outlook.Down + ECB.PC.Monetary.Haw. +
-      ECB.PC.Monetary.Dov. + ECB.PC.Inflation.Inc. + ECB.PC.Inflation.Dec. + Germany.Future.Un.difference +
-      Germany.Future.Eco + Germany.Future.Fin.difference + German.Inflation.Year.on.Year.difference +
+      ECB.PC.Monetary.Dov. + ECB.PC.Inflation.Inc. + ECB.PC.Inflation.Dec. +
+      Germany.Conf.difference +
+      REC_2022_03 + REC_2022_04 + REC_2022_05 + REC_2022_06 + REC_2022_07 + REC_2022_08 +
+      German.Inflation.Year.on.Year.difference +
       Reuter.Poll.Forecast.difference + German.Industrial.Production.Gap + Germany.Unemployment.difference, df)
   
   fit_all_controls_ind <- lm(
     News.Inflation.Direction.Index ~ News.Inflation.Direction.Index.Lag1 + News.Inflation.Direction.Index.Lag2 +
       News.Inflation.Direction.Index.Lag3 + ECB.PC.Outlook.Up + ECB.PC.Outlook.Down + ECB.PC.Monetary.Haw. +
-      ECB.PC.Monetary.Dov. + ECB.PC.Inflation.Inc. + ECB.PC.Inflation.Dec. + Germany.Future.Un.difference +
-      Germany.Future.Eco + Germany.Future.Fin.difference + German.Inflation.Year.on.Year.difference +
+      ECB.PC.Monetary.Dov. + ECB.PC.Inflation.Inc. + ECB.PC.Inflation.Dec. +
+      Germany.Conf.difference +
+      REC_2022_03 + REC_2022_04 + REC_2022_05 + REC_2022_06 + REC_2022_07 + REC_2022_08 +
+      German.Inflation.Year.on.Year.difference +
       Reuter.Poll.Forecast.difference + German.Industrial.Production.Gap + Germany.Unemployment.difference +
       ECB.MRO.difference + draghi + negative + whatever + ECB.MRO.POS + ECB.MRO.NEG +
       DAX.difference + VDAX + ED.Exchange.Rate.difference + Unmon, df)
   
-  # --- Process results ---
+  # --- Newey–West results ---
   get_res_df <- function(m) {
-    c0 <- lmtest::coeftest(m, vcov.=sandwich::NeweyWest(lag = 12, m, prewhite=FALSE, adjust=TRUE))
-    data.frame(varname=rownames(c0),
-               estimate=c0[, "Estimate"], se=c0[, "Std. Error"], pval=c0[, "Pr(>|t|)"],
-               stringsAsFactors=FALSE)
+   # c0 <- lmtest::coeftest(m, vcov. = sandwich::vcovHC(m, type = "HC1"))
+    c0 <- lmtest::coeftest(m, vcov. = sandwich::NeweyWest(m, lag = 12, prewhite = FALSE, adjust = TRUE))
+   # c0 <- lmtest::coeftest(m)
+    data.frame(varname = rownames(c0),
+               estimate = c0[, "Estimate"],
+               se       = c0[, "Std. Error"],
+               pval     = c0[, "Pr(>|t|)"],
+               stringsAsFactors = FALSE)
   }
   
   res_inc_list <- list(get_res_df(fit_no_controls_inc), get_res_df(fit_macro_inc), get_res_df(fit_all_controls_inc))
   res_dec_list <- list(get_res_df(fit_no_controls_dec), get_res_df(fit_macro_dec), get_res_df(fit_all_controls_dec))
   res_idx_list <- list(get_res_df(fit_no_controls_ind), get_res_df(fit_macro_ind), get_res_df(fit_all_controls_ind))
   
+  # Stats
   adj_r2_inc_1 <- round(summary(fit_no_controls_inc)$adj.r.squared, 3)
   adj_r2_inc_2 <- round(summary(fit_macro_inc)$adj.r.squared, 3)
   adj_r2_inc_3 <- round(summary(fit_all_controls_inc)$adj.r.squared, 3)
@@ -215,72 +254,91 @@ build_infl_dir_table <- function(df, use_diffs_infeco, use_diffs_mp, caption_not
   obs_dec_1 <- nobs(fit_no_controls_dec); obs_dec_2 <- nobs(fit_macro_dec); obs_dec_3 <- nobs(fit_all_controls_dec)
   obs_idx_1 <- nobs(fit_no_controls_ind); obs_idx_2 <- nobs(fit_macro_ind); obs_idx_3 <- nobs(fit_all_controls_ind)
   
+  # Labels
   var_label <- make_var_labels(use_diffs_infeco, use_diffs_mp)
-  my_other_vars <- c(
-    "ECB.PC.Inflation.Inc.","ECB.PC.Inflation.Dec.","ECB.PC.Outlook.Up","ECB.PC.Outlook.Down",
-    "ECB.PC.Monetary.Haw.","ECB.PC.Monetary.Dov.","German.Inflation.Year.on.Year.difference",
-    "Reuter.Poll.Forecast.difference","German.Industrial.Production.Gap","Germany.Unemployment.difference",
-    "Germany.Future.Un.difference","Germany.Future.Fin.difference","Germany.Future.Eco","ECB.MRO.difference",
-    "whatever","negative","ECB.MRO.POS","ECB.MRO.NEG","Unmon","DAX.difference","VDAX","ED.Exchange.Rate.difference",
-    "(Intercept)"
-  )
   
-  # --- Build the LaTeX string ---
+  # --- Build LaTeX ---
   txt <- ""
-  txt <- paste0(txt,"\\begin{minipage}{\\textwidth}\n")
-  txt <- paste0(txt,"\\begin{adjustbox}{angle=0,center}\n")
-  txt <- paste0(txt,"\\resizebox{0.8\\textheight}{!}{\n")
-  txt <- paste0(txt,"\\begin{threeparttable}\n")
-  txt <- paste0(txt,"\\tiny\n")
-  txt <- paste0(txt,"\\setlength{\\tabcolsep}{3.5pt}\n")
-  txt <- paste0(txt,"\\caption{Inflation Direction - Full Table}\n")
-  txt <- paste0(txt,"\\label{drivers_of_news_inf_full}\n")
-  txt <- paste0(txt,"\\begin{tabular}{lccccccccc}\n")
-  txt <- paste0(txt,"\\multicolumn{1}{l}{\\textbf{$y_t$}} & \\multicolumn{3}{c}{$\\boldsymbol{\\mathrm{News \\ Inflation_t^{Increasing}}}$} & \\multicolumn{3}{c}{$\\boldsymbol{\\mathrm{News \\ Inflation_t^{Decreasing}}}$} & \\multicolumn{3}{c}{$\\boldsymbol{\\mathrm{News \\ Inflation_t^{Direction}}}$}  \\\\\n")
-  txt <- paste0(txt,"\\midrule\n")
+  txt <- paste0(txt, "\\begin{minipage}{\\textwidth}\n")
+  txt <- paste0(txt, "\\begin{adjustbox}{angle=0,center}\n")
+  txt <- paste0(txt, "\\resizebox{0.8\\textheight}{!}{\n")
+  txt <- paste0(txt, "\\begin{threeparttable}\n")
+  txt <- paste0(txt, "\\tiny\n")
+  txt <- paste0(txt, "\\setlength{\\tabcolsep}{3.5pt}\n")
+  txt <- paste0(txt, "\\caption{Inflation Direction - Full Table}\n")
+  txt <- paste0(txt, "\\label{drivers_of_news_inf_full}\n")
+  txt <- paste0(txt, "\\begin{tabular}{lccccccccc}\n")
+  txt <- paste0(txt, "\\multicolumn{1}{l}{\\textbf{$y_t$}} & \\multicolumn{3}{c}{$\\boldsymbol{\\mathrm{News \\ Inflation_t^{Increasing}}}$} & \\multicolumn{3}{c}{$\\boldsymbol{\\mathrm{News \\ Inflation_t^{Decreasing}}}$} & \\multicolumn{3}{c}{$\\boldsymbol{\\mathrm{News \\ Inflation_t^{Direction}}}$}  \\\\\n")
+  txt <- paste0(txt, "\\midrule\n")
   
-  # Lags rows
+  # Lags
   txt <- paste0(txt, make_lag_row("$y_{t-1}$", "News.Inflation.Inc..Lag1", "News.Inflation.Dec..Lag1", "News.Inflation.Direction.Index.Lag1", res_inc_list, res_dec_list, res_idx_list), "\n")
   txt <- paste0(txt, make_lag_row("$y_{t-2}$", "News.Inflation.Inc..Lag2", "News.Inflation.Dec..Lag2", "News.Inflation.Direction.Index.Lag2", res_inc_list, res_dec_list, res_idx_list), "\n")
   txt <- paste0(txt, make_lag_row("$y_{t-3}$", "News.Inflation.Inc..Lag3", "News.Inflation.Dec..Lag3", "News.Inflation.Direction.Index.Lag3", res_inc_list, res_dec_list, res_idx_list), "\n")
-  txt <- paste0(txt,"\\midrule\n")
+  txt <- paste0(txt, "\\midrule\n")
   
-  # Variable rows (ECB + Macro)
+  # ECB stance/outlook/inflation
   for (v in c("ECB.PC.Inflation.Inc.","ECB.PC.Inflation.Dec.","ECB.PC.Outlook.Up","ECB.PC.Outlook.Down","ECB.PC.Monetary.Haw.","ECB.PC.Monetary.Dov.")) {
     txt <- paste0(txt, make_single_row(v, var_label[v], res_inc_list, res_dec_list, res_idx_list), "\n")
   }
+  
+  # Macro (inflation + forecasts)
   txt <- paste0(txt, "\\midrule\n")
   for (v in c("German.Inflation.Year.on.Year.difference", "Reuter.Poll.Forecast.difference")) {
     txt <- paste0(txt, make_single_row(v, var_label[v], res_inc_list, res_dec_list, res_idx_list), "\n")
   }
+  
+  # Macro (real side + confidence)
   txt <- paste0(txt, "\\midrule\n")
-  for (v in c("German.Industrial.Production.Gap","Germany.Unemployment.difference","Germany.Future.Un.difference","Germany.Future.Fin.difference","Germany.Future.Eco")) {
+  for (v in c("German.Industrial.Production.Gap","Germany.Unemployment.difference","Germany.Conf.difference")) {
     txt <- paste0(txt, make_single_row(v, var_label[v], res_inc_list, res_dec_list, res_idx_list), "\n")
   }
+  
+  rec_vars <- c("REC_2022_03","REC_2022_04","REC_2022_05","REC_2022_06","REC_2022_07","REC_2022_08")
+  rec_rows <- ""
+  any_rec  <- FALSE
+  for (v in rec_vars) {
+    if (var_in_any_model(v, res_inc_list, res_dec_list, res_idx_list)) {
+      rec_rows <- paste0(rec_rows, make_single_row(v, var_label[v], res_inc_list, res_dec_list, res_idx_list), "\n")
+      any_rec <- TRUE
+    }
+  }
+  if (any_rec) {
+    txt <- paste0(txt, "\\midrule\n")
+    txt <- paste0(txt, rec_rows)
+  }
+  
+  # Financial + policy controls
   txt <- paste0(txt, "\\midrule\n")
-  # Variable rows (Financial + Policy)
-  for (v in c("ECB.MRO.difference", "whatever", "negative", "ECB.MRO.POS", "ECB.MRO.NEG", "Unmon", "DAX.difference", "VDAX", "ED.Exchange.Rate.difference")) {
+  for (v in c("ECB.MRO.difference","whatever","negative","ECB.MRO.POS","ECB.MRO.NEG","Unmon","DAX.difference","VDAX","ED.Exchange.Rate.difference")) {
     txt <- paste0(txt, make_single_row(v, var_label[v], res_inc_list, res_dec_list, res_idx_list), "\n")
   }
-  txt <- paste0(txt, "\\midrule\n")
+  
   # Constant
+  txt <- paste0(txt, "\\midrule\n")
   txt <- paste0(txt, make_single_row("(Intercept)", var_label["(Intercept)"], res_inc_list, res_dec_list, res_idx_list), "\n")
-  txt <- paste0(txt,"\\midrule\n")
+  txt <- paste0(txt, "\\midrule\n")
   
-  # Stats rows
-  txt <- paste0(txt, "Adjusted $R^2$ & ", adj_r2_inc_1," & ",adj_r2_inc_2," & ",adj_r2_inc_3," & ", adj_r2_dec_1," & ",adj_r2_dec_2," & ",adj_r2_dec_3," & ", adj_r2_idx_1," & ",adj_r2_idx_2," & ",adj_r2_idx_3, " \\\\\n")
-  txt <- paste0(txt, "Obs. & ", obs_inc_1," & ",obs_inc_2," & ",obs_inc_3," & ", obs_dec_1," & ",obs_dec_2," & ",obs_dec_3," & ", obs_idx_1," & ",obs_idx_2," & ",obs_idx_3, " \\\\\n")
+  # Stats
+  txt <- paste0(txt, "Adjusted $R^2$ & ",
+                adj_r2_inc_1," & ",adj_r2_inc_2," & ",adj_r2_inc_3," & ",
+                adj_r2_dec_1," & ",adj_r2_dec_2," & ",adj_r2_dec_3," & ",
+                adj_r2_idx_1," & ",adj_r2_idx_2," & ",adj_r2_idx_3, " \\\\\n")
+  txt <- paste0(txt, "Obs. & ",
+                obs_inc_1," & ",obs_inc_2," & ",obs_inc_3," & ",
+                obs_dec_1," & ",obs_dec_2," & ",obs_dec_3," & ",
+                obs_idx_1," & ",obs_idx_2," & ",obs_idx_3, " \\\\\n")
   
-  # Table footer
-  txt <- paste0(txt,"\\end{tabular}\n")
-  txt <- paste0(txt,"\\begin{tablenotes}[flushleft]\n")
-  txt <- paste0(txt,"\\footnotesize\n")
-  txt <- paste0(txt, "\\item Note: Results from estimating Equation~\\eqref{Reg1} for three measures of inflation‐direction news: $\\mathrm{News \\ Inflation}_t^{\\text{Increasing}}$, $\\mathrm{News \\ Inflation}_t^{\\text{Decreasing}}$, and $\\mathrm{News \\ Inflation}_t^{\\text{Direction}}$. ECB variables capture the share of sentences on inflation outlook, economic outlook, and monetary stance in press conferences. Newey-West standard errors are in parentheses. ***, **, and * represent statistical significance at 1\\%, 5\\%, and 10\\%, respectively.\n")
-  txt <- paste0(txt,"\\end{tablenotes}\n")
-  txt <- paste0(txt,"\\end{threeparttable}\n")
-  txt <- paste0(txt,"}\n")
-  txt <- paste0(txt,"\\end{adjustbox}\n")
-  txt <- paste0(txt,"\\end{minipage}\n")
+  # Footer
+  txt <- paste0(txt, "\\end{tabular}\n")
+  txt <- paste0(txt, "\\begin{tablenotes}[flushleft]\n")
+  txt <- paste0(txt, "\\footnotesize\n")
+  txt <- paste0(txt, "\\item Note: Results from estimating Equation~\\eqref{Reg1} for three measures of inflation‐direction news: $\\mathrm{News \\ Inflation}_t^{\\text{Increasing}}$, $\\mathrm{News \\ Inflation}_t^{\\text{Decreasing}}$, and $\\mathrm{News \\ Inflation}_t^{\\text{Direction}}$. ECB variables capture the share of sentences on inflation outlook, economic outlook, and monetary stance in press conferences. Newey–West standard errors in parentheses. ***, **, and * represent significance at 1\\%, 5\\%, and 10\\%, respectively.\n")
+  txt <- paste0(txt, "\\end{tablenotes}\n")
+  txt <- paste0(txt, "\\end{threeparttable}\n")
+  txt <- paste0(txt, "}\n")
+  txt <- paste0(txt, "\\end{adjustbox}\n")
+  txt <- paste0(txt, "\\end{minipage}\n")
   
   return(txt)
 }
@@ -288,14 +346,12 @@ build_infl_dir_table <- function(df, use_diffs_infeco, use_diffs_mp, caption_not
 ################################################################################
 # Execution
 ################################################################################
-# Set parameters for which data version to use
-df_to_use  <- canonize_ecb_pc(data, use_diffs_infeco = FALSE, use_diffs_mp = FALSE)
+df_to_use <- canonize_ecb_pc(data, use_diffs_infeco = FALSE, use_diffs_mp = FALSE)
 
-# Generate and print the LaTeX code to the console
-latex_output <- build_infl_dir_table(df_to_use, 
-                                     use_diffs_infeco = FALSE, 
-                                     use_diffs_mp = FALSE, 
-                                     caption_note="")
+latex_output <- build_infl_dir_table(df_to_use,
+                                     use_diffs_infeco = FALSE,
+                                     use_diffs_mp = FALSE,
+                                     caption_note = "")
 cat(latex_output)
 
 ################################################################################
@@ -307,8 +363,22 @@ build_infl_dir_table_small <- function(df, use_diffs_infeco = FALSE, use_diffs_m
       ECB.PC.Outlook.Up + ECB.PC.Outlook.Down + 
       ECB.PC.Monetary.Haw. + ECB.PC.Monetary.Dov. + 
       ECB.PC.Inflation.Inc. + ECB.PC.Inflation.Dec. + 
-      Germany.Future.Un.difference +
-      Germany.Future.Eco + Germany.Future.Fin.difference + German.Inflation.Year.on.Year.difference +
+     # Germany.Future.Un.difference.Lag1 +
+      Germany.Conf.difference +
+      # Germany.Conf.difference.Lag1 +
+      # Germany.Conf.difference.Lag2 +
+      # Germany.Conf.difference.Lag3 +
+      #REC_2022_03 + REC_2022_04 + REC_2022_05 + REC_2022_06 + REC_2022_07 + REC_2022_08 +
+      # REC_2022_03 +
+      # REC_2022_04 +
+      # REC_2022_05 +
+      # REC_2022_06 +
+      # REC_2022_07 +
+      # REC_2022_08 +
+      # 
+     # Germany.Future.Eco + 
+   #   Germany.Future.Fin.difference + 
+      German.Inflation.Year.on.Year.difference +
       Reuter.Poll.Forecast.difference + German.Industrial.Production.Gap + Germany.Unemployment.difference +
       ECB.MRO.difference + draghi + negative + whatever + ECB.MRO.POS + ECB.MRO.NEG +
       DAX.difference + VDAX + ED.Exchange.Rate.difference + Unmon, df)
@@ -319,12 +389,25 @@ build_infl_dir_table_small <- function(df, use_diffs_infeco = FALSE, use_diffs_m
       ECB.PC.Outlook.Up + ECB.PC.Outlook.Down + 
       ECB.PC.Monetary.Haw. + ECB.PC.Monetary.Dov. + 
       ECB.PC.Inflation.Inc. + ECB.PC.Inflation.Dec. + 
-      Germany.Future.Un.difference +
-      Germany.Future.Eco + Germany.Future.Fin.difference + German.Inflation.Year.on.Year.difference +
+    #  Germany.Future.Un.difference.Lag1 +
+      Germany.Conf.difference +
+      # Germany.Conf.difference.Lag1 +
+      # Germany.Conf.difference.Lag2 +
+      # Germany.Conf.difference.Lag3 +
+      #REC_2022_03 + REC_2022_04 + REC_2022_05 + REC_2022_06 + REC_2022_07 + REC_2022_08 +
+      # REC_2022_03 +
+      # REC_2022_04 +
+      # REC_2022_05 +
+      # REC_2022_06 +
+      # REC_2022_07 +
+      # REC_2022_08 +
+      
+      # Germany.Future.Eco + 
+      #   Germany.Future.Fin.difference + 
+      German.Inflation.Year.on.Year.difference +
       Reuter.Poll.Forecast.difference + German.Industrial.Production.Gap + Germany.Unemployment.difference +
       ECB.MRO.difference + draghi + negative + whatever + ECB.MRO.POS + ECB.MRO.NEG +
       DAX.difference + VDAX + ED.Exchange.Rate.difference + Unmon, df)
-  
   
   fit_controls_ind <- lm(
     News.Inflation.Direction.Index ~ News.Inflation.Direction.Index.Lag1 + News.Inflation.Direction.Index.Lag2 +
@@ -332,14 +415,29 @@ build_infl_dir_table_small <- function(df, use_diffs_infeco = FALSE, use_diffs_m
       ECB.PC.Outlook.Up + ECB.PC.Outlook.Down + 
       ECB.PC.Monetary.Haw. + ECB.PC.Monetary.Dov. + 
       ECB.PC.Inflation.Inc. + ECB.PC.Inflation.Dec. + 
-      Germany.Future.Un.difference +
-      Germany.Future.Eco + Germany.Future.Fin.difference + German.Inflation.Year.on.Year.difference +
+     # Germany.Future.Un.difference.Lag1 +
+      Germany.Conf.difference +
+      # Germany.Conf.difference.Lag1 +
+      # Germany.Conf.difference.Lag2 +
+      # Germany.Conf.difference.Lag3 +
+      #REC_2022_03 + REC_2022_04 + REC_2022_05 + REC_2022_06 + REC_2022_07 + REC_2022_08 +
+      # REC_2022_03 +
+      # REC_2022_04 +
+      # REC_2022_05 +
+      # REC_2022_06 +
+      # REC_2022_07 +
+      # REC_2022_08 +
+      
+      # Germany.Future.Eco + 
+      #   Germany.Future.Fin.difference + 
+      German.Inflation.Year.on.Year.difference +
       Reuter.Poll.Forecast.difference + German.Industrial.Production.Gap + Germany.Unemployment.difference +
       ECB.MRO.difference + draghi + negative + whatever + ECB.MRO.POS + ECB.MRO.NEG +
       DAX.difference + VDAX + ED.Exchange.Rate.difference + Unmon, df)
   
   get_res_df <- function(m) {
     ct <- lmtest::coeftest(m, vcov. = sandwich::NeweyWest(m, lag = 12, prewhite = FALSE, adjust = TRUE))
+  #  ct <- lmtest::coeftest(m)     
     data.frame(varname = rownames(ct),
                estimate = ct[, "Estimate"],
                se       = ct[, "Std. Error"],
@@ -425,10 +523,10 @@ build_infl_dir_table_small <- function(df, use_diffs_infeco = FALSE, use_diffs_m
   txt
 }
 
-df_small_diff <- canonize_ecb_pc(data, use_diffs_infeco = TRUE, use_diffs_mp = TRUE)
-cat(build_infl_dir_table_small(df_small_diff,
-                               use_diffs_infeco = TRUE,
-                               use_diffs_mp = TRUE))
+# df_small_diff <- canonize_ecb_pc(data, use_diffs_infeco = TRUE, use_diffs_mp = TRUE)
+# cat(build_infl_dir_table_small(df_small_diff,
+#                                use_diffs_infeco = TRUE,
+#                                use_diffs_mp = TRUE))
 
 df_small_levels <- canonize_ecb_pc(data, use_diffs_infeco = FALSE, use_diffs_mp = FALSE)
 
@@ -436,11 +534,11 @@ cat(build_infl_dir_table_small(df_small_levels,
                                use_diffs_infeco = FALSE, 
                                use_diffs_mp = FALSE))
 
-df_small_MP_diff <- canonize_ecb_pc(data, use_diffs_infeco = FALSE, use_diffs_mp = TRUE)
-
-cat(build_infl_dir_table_small(df_small_MP_diff, 
-                               use_diffs_infeco = FALSE, 
-                               use_diffs_mp = TRUE))
+# df_small_MP_diff <- canonize_ecb_pc(data, use_diffs_infeco = FALSE, use_diffs_mp = TRUE)
+# 
+# cat(build_infl_dir_table_small(df_small_MP_diff, 
+#                                use_diffs_infeco = FALSE, 
+#                                use_diffs_mp = TRUE))
 
 ################################################################################
 # Inflation Sentiment — Full Table (ADD ONLY)
@@ -457,15 +555,21 @@ build_infl_sent_table <- function(df, use_diffs_infeco, use_diffs_mp, caption_no
   fit_macro_pos <- lm(
     News.Inflation.Pos. ~ News.Inflation.Pos..Lag1 + News.Inflation.Pos..Lag2 + News.Inflation.Pos..Lag3 +
       ECB.PC.Inflation.Inc. + ECB.PC.Inflation.Dec. + ECB.PC.Monetary.Haw. + ECB.PC.Monetary.Dov. +
-      ECB.PC.Outlook.Up + ECB.PC.Outlook.Down + Germany.Future.Un.difference + Germany.Future.Eco +
-      Germany.Future.Fin.difference + German.Inflation.Year.on.Year.difference + Reuter.Poll.Forecast.difference +
+      ECB.PC.Outlook.Up + ECB.PC.Outlook.Down + Germany.Conf.difference +
+      
+     # Germany.Future.Un.difference + Germany.Future.Eco +# Germany.Future.Fin.difference + 
+      
+      German.Inflation.Year.on.Year.difference + Reuter.Poll.Forecast.difference +
       German.Industrial.Production.Gap + Germany.Unemployment.difference, df)
   
   fit_all_controls_pos <- lm(
     News.Inflation.Pos. ~ News.Inflation.Pos..Lag1 + News.Inflation.Pos..Lag2 + News.Inflation.Pos..Lag3 +
       ECB.PC.Outlook.Up + ECB.PC.Outlook.Down + ECB.PC.Monetary.Haw. + ECB.PC.Monetary.Dov. +
-      ECB.PC.Inflation.Inc. + ECB.PC.Inflation.Dec. + Germany.Future.Un.difference + Germany.Future.Eco +
-      Germany.Future.Fin.difference + German.Inflation.Year.on.Year.difference + Reuter.Poll.Forecast.difference +
+      ECB.PC.Inflation.Inc. + ECB.PC.Inflation.Dec. + Germany.Conf.difference +
+      
+  #    Germany.Future.Un.difference + Germany.Future.Eco +Germany.Future.Fin.difference + 
+      
+      German.Inflation.Year.on.Year.difference + Reuter.Poll.Forecast.difference +
       German.Industrial.Production.Gap + Germany.Unemployment.difference + ECB.MRO.difference + draghi + negative +
       whatever + ECB.MRO.POS + ECB.MRO.NEG + ED.Exchange.Rate.difference + DAX.difference + VDAX + Unmon, df)
   
@@ -478,15 +582,20 @@ build_infl_sent_table <- function(df, use_diffs_infeco, use_diffs_mp, caption_no
   fit_macro_neg <- lm(
     News.Inflation.Neg. ~ News.Inflation.Neg..Lag1 + News.Inflation.Neg..Lag2 + News.Inflation.Neg..Lag3 +
       ECB.PC.Inflation.Inc. + ECB.PC.Inflation.Dec. + ECB.PC.Monetary.Haw. + ECB.PC.Monetary.Dov. +
-      ECB.PC.Outlook.Up + ECB.PC.Outlook.Down + Germany.Future.Un.difference + Germany.Future.Eco +
-      Germany.Future.Fin.difference + German.Inflation.Year.on.Year.difference + Reuter.Poll.Forecast.difference +
+      ECB.PC.Outlook.Up + ECB.PC.Outlook.Down + Germany.Conf.difference + 
+      
+     # Germany.Future.Un.difference + Germany.Future.Eco + Germany.Future.Fin.difference + 
+      German.Inflation.Year.on.Year.difference + Reuter.Poll.Forecast.difference +
       German.Industrial.Production.Gap + Germany.Unemployment.difference, df)
   
   fit_all_controls_neg <- lm(
     News.Inflation.Neg. ~ News.Inflation.Neg..Lag1 + News.Inflation.Neg..Lag2 + News.Inflation.Neg..Lag3 +
       ECB.PC.Outlook.Up + ECB.PC.Outlook.Down + ECB.PC.Monetary.Haw. + ECB.PC.Monetary.Dov. +
-      ECB.PC.Inflation.Inc. + ECB.PC.Inflation.Dec. + Germany.Future.Un.difference + Germany.Future.Eco +
-      Germany.Future.Fin.difference + German.Inflation.Year.on.Year.difference + Reuter.Poll.Forecast.difference +
+      ECB.PC.Inflation.Inc. + ECB.PC.Inflation.Dec. + Germany.Conf.difference +
+      
+      #Germany.Future.Un.difference + Germany.Future.Eco + Germany.Future.Fin.difference + 
+      
+      German.Inflation.Year.on.Year.difference + Reuter.Poll.Forecast.difference +
       German.Industrial.Production.Gap + Germany.Unemployment.difference + ECB.MRO.difference + draghi + negative +
       whatever + ECB.MRO.POS + ECB.MRO.NEG + DAX.difference + VDAX + ED.Exchange.Rate.difference + Unmon, df)
   
@@ -499,15 +608,21 @@ build_infl_sent_table <- function(df, use_diffs_infeco, use_diffs_mp, caption_no
   fit_macro_sen <- lm(
     News.Inflation.Sentiment.Index ~ News.Inflation.Sentiment.Index.Lag1 + News.Inflation.Sentiment.Index.Lag2 +
       News.Inflation.Sentiment.Index.Lag3 + ECB.PC.Outlook.Up + ECB.PC.Outlook.Down + ECB.PC.Monetary.Haw. +
-      ECB.PC.Monetary.Dov. + ECB.PC.Inflation.Inc. + ECB.PC.Inflation.Dec. + Germany.Future.Un.difference +
-      Germany.Future.Eco + Germany.Future.Fin.difference + German.Inflation.Year.on.Year.difference +
+      ECB.PC.Monetary.Dov. + ECB.PC.Inflation.Inc. + ECB.PC.Inflation.Dec. + Germany.Conf.difference +
+      
+   #   Germany.Future.Un.difference + Germany.Future.Eco + Germany.Future.Fin.difference +
+      
+      German.Inflation.Year.on.Year.difference +
       Reuter.Poll.Forecast.difference + German.Industrial.Production.Gap + Germany.Unemployment.difference, df)
   
   fit_all_controls_sen <- lm(
     News.Inflation.Sentiment.Index ~ News.Inflation.Sentiment.Index.Lag1 + News.Inflation.Sentiment.Index.Lag2 +
       News.Inflation.Sentiment.Index.Lag3 + ECB.PC.Outlook.Up + ECB.PC.Outlook.Down + ECB.PC.Monetary.Haw. +
-      ECB.PC.Monetary.Dov. + ECB.PC.Inflation.Inc. + ECB.PC.Inflation.Dec. + Germany.Future.Un.difference +
-      Germany.Future.Eco + Germany.Future.Fin.difference + German.Inflation.Year.on.Year.difference +
+      ECB.PC.Monetary.Dov. + ECB.PC.Inflation.Inc. + ECB.PC.Inflation.Dec. + Germany.Conf.difference +
+      
+     # Germany.Future.Un.difference + Germany.Future.Eco + Germany.Future.Fin.difference + 
+      
+      German.Inflation.Year.on.Year.difference +
       Reuter.Poll.Forecast.difference + German.Industrial.Production.Gap + Germany.Unemployment.difference +
       ECB.MRO.difference + draghi + negative + whatever + ECB.MRO.POS + ECB.MRO.NEG +
       DAX.difference + VDAX + ED.Exchange.Rate.difference + Unmon, df)
@@ -538,7 +653,7 @@ build_infl_sent_table <- function(df, use_diffs_infeco, use_diffs_mp, caption_no
     "ECB.PC.Inflation.Inc.","ECB.PC.Inflation.Dec.","ECB.PC.Outlook.Up","ECB.PC.Outlook.Down",
     "ECB.PC.Monetary.Haw.","ECB.PC.Monetary.Dov.","German.Inflation.Year.on.Year.difference",
     "Reuter.Poll.Forecast.difference","German.Industrial.Production.Gap","Germany.Unemployment.difference",
-    "Germany.Future.Un.difference","Germany.Future.Fin.difference","Germany.Future.Eco","ECB.MRO.difference",
+    "Germany.Conf.difference","ECB.MRO.difference",
     "whatever","negative","ECB.MRO.POS","ECB.MRO.NEG","Unmon","DAX.difference","VDAX","ED.Exchange.Rate.difference",
     "(Intercept)"
   )
@@ -588,7 +703,7 @@ build_infl_sent_table <- function(df, use_diffs_infeco, use_diffs_mp, caption_no
   txt <- paste0(txt, "\\midrule\n")
   
   # More controls (financial/policy)
-  for (v in c("German.Industrial.Production.Gap","Germany.Unemployment.difference","Germany.Future.Un.difference","Germany.Future.Fin.difference","Germany.Future.Eco")) {
+  for (v in c("German.Industrial.Production.Gap","Germany.Unemployment.difference","Germany.Conf.difference")) {
     txt <- paste0(txt, make_single_row(v, vlab[v], res_pos_list, res_neg_list, res_sen_list), "\n")
   }
   txt <- paste0(txt, "\\midrule\n")
@@ -628,8 +743,8 @@ build_infl_sent_table_small <- function(df, use_diffs_infeco = FALSE, use_diffs_
     News.Inflation.Pos. ~ News.Inflation.Pos..Lag1 + News.Inflation.Pos..Lag2 + News.Inflation.Pos..Lag3 + 
       ECB.PC.Outlook.Up + ECB.PC.Outlook.Down + 
       ECB.PC.Monetary.Haw. + ECB.PC.Monetary.Dov. + 
-      ECB.PC.Inflation.Inc. + ECB.PC.Inflation.Dec. + 
-      Germany.Future.Un.difference + Germany.Future.Eco + Germany.Future.Fin.difference +
+      ECB.PC.Inflation.Inc. + ECB.PC.Inflation.Dec. + Germany.Conf.difference +
+     # Germany.Future.Un.difference + Germany.Future.Eco + Germany.Future.Fin.difference +
       German.Inflation.Year.on.Year.difference + Reuter.Poll.Forecast.difference + 
       German.Industrial.Production.Gap + Germany.Unemployment.difference +
       ECB.MRO.difference + draghi + negative + whatever + ECB.MRO.POS + ECB.MRO.NEG +
@@ -639,8 +754,8 @@ build_infl_sent_table_small <- function(df, use_diffs_infeco = FALSE, use_diffs_
     News.Inflation.Neg. ~ News.Inflation.Neg..Lag1 + News.Inflation.Neg..Lag2 + News.Inflation.Neg..Lag3 + 
       ECB.PC.Outlook.Up + ECB.PC.Outlook.Down + 
       ECB.PC.Monetary.Haw. + ECB.PC.Monetary.Dov. + 
-      ECB.PC.Inflation.Inc. + ECB.PC.Inflation.Dec. + 
-      Germany.Future.Un.difference + Germany.Future.Eco + Germany.Future.Fin.difference +
+      ECB.PC.Inflation.Inc. + ECB.PC.Inflation.Dec. + Germany.Conf.difference + 
+     # Germany.Future.Un.difference + Germany.Future.Eco + Germany.Future.Fin.difference +
       German.Inflation.Year.on.Year.difference + Reuter.Poll.Forecast.difference + 
       German.Industrial.Production.Gap + Germany.Unemployment.difference +
       ECB.MRO.difference + draghi + negative + whatever + ECB.MRO.POS + ECB.MRO.NEG +
@@ -651,8 +766,8 @@ build_infl_sent_table_small <- function(df, use_diffs_infeco = FALSE, use_diffs_
       News.Inflation.Sentiment.Index.Lag3 + 
       ECB.PC.Outlook.Up + ECB.PC.Outlook.Down + 
       ECB.PC.Monetary.Haw. + ECB.PC.Monetary.Dov. + 
-      ECB.PC.Inflation.Inc. + ECB.PC.Inflation.Dec. + 
-      Germany.Future.Un.difference + Germany.Future.Eco + Germany.Future.Fin.difference +
+      ECB.PC.Inflation.Inc. + ECB.PC.Inflation.Dec. + Germany.Conf.difference + 
+    #  Germany.Future.Un.difference + Germany.Future.Eco + Germany.Future.Fin.difference +
       German.Inflation.Year.on.Year.difference + Reuter.Poll.Forecast.difference + 
       German.Industrial.Production.Gap + Germany.Unemployment.difference +
       ECB.MRO.difference + draghi + negative + whatever + ECB.MRO.POS + ECB.MRO.NEG +

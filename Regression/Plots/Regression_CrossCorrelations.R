@@ -20,15 +20,16 @@ library("kableExtra")
 
 #####################################################################################
 
-data = read_excel('D:/Studium/PhD/Github/Single-Author/Code/Regression/Regession_data_monthly_2_processed_inf.xlsx')
-data = data.frame(data)
-data <- data[12:(nrow(data)), ]
+# data = read_excel('D:/Studium/PhD/Github/Single-Author/Code/Regression/Regession_data_monthly_2_processed_inf.xlsx')
+# data = data.frame(data)
 
 data = read_excel('D:/Studium/PhD/Github/Single-Author/Code/Regression/Regession_data_monthly_2_processed_ECB_2_og.xlsx')
 data = data.frame(data)
-data <- data[12:(nrow(data)), ]
 
-data$time = as.Date(strptime(data$time, "%Y-%m-%d"))
+START_DATE <- as.Date("2002-01-01")
+
+data$time <- as.Date(strptime(data$time, "%Y-%m-%d"))
+data <- data |> dplyr::filter(time >= START_DATE)
 
 numeric_columns <- sapply(data, is.numeric)
 
@@ -174,6 +175,7 @@ for (i in seq_along(shifts)) {
       # pick reference variable for correlation (unchanged)
       if (grp == "Inflation News" || grp == "ECB Inflation Outlook") {
         ref_var <- if (use_first_differences) "German.Inflation.Year.on.Year.difference" else "German.Inflation.Year.on.Year"
+      #  ref_var <- if (use_first_differences) "Household.Inflation.Expectations.difference" else "Household.Inflation.Expectations"
       } else if (grp == "Monetary Policy News - Quotes" || grp == "Monetary Policy News - Non-Quotes" || grp == "ECB Monetary Stance") {
         ref_var <- if (use_first_differences) "ECB.MRO.difference" else "ECB.MRO"
       } else if (grp == "ECB Economic Outlook") {

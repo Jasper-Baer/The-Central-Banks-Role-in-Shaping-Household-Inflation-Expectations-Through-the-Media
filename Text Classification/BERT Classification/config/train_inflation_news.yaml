@@ -4,7 +4,8 @@
 
 # --- Data Parameters ---
 # Path to the labeled training data file.
-input_data_path: "D:/Studium/PhD/Single Author/Data/inflation_lemmas_example.xlsx"
+input_data_path: "D:/Studium/PhD/Single Author/Data/Training/inflation_lemmas_train.xlsx"
+# input_data_path: "D:/Studium/PhD/Single Author/Data/Training/mon_train_set_V6.xlsx"
 # The name of the column containing the text sentences.
 text_column: "Sentences"
 # The name of the column containing the integer labels.
@@ -13,6 +14,8 @@ label_column: "Label"
 column_rename_map:
   sentence: "Sentences"
   Direction: "Label"
+  #Monetary: "Label"
+  #Sentiment: "Label"
 # (Optional) Limit the number of rows to use for quick testing. Set to null to use all rows.
 limit_rows: null
 
@@ -39,10 +42,17 @@ random_seed: 0
 train_on_gpu: true
 
 # Path to the fine-tuned model you want to load and reuse.
+# saved_model_path: "models/news_monetary_stance.pt"
+# saved_model_path: "models/news_inflation_sentiment.pt"
 saved_model_path: "models/inflation_news_model.pt"
+# saved_model_path: null
 
 # --- Output Paths ---
 # Directory where outputs like the confusion matrix will be saved.
-output_dir: "outputs/inflation_news"
+# output_dir: "outputs/news_monetary_stance"
+# output_dir: "outputs/news_inflation_sentiment"
+# output_dir: "outputs/inflation_news"
 # Full path where the best trained model checkpoint (.pt file) will be saved.
+# output_model_path: "models/news_monetary_stance.pt"
+# output_model_path: "models/news_inflation_sentiment.pt"
 output_model_path: "models/inflation_news_model.pt"

@@ -1412,7 +1412,7 @@ data$time = as.Date(strptime(data$time, "%Y-%m-%d"))
 text_offset = 6
 
 breaks_inflation <- seq(from = -6, to = 12, by = 2)
-breaks_frequency <- seq(from = -25, to = 30, by = 5)
+breaks_frequency <- seq(from = -25, to = 35, by = 5)
 
 data_first_part <- data_ECB[1:25, ]
 data_second_part <- data_ECB[26:102, ]
@@ -1599,7 +1599,7 @@ p <- ggplot() +
     name = "% in Press Conferences",
     labels = function(x) abs(x),
     breaks = breaks_frequency,
-    limits = c(-30,35),
+    limits = c(-30,38),
     sec.axis = sec_axis(~inverse_transform(.), 
                         name = "Inflation", 
                         breaks = breaks_inflation)

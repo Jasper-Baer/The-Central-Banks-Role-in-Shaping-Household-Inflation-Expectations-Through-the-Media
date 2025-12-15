@@ -13,20 +13,84 @@ library('car')
 
 #####################################################################################
 
-data = read_excel('D:/Studium/PhD/Github/Single-Author/Code/Regression/Regession_data_monthly_2_processed_inf.xlsx')
-data = data.frame(data)
+DATA_PATH  <- "D:/Studium/PhD/Github/Single-Author/Code/Regression/Regession_data_monthly_2_processed_inf.xlsx"
+START_DATE <- as.Date("2003-02-28")
 
-data = data[12:(nrow(data)),]
+# Safe scaling for numeric columns except those explicitly excluded
+safe_scale <- function(df, exclude = character()) {
+  is_num <- sapply(df, is.numeric)
+  is_num[intersect(names(is_num), exclude)] <- FALSE
+  df[is_num] <- scale(df[is_num])
+  df
+}
 
-data$time = as.Date(strptime(data$time, "%Y-%m-%d"))
+# Newey–West coeftable -> data.frame
+coeftable_df_nw12 <- function(model) {
+  ct <- lmtest::coeftest(model, vcov. = sandwich::NeweyWest(model, lag = 12, prewhite = FALSE, adjust = TRUE))
+  data.frame(
+    varname  = rownames(ct),
+    estimate = ct[, "Estimate"],
+    se       = ct[, "Std. Error"],
+    pval     = ct[, "Pr(>|t|)"],
+    stringsAsFactors = FALSE
+  )
+}
 
-numeric_columns <- sapply(data, is.numeric)
+# Signif. codes: map like your script (dot->*, *->**, **->***)
+base_sig_code <- function(p) {
+  if (p < 0.001) "***"
+  else if (p < 0.01) "**"
+  else if (p < 0.05) "*"
+  else if (p < 0.1) "."
+  else ""
+}
+bump_sig_code <- function(p) {
+  x <- base_sig_code(p)
+  if (x == ".") "*" else if (x == "*") "**" else if (x == "**") "***" else if (x == "***") "***" else ""
+}
 
-dont_scale_names = c("draghi", "negative", "trichet", "whatever", "Unmon")
+fmt_est_se <- function(est, se, p) {
+  if (!length(est)) return(list(est = "", se = ""))
+  s <- bump_sig_code(p)
+  list(est = sprintf("%.3f%s", est, s),
+       se  = sprintf("{(%.3f)}", se))
+}
 
-numeric_columns[dont_scale_names] <- FALSE
+# One row (estimate line + SE line) across 6 models
+latex_row_6 <- function(label, v, r1, r2, r3, r4, r5, r6) {
+  pick <- function(res, var) fmt_est_se(res$estimate[res$varname == var],
+                                        res$se[res$varname == var],
+                                        res$pval[res$varname == var])
+  f1 <- pick(r1, v); f2 <- pick(r2, v); f3 <- pick(r3, v)
+  f4 <- pick(r4, v); f5 <- pick(r5, v); f6 <- pick(r6, v)
+  
+  line1 <- paste0(label, " & ",
+                  f1$est, " & ", f2$est, " & ", f3$est, " & ",
+                  f4$est, " & ", f5$est, " & ", f6$est, " \\\\")
+  line2 <- paste0(" & ",
+                  f1$se, " & ", f2$se, " & ", f3$se, " & ",
+                  f4$se, " & ", f5$se, " & ", f6$se, " \\\\")
+  paste(line1, line2, sep = "\n")
+}
 
-data[numeric_columns] <- scale(data[numeric_columns])
+data <- read_excel(DATA_PATH) |> data.frame()
+data$time <- as.Date(strptime(data$time, "%Y-%m-%d"))
+data <- data |> dplyr::filter(time >= START_DATE)
+
+# Build 2022 month dummies (Feb–Dec)
+rec_months <- seq(as.Date("2022-02-01"), as.Date("2022-12-01"), by = "month")
+rec_labels <- paste0("REC_", format(rec_months, "%Y_%m"))
+month_tag  <- format(data$time, "%Y-%m")
+rec_tags   <- format(rec_months, "%Y-%m")
+rec_df     <- as.data.frame(sapply(rec_tags, function(m) as.integer(month_tag == m)))
+names(rec_df) <- rec_labels
+data <- dplyr::bind_cols(data, rec_df)
+
+dont_scale <- c("draghi","negative","whatever","Unmon",
+                "REC_2022_01","REC_2022_02","REC_2022_03","REC_2022_04",
+                "REC_2022_05","REC_2022_06","REC_2022_07","REC_2022_08",
+                "REC_2022_09","REC_2022_10","REC_2022_11","REC_2022_12")
+data <- safe_scale(data, exclude = dont_scale)
 
 ###
 
@@ -92,7 +156,7 @@ adj_r2 <- fit_summary$adj.r.squared
 
 ###
 
-fit_no_controls_quotes_count <- lm(German.Inflation.Balanced.difference ~
+fit_no_controls_both <- lm(German.Inflation.Balanced.difference ~
             + German.Inflation.Balanced.difference.Lag1
             + German.Inflation.Balanced.difference.Lag2
             + German.Inflation.Balanced.difference.Lag3
@@ -131,10 +195,10 @@ fit_all_controls_quotes <- lm(German.Inflation.Balanced.difference ~
             + News.Inflation.Pos._stored_1
             + News.Inflation.Neg._stored_1
             
-            + News.Monetary.Quote.Hawkish_stored_1*Quote_Ratio 
-            + News.Monetary.Quote.Dovish_stored_1*Quote_Ratio 
-            + News.Monetary.Quote.Pos._stored_1*Quote_Ratio 
-            + News.Monetary.Quote.Neg._stored_1*Quote_Ratio 
+            + News.Monetary.Quote.Hawkish_stored_1
+            + News.Monetary.Quote.Dovish_stored_1
+            + News.Monetary.Quote.Pos._stored_1
+            + News.Monetary.Quote.Neg._stored_1
             
             + German.Inflation.Year.on.Year.difference.Lag1
             + Reuter.Poll.Forecast.difference.Lag1
@@ -146,6 +210,8 @@ fit_all_controls_quotes <- lm(German.Inflation.Balanced.difference ~
             + draghi.Lag1
             + negative.Lag1
             + whatever.Lag1
+            
+            + Germany.Conf.difference.Lag1 
             
             + ECB.MRO.POS.Lag1
             + ECB.MRO.NEG.Lag1
@@ -175,14 +241,14 @@ fit_all_controls_non_quotes <- lm(German.Inflation.Balanced.difference ~
             + News.Inflation.Pos._stored_1
             + News.Inflation.Neg._stored_1
             
-            + News.Monetary.Quote.Hawkish_stored_1
-            + News.Monetary.Quote.Dovish_stored_1
-            + News.Monetary.Quote.Pos._stored_1
-            + News.Monetary.Quote.Neg._stored_1
+            + News.Monetary.Non.Quote.Hawkish_stored_1
+            + News.Monetary.Non.Quote.Dovish_stored_1
+            + News.Monetary.Non.Quote.Pos._stored_1
+            + News.Monetary.Non.Quote.Neg._stored_1
             
-            + Germany.Future.Un.difference.Lag1
-            + Germany.Future.Eco.Lag1
-            + Germany.Future.Fin.difference.Lag1
+            # + Germany.Future.Un.difference.Lag1
+            # + Germany.Future.Eco.Lag1
+            # + Germany.Future.Fin.difference.Lag1
             
             + German.Inflation.Year.on.Year.difference.Lag1
             + Reuter.Poll.Forecast.difference.Lag1
@@ -194,6 +260,8 @@ fit_all_controls_non_quotes <- lm(German.Inflation.Balanced.difference ~
             + draghi.Lag1
             + negative.Lag1
             + whatever.Lag1
+            
+            + Germany.Conf.difference.Lag1 
             
             + ECB.MRO.POS.Lag1
             + ECB.MRO.NEG.Lag1
@@ -213,7 +281,7 @@ adj_r2 <- fit_summary$adj.r.squared
 
 ###
 
-fit_all_controls_quotes_count <- lm(German.Inflation.Balanced.difference ~
+fit_all_controls_both <- lm(German.Inflation.Balanced.difference ~
             + German.Inflation.Balanced.difference.Lag1
             + German.Inflation.Balanced.difference.Lag2
             + German.Inflation.Balanced.difference.Lag3
@@ -228,9 +296,11 @@ fit_all_controls_quotes_count <- lm(German.Inflation.Balanced.difference ~
             + News.Monetary.Quote.Pos._stored_1*Quote_Ratio 
             + News.Monetary.Quote.Neg._stored_1*Quote_Ratio 
             
-            + Germany.Future.Un.difference.Lag1
-            + Germany.Future.Eco.Lag1
-            + Germany.Future.Fin.difference.Lag1
+            # + Germany.Future.Un.difference.Lag1
+            # + Germany.Future.Eco.Lag1
+            # + Germany.Future.Fin.difference.Lag1
+            
+            + Germany.Conf.difference.Lag1 
             
             + German.Inflation.Year.on.Year.difference.Lag1
             + Reuter.Poll.Forecast.difference.Lag1
@@ -263,12 +333,12 @@ adj_r2 <- fit_summary$adj.r.squared
 fit1 <- fit_no_controls_quotes      # [1] 
 fit2 <- fit_no_controls_non_quotes  # [2] 
 fit3 <- fit_no_controls_both        # [3] 
-fit4 <- fit_no_controls_quotes_count# [4] 
-fit5 <- fit_all_controls_quotes     # [5] 
-fit6 <- fit_all_controls_quotes_count # [6]
+fit4 <- fit_all_controls_quotes# [4] 
+fit5 <- fit_all_controls_non_quotes     # [5] 
+fit6 <- fit_all_controls_both # [6]
 
 get_res <- function(fit_obj) {
-  co <- coeftest(fit_obj, vcov.=NeweyWest(fit_obj, prewhite=FALSE, adjust=TRUE))
+  co <- coeftest(fit_obj, vcov.=NeweyWest(fit_obj, prewhite=FALSE, adjust=TRUE, lag = 12))
   data.frame(
     varname  = rownames(co),
     estimate = co[, "Estimate"],
@@ -382,23 +452,23 @@ var_lab <- c(
   "German.Inflation.Year.on.Year.Lag1" = "$HICP Inflation",
   "Reuter.Poll.Forecast.difference.Lag1"          = "$\\Delta$ Prof. Inflation Forecast",
   
-  "German.Industrial.Production.Gap" = "Industrial Production Gap",
-  "Germany.Unemployment.Lag1"         = "Unemployment Rate",
-#  "Germany.Conf"                 = "Confidence",
-  "Germany.Future.Un.Lag1"            = "Unemployment Expectations",
-  "Germany.Future.Eco.Lag1"           = "Economic Expectations",
-  "Germany.Future.Fin.Lag1"           = "Financial Expectations",
+  "German.Industrial.Production.Gap.Lag1" = "Industrial Production Gap",
+  "Germany.Unemployment.difference.Lag1"         = "$\\Delta$ Unemployment Rate",
+  "Germany.Conf.difference.Lag1"                 = "$\\Delta$ Confidence",
+  # "Germany.Future.Un.Lag1"            = "Unemployment Expectations",
+  # "Germany.Future.Eco.Lag1"           = "Economic Expectations",
+  # "Germany.Future.Fin.Lag1"           = "Financial Expectations",
   
-  "Germany.Unemployment.difference.Lag1"         = "\\Delta$ Unemployment Rate",
+ # "Germany.Unemployment.difference.Lag1"         = "\\Delta$ Unemployment Rate",
  # "Germany.Conf.difference"                 = "\\Delta$ Confidence",
-  "Germany.Future.Un.differenc.Lag1e"            = "\\Delta$ Unemployment Expectations",
+ # "Germany.Future.Un.differenc.Lag1e"            = "\\Delta$ Unemployment Expectations",
  # "Germany.Future.Eco.difference"           = "\\Delta$ Economic Expectations",
-  "Germany.Future.Fin.difference.Lag1"           = "\\Delta$ Financial Expectations",
+  #"Germany.Future.Fin.difference.Lag1"           = "\\Delta$ Financial Expectations",
   
-  "ECB.MRO.difference.Lag1"            = "$\\Delta MRO Rate$",
+  "ECB.MRO.difference.Lag1"            = "$\\Delta$ MRO Rate",
   "whatever.Lag1"           = "Whatever it Takes",
   "draghi.Lag1"             = "Draghi",
-  "lagarde.Lag1"            = "Lagarde",
+ # "lagarde.Lag1"            = "Lagarde",
   "negative.Lag1"           = "Negative Rate",
   "ECB.MRO.POS.Lag1"        = "Positive Interest Surprise",
   "ECB.MRO.NEG.Lag1"        = "Negative Interest Surprise",
@@ -442,10 +512,11 @@ all_vars <- c(
   "German.Industrial.Production.Gap.Lag1",
   "Germany.Unemployment.difference.Lag1",
   #"Germany.Conf.difference",
-  "Germany.Future.Un.difference.Lag1",
+  #"Germany.Future.Un.difference.Lag1",
  # "Germany.Future.Eco.difference",
-  "Germany.Future.Eco",
-  "Germany.Future.Fin.difference.Lag1",
+  #"Germany.Future.Eco",
+ # "Germany.Future.Fin.difference.Lag1",
+ "Germany.Conf.difference.Lag1",
   
   "ECB.MRO.difference.Lag1",
   "draghi.Lag1",

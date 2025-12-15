@@ -105,6 +105,31 @@ def transform_date_2(data):
 # Inflation
 ###############################################################################
 
+energy_prices = load_excel_data(PATH_data, 'Energy_prices.xlsx', sheet_name= "Sheet 1")
+energy_prices = energy_prices[energy_prices.iloc[:, 0].isin(["Germany", "TIME"])]
+
+dates = energy_prices.iloc[0, 1:]
+values = energy_prices.iloc[1, 1:]
+
+energy_prices = pd.DataFrame({
+    'time': dates,
+    'values': values
+})
+
+oil_brent = load_excel_data(PATH_data, 'DCOILBRENTEU.xlsx', sheet_name= "Daily")
+oil_brent['observation_date'] = pd.to_datetime(oil_brent['observation_date'])
+oil_brent.set_index('observation_date', inplace=True)
+
+brent_monthly = oil_brent['DCOILBRENTEU'].resample('M').mean()
+brent_monthly = brent_monthly.to_frame(name='price')
+brent_monthly['Oil_Price_Change_YoY'] = (brent_monthly['price'] / brent_monthly['price'].shift(12) - 1) * 100
+brent_monthly.index.name = 'time'
+
+yield_ita = load_excel_data(PATH_data, 'IRLTLT01ITM156N.xlsx', sheet_name= "Monthly")
+yield_germ = load_excel_data(PATH_data, 'IRLTLT01DEM156N.xlsx', sheet_name= "Monthly")
+
+yield_germ['spread'] = yield_germ.iloc[:,1] - yield_ita.iloc[:,1]
+
 forecast_q = load_excel_data(PATH_Reuter, 'Forecast_Inflation_Reuter.xlsx')
 forecast_q = forecast_q.dropna(subset = ['One-Year-Ahead Direct'])
 
@@ -163,6 +188,8 @@ MRO_surprise.iloc[:,1] = MRO_surprise.iloc[:,1].fillna(0)
 MRO_surprise['Positive_Surprise'] = np.where(MRO_surprise.iloc[:,1] > 0, MRO_surprise.iloc[:,1], 0)
 MRO_surprise['Negative_Surprise'] = abs(np.where(MRO_surprise.iloc[:,1] < 0, MRO_surprise.iloc[:,1], 0))
 
+#MRO_surprise['Positive_Surprise'] = MRO_surprise.iloc[:,1]# - MRO_surprise.iloc[:,1]
+
 # Share of sentences: Sentences about inflation weighted by all sentences
 #monthly_inf_count = load_csv_data(PATH_data, 'monthly_count_inf_to_all.csv')
 
@@ -212,7 +239,10 @@ Ifo = Ifo[['Business_climate', 'Business_situation', 'Business_expectations']]
 data_inf_exp_eu = pd.read_excel(PATH_data + '\Infl_Exp.xlsx', index_col = 0)
 #ger_oecd_inf_exp = pd.read_csv(PATH + '\OECD_INF_FOR.csv', index_col = 0)
 
-data_out_ger = pd.read_excel(PATH_data + '\consumer_total_sa_nace2.xlsx', sheet_name='CONSUMER MONTHLY')[['Unnamed: 0', 'CONS.DE.TOT.COF.BS.M', 'CONS.DE.TOT.1.BS.M',  'CONS.DE.TOT.2.BS.M', 'CONS.DE.TOT.3.BS.M',  'CONS.DE.TOT.4.BS.M', 'CONS.DE.TOT.5.BS.M',  'CONS.DE.TOT.6.BS.M', 'CONS.DE.TOT.7.BS.M', 'CONS.DE.TOT.12.BS.M']]
+data_out_ger = pd.read_excel(PATH_data + '\consumer_total_nsa_nace2.xlsx', sheet_name='CONSUMER MONTHLY')[['Unnamed: 0', 'CONS.DE.TOT.COF.B.M', 'CONS.DE.TOT.1.B.M',  'CONS.DE.TOT.2.B.M', 'CONS.DE.TOT.3.B.M',  'CONS.DE.TOT.4.B.M', 'CONS.DE.TOT.5.B.M',  'CONS.DE.TOT.6.B.M', 'CONS.DE.TOT.7.B.M', 'CONS.DE.TOT.9.B.M','CONS.DE.TOT.12.B.M']]
+
+#data_out_ger = pd.read_excel(PATH_data + '\consumer_total_sa_nace2.xlsx', sheet_name='CONSUMER MONTHLY')[['Unnamed: 0', 'CONS.DE.TOT.COF.BS.M', 'CONS.DE.TOT.1.BS.M',  'CONS.DE.TOT.2.BS.M', 'CONS.DE.TOT.3.BS.M',  'CONS.DE.TOT.4.BS.M', 'CONS.DE.TOT.5.BS.M',  'CONS.DE.TOT.6.BS.M', 'CONS.DE.TOT.7.BS.M', 'CONS.DE.TOT.9.BS.M','CONS.DE.TOT.12.BS.M']]
+
 
 # data_comb_ecb_index = load_excel_data(PATH_data, 'news_ecbindex_dire_senti_BERT_m.xlsx')
 # data_comb_ecb_index.rename(columns = {'t_date': 'date'}, inplace = True)
@@ -232,7 +262,13 @@ VDAX_NEW.set_index('Datum', inplace=True)
 
 VDAX_NEW = VDAX_NEW
 
-DAX = pd.read_excel(PATH_data + '\DAX.xlsx').iloc[:, 2:4]
+#DAX = pd.read_excel(PATH_data + '\DAX.xlsx').iloc[:, 2:4]
+DAX = pd.read_excel(PATH_data + '\DAX.xlsx').iloc[:, 2:5]
+
+DAX.iloc[:, 2] = DAX.iloc[:, 2].str.replace(',', '', regex=False)
+#DAX.iloc[:, 2] = DAX.iloc[:, 2].str.replace('.', ',')
+
+DAX.iloc[:, 2] = pd.to_numeric(DAX.iloc[:, 2])
 
 DAX['Datum'] = pd.to_datetime(DAX['Date2'], format='%Y.%m.%d')
 DAX.set_index('Datum', inplace=True)
@@ -331,6 +367,21 @@ germ_balanced_ed3_perc = pd.read_excel(PATH_data + "\consumer_subsectors_nsa_q5_
 
 ###############################################################################
 
+energy_prices = transform_date(energy_prices)
+energy_prices = energy_prices.loc[(energy_prices.index >= start_date) & (energy_prices.index <= end_date)]
+
+###
+
+#brent_monthly = transform_date(brent_monthly)
+brent_monthly = brent_monthly.loc[(brent_monthly.index >= start_date) & (brent_monthly.index <= end_date)]
+
+###
+
+yield_germ = transform_date(yield_germ)
+yield_germ = yield_germ.loc[(yield_germ.index >= start_date) & (yield_germ.index <= end_date)]
+
+###
+
 data_out_ger = transform_date(data_out_ger)
 data_out_ger = data_out_ger.loc[(data_out_ger.index >= start_date) & (data_out_ger.index <= end_date)]
 data_out_ger.drop(columns=['Unnamed: 0'], inplace = True)
@@ -424,72 +475,72 @@ file_names_news = [
  #   'news_index_ecbrising_non_quotes', 'news_index_ecbnotrend_non_quotes', 'news_index_ecbfalling_non_quotes',
  #   'news_index_ecbrising_quotes', 'news_index_ecbnotrend_quotes', 'news_index_ecbfalling_quotes',
  
-    'news_index_ecbpositive_non_quotes_daily_lead', 'news_index_ecbneutral_non_quotes_daily_lead', 'news_index_ecbnegative_non_quotes_daily_lead',
-    'news_index_ecbpositive_quotes_daily_lead', 'news_index_ecbneutral_quotes_daily_lead', 'news_index_ecbnegative_quotes_daily_lead',
-    'news_index_rising_lead', 'news_index_notrend_lead', 'news_index_falling_lead',
-    'news_index_good_lead', 'news_index_neutral_lead', 'news_index_bad_lead',
-    'news_index_goodrising_lead', 'news_index_neutralrising_lead', 'news_index_badrising_lead',
-    'news_index_goodnotrend_lead', 'news_index_neutralnotrend_lead', 'news_index_badnotrend_lead',
-    'news_index_goodfalling_lead', 'news_index_neutralfalling_lead', 'news_index_badfalling_lead',
+    # 'news_index_ecbpositive_non_quotes_daily_lead', 'news_index_ecbneutral_non_quotes_daily_lead', 'news_index_ecbnegative_non_quotes_daily_lead',
+    # 'news_index_ecbpositive_quotes_daily_lead', 'news_index_ecbneutral_quotes_daily_lead', 'news_index_ecbnegative_quotes_daily_lead',
+    # 'news_index_rising_lead', 'news_index_notrend_lead', 'news_index_falling_lead',
+    # 'news_index_good_lead', 'news_index_neutral_lead', 'news_index_bad_lead',
+    # 'news_index_goodrising_lead', 'news_index_neutralrising_lead', 'news_index_badrising_lead',
+    # 'news_index_goodnotrend_lead', 'news_index_neutralnotrend_lead', 'news_index_badnotrend_lead',
+    # 'news_index_goodfalling_lead', 'news_index_neutralfalling_lead', 'news_index_badfalling_lead',
  
     'news_index_ecbpositive_non_quotes', 'news_index_ecbneutral_non_quotes', 'news_index_ecbnegative_non_quotes',
     'news_index_ecbpositive_quotes', 'news_index_ecbneutral_quotes', 'news_index_ecbnegative_quotes',
     'news_index_rising', 'news_index_notrend', 'news_index_falling',
     'news_index_good', 'news_index_neutral', 'news_index_bad',
-    'news_index_goodrising', 'news_index_neutralrising', 'news_index_badrising',
-    'news_index_goodnotrend', 'news_index_neutralnotrend', 'news_index_badnotrend',
-    'news_index_goodfalling', 'news_index_neutralfalling', 'news_index_badfalling',
+    # 'news_index_goodrising', 'news_index_neutralrising', 'news_index_badrising',
+    # 'news_index_goodnotrend', 'news_index_neutralnotrend', 'news_index_badnotrend',
+    # 'news_index_goodfalling', 'news_index_neutralfalling', 'news_index_badfalling',
     
     
-    'news_index_ecbpositive_non_quotes_daily', 'news_index_ecbneutral_non_quotes_daily', 'news_index_ecbnegative_non_quotes_daily',
-    'news_index_ecbpositive_quotes_daily', 'news_index_ecbneutral_quotes_daily', 'news_index_ecbnegative_quotes_daily',
-    'news_index_rising_daily', 'news_index_notrend_daily', 'news_index_falling_daily',
-       'news_index_good_daily', 'news_index_neutral_daily', 'news_index_bad_daily',
-       'news_index_goodrising_daily', 'news_index_neutralrising_daily', 'news_index_badrising_daily',
-       'news_index_goodnotrend_daily', 'news_index_neutralnotrend_daily', 'news_index_badnotrend_daily',
-       'news_index_goodfalling_daily', 'news_index_neutralfalling_daily', 'news_index_badfalling_daily',
+    # 'news_index_ecbpositive_non_quotes_daily', 'news_index_ecbneutral_non_quotes_daily', 'news_index_ecbnegative_non_quotes_daily',
+    # 'news_index_ecbpositive_quotes_daily', 'news_index_ecbneutral_quotes_daily', 'news_index_ecbnegative_quotes_daily',
+    # 'news_index_rising_daily', 'news_index_notrend_daily', 'news_index_falling_daily',
+    #    'news_index_good_daily', 'news_index_neutral_daily', 'news_index_bad_daily',
+    #    'news_index_goodrising_daily', 'news_index_neutralrising_daily', 'news_index_badrising_daily',
+    #    'news_index_goodnotrend_daily', 'news_index_neutralnotrend_daily', 'news_index_badnotrend_daily',
+    #    'news_index_goodfalling_daily', 'news_index_neutralfalling_daily', 'news_index_badfalling_daily',
        
        'news_index_ecb_quotes_number', 'news_index_ecb_non_quotes_number',
        
        'news_index_inf_number', 'news_index_mon_number',
       
-       'news_index_ecbpositive_non_quotes_daily_lag1', 'news_index_ecbneutral_non_quotes_daily_lag1', 'news_index_ecbnegative_non_quotes_daily_lag1',
-       'news_index_ecbpositive_quotes_daily_lag1', 'news_index_ecbneutral_quotes_daily_lag1', 'news_index_ecbnegative_quotes_daily_lag1',
-       'news_index_rising_daily_lag1', 'news_index_notrend_daily_lag1', 'news_index_falling_daily_lag1',
-          'news_index_good_daily_lag1', 'news_index_neutral_daily_lag1', 'news_index_bad_daily_lag1',
-          'news_index_goodrising_daily_lag1', 'news_index_neutralrising_daily_lag1', 'news_index_badrising_daily_lag1',
-          'news_index_goodnotrend_daily_lag1', 'news_index_neutralnotrend_daily_lag1', 'news_index_badnotrend_daily_lag1',
-          'news_index_goodfalling_daily_lag1', 'news_index_neutralfalling_daily_lag1', 'news_index_badfalling_daily_lag1',
+       # 'news_index_ecbpositive_non_quotes_daily_lag1', 'news_index_ecbneutral_non_quotes_daily_lag1', 'news_index_ecbnegative_non_quotes_daily_lag1',
+       # 'news_index_ecbpositive_quotes_daily_lag1', 'news_index_ecbneutral_quotes_daily_lag1', 'news_index_ecbnegative_quotes_daily_lag1',
+       # 'news_index_rising_daily_lag1', 'news_index_notrend_daily_lag1', 'news_index_falling_daily_lag1',
+       #    'news_index_good_daily_lag1', 'news_index_neutral_daily_lag1', 'news_index_bad_daily_lag1',
+       #    'news_index_goodrising_daily_lag1', 'news_index_neutralrising_daily_lag1', 'news_index_badrising_daily_lag1',
+       #    'news_index_goodnotrend_daily_lag1', 'news_index_neutralnotrend_daily_lag1', 'news_index_badnotrend_daily_lag1',
+       #    'news_index_goodfalling_daily_lag1', 'news_index_neutralfalling_daily_lag1', 'news_index_badfalling_daily_lag1',
        
 #    'news_index_hawkish', 'news_index_nomon', 'news_index_dovish', 
 #    'news_index_goodhawkish', 'news_index_goodnomon', 'news_index_gooddovish',
  #   'news_index_neutralhawkish', 'news_index_neutralnomon', 'news_index_neutraldovish',
  #   'news_index_badhawkish', 'news_index_badnomon', 'news_index_baddovish'
  
-    'news_index_ecbhawkish_non_quotes_daily', 'news_index_ecbnomon_non_quotes_daily', 'news_index_ecbdovish_non_quotes_daily',
-    'news_index_ecbhawkish_quotes_daily', 'news_index_ecbnomon_quotes_daily', 'news_index_ecbdovish_quotes_daily',
-    'news_index_ecbgoodhawkish_quotes_daily', 'news_index_ecbgoodnomon_quotes_daily', 'news_index_ecbgooddovish_quotes_daily',
-    'news_index_ecbneutralhawkish_quotes_daily', 'news_index_ecbneutralnomon_quotes_daily', 'news_index_ecbneutraldovish_quotes_daily',
-    'news_index_ecbbadhawkish_quotes_daily', 'news_index_ecbbadnomon_quotes_daily', 'news_index_ecbbaddovish_quotes_daily',
-    'news_index_ecbgoodhawkish_non_quotes_daily', 'news_index_ecbgoodnomon_non_quotes_daily', 'news_index_ecbgooddovish_non_quotes_daily',
-    'news_index_ecbneutralhawkish_non_quotes_daily', 'news_index_ecbneutralnomon_non_quotes_daily', 'news_index_ecbneutraldovish_non_quotes_daily',
-    'news_index_ecbbadhawkish_non_quotes_daily', 'news_index_ecbbadnomon_non_quotes_daily', 'news_index_ecbbaddovish_non_quotes_daily',
+    # 'news_index_ecbhawkish_non_quotes_daily', 'news_index_ecbnomon_non_quotes_daily', 'news_index_ecbdovish_non_quotes_daily',
+    # 'news_index_ecbhawkish_quotes_daily', 'news_index_ecbnomon_quotes_daily', 'news_index_ecbdovish_quotes_daily',
+    # 'news_index_ecbgoodhawkish_quotes_daily', 'news_index_ecbgoodnomon_quotes_daily', 'news_index_ecbgooddovish_quotes_daily',
+    # 'news_index_ecbneutralhawkish_quotes_daily', 'news_index_ecbneutralnomon_quotes_daily', 'news_index_ecbneutraldovish_quotes_daily',
+    # 'news_index_ecbbadhawkish_quotes_daily', 'news_index_ecbbadnomon_quotes_daily', 'news_index_ecbbaddovish_quotes_daily',
+    # 'news_index_ecbgoodhawkish_non_quotes_daily', 'news_index_ecbgoodnomon_non_quotes_daily', 'news_index_ecbgooddovish_non_quotes_daily',
+    # 'news_index_ecbneutralhawkish_non_quotes_daily', 'news_index_ecbneutralnomon_non_quotes_daily', 'news_index_ecbneutraldovish_non_quotes_daily',
+    # 'news_index_ecbbadhawkish_non_quotes_daily', 'news_index_ecbbadnomon_non_quotes_daily', 'news_index_ecbbaddovish_non_quotes_daily',
     
-    'news_index_ecbhawkish_non_quotes_daily_lag1', 'news_index_ecbnomon_non_quotes_daily_lag1', 'news_index_ecbdovish_non_quotes_daily_lag1',
-    'news_index_ecbhawkish_quotes_daily_lag1', 'news_index_ecbnomon_quotes_daily_lag1', 'news_index_ecbdovish_quotes_daily_lag1',
-    'news_index_ecbgoodhawkish_quotes_daily_lag1', 'news_index_ecbgoodnomon_quotes_daily_lag1', 'news_index_ecbgooddovish_quotes_daily_lag1',
-    'news_index_ecbneutralhawkish_quotes_daily_lag1', 'news_index_ecbneutralnomon_quotes_daily_lag1', 'news_index_ecbneutraldovish_quotes_daily_lag1',
-    'news_index_ecbbadhawkish_quotes_daily_lag1', 'news_index_ecbbadnomon_quotes_daily_lag1', 'news_index_ecbbaddovish_quotes_daily_lag1',
-    'news_index_ecbgoodhawkish_non_quotes_daily_lag1', 'news_index_ecbgoodnomon_non_quotes_daily_lag1', 'news_index_ecbgooddovish_non_quotes_daily_lag1',
-    'news_index_ecbneutralhawkish_non_quotes_daily_lag1', 'news_index_ecbneutralnomon_non_quotes_daily_lag1', 'news_index_ecbneutraldovish_non_quotes_daily_lag1',
-    'news_index_ecbbadhawkish_non_quotes_daily_lag1', 'news_index_ecbbadnomon_non_quotes_daily_lag1', 'news_index_ecbbaddovish_non_quotes_daily_lag1',
+    # 'news_index_ecbhawkish_non_quotes_daily_lag1', 'news_index_ecbnomon_non_quotes_daily_lag1', 'news_index_ecbdovish_non_quotes_daily_lag1',
+    # 'news_index_ecbhawkish_quotes_daily_lag1', 'news_index_ecbnomon_quotes_daily_lag1', 'news_index_ecbdovish_quotes_daily_lag1',
+    # 'news_index_ecbgoodhawkish_quotes_daily_lag1', 'news_index_ecbgoodnomon_quotes_daily_lag1', 'news_index_ecbgooddovish_quotes_daily_lag1',
+    # 'news_index_ecbneutralhawkish_quotes_daily_lag1', 'news_index_ecbneutralnomon_quotes_daily_lag1', 'news_index_ecbneutraldovish_quotes_daily_lag1',
+    # 'news_index_ecbbadhawkish_quotes_daily_lag1', 'news_index_ecbbadnomon_quotes_daily_lag1', 'news_index_ecbbaddovish_quotes_daily_lag1',
+    # 'news_index_ecbgoodhawkish_non_quotes_daily_lag1', 'news_index_ecbgoodnomon_non_quotes_daily_lag1', 'news_index_ecbgooddovish_non_quotes_daily_lag1',
+    # 'news_index_ecbneutralhawkish_non_quotes_daily_lag1', 'news_index_ecbneutralnomon_non_quotes_daily_lag1', 'news_index_ecbneutraldovish_non_quotes_daily_lag1',
+    # 'news_index_ecbbadhawkish_non_quotes_daily_lag1', 'news_index_ecbbadnomon_non_quotes_daily_lag1', 'news_index_ecbbaddovish_non_quotes_daily_lag1',
  
 ]
 
 news_indices = {}
 
 for name in file_names_news:
-    filepath = PATH_data + '\\' + name + '.xlsx'
+    filepath = PATH_data + '\\'+ 'Neu' + '\\' + name + '.xlsx'
     news_indices[name] = process_dataframe(filepath, start_date, end_date)
 
 ###
@@ -501,20 +552,21 @@ file_names_news_og = [
        
        'news_index_ecbhawkish_non_quotes_og', 'news_index_ecbnomon_non_quotes_og', 'news_index_ecbdovish_non_quotes_og',
        'news_index_ecbhawkish_quotes_og', 'news_index_ecbnomon_quotes_og', 'news_index_ecbdovish_quotes_og',
-       'news_index_ecbgoodhawkish_quotes_og', 'news_index_ecbgoodnomon_quotes_og', 'news_index_ecbgooddovish_quotes_og',
-       'news_index_ecbneutralhawkish_quotes_og', 'news_index_ecbneutralnomon_quotes_og', 'news_index_ecbneutraldovish_quotes_og',
-       'news_index_ecbbadhawkish_quotes_og', 'news_index_ecbbadnomon_quotes_og', 'news_index_ecbbaddovish_quotes_og',
-       'news_index_ecbgoodhawkish_non_quotes_og', 'news_index_ecbgoodnomon_non_quotes_og', 'news_index_ecbgooddovish_non_quotes_og',
        
-       'news_index_ecbneutralhawkish_non_quotes_og', 'news_index_ecbneutralnomon_non_quotes_og', 'news_index_ecbneutraldovish_non_quotes_og',
-       'news_index_ecbbadhawkish_non_quotes_og', 'news_index_ecbbadnomon_non_quotes_og', 'news_index_ecbbaddovish_non_quotes_og',
+       # 'news_index_ecbgoodhawkish_quotes_og', 'news_index_ecbgoodnomon_quotes_og', 'news_index_ecbgooddovish_quotes_og',
+       # 'news_index_ecbneutralhawkish_quotes_og', 'news_index_ecbneutralnomon_quotes_og', 'news_index_ecbneutraldovish_quotes_og',
+       # 'news_index_ecbbadhawkish_quotes_og', 'news_index_ecbbadnomon_quotes_og', 'news_index_ecbbaddovish_quotes_og',
+       # 'news_index_ecbgoodhawkish_non_quotes_og', 'news_index_ecbgoodnomon_non_quotes_og', 'news_index_ecbgooddovish_non_quotes_og',
+       
+       # 'news_index_ecbneutralhawkish_non_quotes_og', 'news_index_ecbneutralnomon_non_quotes_og', 'news_index_ecbneutraldovish_non_quotes_og',
+       # 'news_index_ecbbadhawkish_non_quotes_og', 'news_index_ecbbadnomon_non_quotes_og', 'news_index_ecbbaddovish_non_quotes_og',
         
        'news_index_rising_og', 'news_index_notrend_og', 'news_index_falling_og',
        'news_index_good_og', 'news_index_neutral_og', 'news_index_bad_og',
        
-       'news_index_goodrising_og', 'news_index_neutralrising_og', 'news_index_badrising_og',
-       'news_index_goodnotrend_og', 'news_index_neutralnotrend_og', 'news_index_badnotrend_og',
-       'news_index_goodfalling_og', 'news_index_neutralfalling_og', 'news_index_badfalling_og',
+       # 'news_index_goodrising_og', 'news_index_neutralrising_og', 'news_index_badrising_og',
+       # 'news_index_goodnotrend_og', 'news_index_neutralnotrend_og', 'news_index_badnotrend_og',
+       # 'news_index_goodfalling_og', 'news_index_neutralfalling_og', 'news_index_badfalling_og',
        
        'news_index_inf_number_og', 'news_index_mon_number_og',
        'news_index_ecb_quotes_number_og', 'news_index_ecb_non_quotes_number_og'
@@ -800,13 +852,20 @@ Regression_data_m['ECB MRO NEG'] = negative_surprise_values
 Regression_data_m['ED Exchange Rate'] = list(euro_dollar_m.iloc[start:,1])
 Regression_data_m['Eurostoxx'] = list(eurostoxx.iloc[start:,1])
 
+Regression_data_m['Germany Yield'] = list(yield_germ.iloc[start:,1])
+Regression_data_m['Germany Spread'] = list(yield_germ.iloc[start:,2])
+
 Regression_data_m['Germany Conf'] = list(data_out_ger.iloc[start:,0])
 Regression_data_m['Germany Past Fin'] = list(data_out_ger.iloc[start:,1])
 Regression_data_m['Germany Future Fin'] = list(data_out_ger.iloc[start:,2])
 Regression_data_m['Germany Past Eco'] = list(data_out_ger.iloc[start:,3])
 Regression_data_m['Germany Future Eco'] = list(data_out_ger.iloc[start:,4])
 Regression_data_m['Germany Future Un'] = list(data_out_ger.iloc[start:,7])
-Regression_data_m['Germany Fin Status'] = list(data_out_ger.iloc[start:,8])
+Regression_data_m['Germany Future Pur'] = list(data_out_ger.iloc[start:,8])
+Regression_data_m['Germany Fin Status'] = list(data_out_ger.iloc[start:,9])
+
+Regression_data_m['Oil Change'] = list(brent_monthly.iloc[start:,1])
+Regression_data_m['Germany Energy'] = list(energy_prices.iloc[start:,1])
 
 #Regression_data_m['PR Mon'] = list(PR['r_mp_rest'] - PR['r_mp_acco'])[start:]
 #Regression_data_m['PR Eco'] = list(PR['r_ec_posi'] - PR['r_ec_nega'])[start:]
@@ -868,7 +927,8 @@ Regression_data_m['German Inflation Balanced Secondary Perc'] = list(germ_balanc
 Regression_data_m['German Inflation Balanced Further Perc'] = list(germ_balanced_ed3_perc.iloc[:-10,1])
 
 Regression_data_m['VDAX'] = list(VDAX_NEW['VDAX-NEW VOLATILITY INDEX - PRICE INDEX'][126:-7])
-Regression_data_m['DAX'] = list(DAX['DAX PERFORMANCE - PRICE INDEX'][126:-7])
+#Regression_data_m['DAX'] = list(DAX['DAX PERFORMANCE - PRICE INDEX'][126:-7])
+Regression_data_m['DAX'] = list(DAX['DAX PERFORMANCE - CLOSE'][126:-7])
 
 start = 1
 
@@ -982,8 +1042,26 @@ Regression_data_m = merge_month_year(ip_ger_m, Regression_data_m, 'date', 'cycli
 Regression_data_m = merge_month_year(inflation_ger_m, Regression_data_m, 'date', 'Inflation', 'German Inflation Year-on-Year')
 Regression_data_m = merge_month_year(MRO_surprise, Regression_data_m, 'date', 'Positive_Surprise', 'ECB MRO POS')
 Regression_data_m = merge_month_year(MRO_surprise, Regression_data_m, 'date', 'Negative_Surprise', 'ECB MRO NEG')
-Regression_data_m = merge_month_year(DAX, Regression_data_m, 'date', 'DAX PERFORMANCE - PRICE INDEX', 'DAX')
+#Regression_data_m = merge_month_year(MRO_surprise, Regression_data_m, 'date', 'Negative_Surprise', 'ECB MRO SUR')
+#MRO_surprise
+
+#Regression_data_m = merge_month_year(DAX, Regression_data_m, 'date', 'DAX PERFORMANCE - PRICE INDEX', 'DAX')
+Regression_data_m = merge_month_year(DAX, Regression_data_m, 'date', 'DAX PERFORMANCE - CLOSE', 'DAX')
 Regression_data_m = merge_month_year(VDAX_NEW, Regression_data_m, 'date', 'VDAX-NEW VOLATILITY INDEX - PRICE INDEX', 'VDAX')
+
+#Regression_data_m = merge_month_year(DAX, Regression_data_m, 'date', 'DAX PERFORMANCE - PRICE INDEX', 'DAX')
+#Regression_data_m = merge_month_year(VDAX_NEW, Regression_data_m, 'date', 'VDAX-NEW VOLATILITY INDEX - PRICE INDEX', 'VDAX')
+
+Regression_data_m = merge_month_year(yield_germ, Regression_data_m, 'date', 'IRLTLT01DEM156N', 'Germany Yield')
+Regression_data_m = merge_month_year(yield_germ, Regression_data_m, 'date', 'spread', 'Germany Spread')
+
+Regression_data_m = merge_month_year(brent_monthly, Regression_data_m, 'date', 'price', 'Oil')
+Regression_data_m = merge_month_year(brent_monthly, Regression_data_m, 'date', 'Oil_Price_Change_YoY', 'Oil Change')
+
+Regression_data_m = merge_month_year(energy_prices, Regression_data_m, 'date', 'values', 'Germany Energy')
+
+#Regression_data_m['Germany Yield'] = list(yield_germ.iloc[start:,1])
+#Regression_data_m['Germany Spread'] = list(yield_germ.iloc[start:,2])
 
 # ecb_mro['year_month'] = ecb_mro['observation_date'].dt.to_period('M')
 # ecb_mro = ecb_mro.groupby('year_month').last().reset_index()
@@ -1083,10 +1161,15 @@ Regression_data_m = merge_month_year(forecast_q_eu_staff_gdp, Regression_data_m,
 Regression_data_m = merge_month_year(euro_dollar_m, Regression_data_m, 'date', 'Unnamed: 1', 'ED Exchange Rate')
 Regression_data_m = merge_month_year(eurostoxx, Regression_data_m, 'date', 'OBS.VALUE', 'Eurostoxx')
 
-Regression_data_m = merge_month_year(data_out_ger, Regression_data_m, 'date', 'CONS.DE.TOT.COF.BS.M', 'Germany Conf')
-Regression_data_m = merge_month_year(data_out_ger, Regression_data_m, 'date', 'CONS.DE.TOT.2.BS.M', 'Germany Future Fin')
-Regression_data_m = merge_month_year(data_out_ger, Regression_data_m, 'date', 'CONS.DE.TOT.4.BS.M', 'Germany Future Eco')
-Regression_data_m = merge_month_year(data_out_ger, Regression_data_m, 'date', 'CONS.DE.TOT.7.BS.M', 'Germany Future Un')
+Regression_data_m = merge_month_year(data_out_ger, Regression_data_m, 'date', 'CONS.DE.TOT.COF.B.M', 'Germany Conf')
+Regression_data_m = merge_month_year(data_out_ger, Regression_data_m, 'date', 'CONS.DE.TOT.2.B.M', 'Germany Future Fin')
+Regression_data_m = merge_month_year(data_out_ger, Regression_data_m, 'date', 'CONS.DE.TOT.4.B.M', 'Germany Future Eco')
+Regression_data_m = merge_month_year(data_out_ger, Regression_data_m, 'date', 'CONS.DE.TOT.7.B.M', 'Germany Future Un')
+
+# Regression_data_m = merge_month_year(data_out_ger, Regression_data_m, 'date', 'CONS.DE.TOT.COF.BS.M', 'Germany Conf')
+# Regression_data_m = merge_month_year(data_out_ger, Regression_data_m, 'date', 'CONS.DE.TOT.2.BS.M', 'Germany Future Fin')
+# Regression_data_m = merge_month_year(data_out_ger, Regression_data_m, 'date', 'CONS.DE.TOT.4.BS.M', 'Germany Future Eco')
+# Regression_data_m = merge_month_year(data_out_ger, Regression_data_m, 'date', 'CONS.DE.TOT.7.BS.M', 'Germany Future Un')
 
 germ_balanced.index = germ_balanced['TOT']
 

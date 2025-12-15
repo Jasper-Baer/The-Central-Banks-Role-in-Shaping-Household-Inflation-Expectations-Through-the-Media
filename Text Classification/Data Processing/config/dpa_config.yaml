@@ -1,0 +1,41 @@
+# ===================================================================
+# CONFIGURATION FOR THE DPA NEWS PROCESSING PIPELINE
+# ===================================================================
+
+# --- DEBUG MODE ---
+debug_mode: True
+debug_rows: 1000 
+
+# --- Base Path ---
+data_root: "D:/Studium/PhD/New_DPA_Data"
+
+
+# --- Directory Paths ---
+raw_data_input_dir: "data" 
+extracted_output_dir: "data/01_extracted"
+preprocessed_output_dir: "data/02_preprocessed"
+final_candidates_output_dir: "data/03_final_candidates"
+final_cleaned_output_dir: "data/04_final_cleaned" 
+lemmatized_output_dir: "data/05_lemmatized"
+subset_output_dir: "data/06_subsets"
+
+
+# --- Intermediate and Final Filenames ---
+raw_articles_csv: "01_raw_articles.csv"
+cleaned_articles_csv: "02_cleaned_articles.csv"
+final_candidates_csv: "03_final_candidates.csv"
+final_cleaned_csv: "04_final_cleaned_articles.csv"
+lemmatized_data_csv: "05_lemmatized_data.csv"
+stem_map_json: "05_stem_map.json"
+inflation_subset_csv: "inflation_sentences_final.csv"
+ecb_subset_csv: "ecb_sentences_final.csv"
+
+
+# --- Parameters ---
+min_word_count: 100
+numeric_article_threshold: 0.50
+numeric_paragraph_threshold: 0.70
+numeric_paragraph_min_words: 10
+fuzzy_dedup_similarity_threshold: 0.8 
+names_ratio_threshold: 0.15
+lemmatization_chunks: 10

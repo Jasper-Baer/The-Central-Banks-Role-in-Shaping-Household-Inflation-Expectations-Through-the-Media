@@ -7,10 +7,15 @@ library("kableExtra")
 
 data <- read_excel('D:/Studium/PhD/Github/Single-Author/Code/Regression/Regession_data_monthly_2_processed_ECB_2_og.xlsx')
 data <- data.frame(data)
-data <- data[12:(nrow(data)),]
 data$time <- as.Date(strptime(data$time, "%Y-%m-%d"))
+
+# Delete first year + 1 month due to missing data in Reuter Poll Forecast and
+# first differencing
+data <- data %>%
+  filter(time >= as.Date("2003-02-28")) 
 n <- nrow(data)
-lags <- floor(0.75 * n^(1/3))
+#lags <- floor(0.75 * n^(1/3))
+#lags <- floor(12 * (n/100)^(1/4))
 
 variables_to_test <- c(
   "News.Inflation.Direction.Index",
@@ -51,6 +56,16 @@ variables_to_test <- c(
   # "News.Monetary.Quote.Neg._stored_1",
   # "News.Monetary.Quote.Sentiment.Index_stored_1",
   
+ # "Oil.Change",
+#  "Germany.Yield",
+ # "Germany.Spread",
+  
+#  "Germany.Yield.difference",
+#  "Germany.Spread.difference",
+  
+ # "Germany.Energy",
+#  "Germany.Energy.difference",
+  
   "Quote_Ratio",
   "ECB.PC.Inflation.Inc.",
   "ECB.PC.Inflation.Dec.",
@@ -67,11 +82,11 @@ variables_to_test <- c(
   "Germany.Unemployment",
   "Germany.Unemployment.difference",
   "German.Industrial.Production.Gap",
-  "Germany.Future.Un",
-  "Germany.Future.Un.difference",
-  "Germany.Future.Eco",
-  "Germany.Future.Fin",
-  "Germany.Future.Fin.difference",
+#  "Germany.Future.Un",
+#  "Germany.Future.Un.difference",
+#  "Germany.Future.Eco",
+#  "Germany.Future.Fin",
+#  "Germany.Future.Fin.difference",
   "Germany.Conf",
   "Germany.Conf.difference",
   "ECB.MRO",
@@ -87,6 +102,8 @@ variables_to_test <- c(
   "Reuter.Poll.Forecast.difference",
   "German.Inflation.Year.on.Year",
   "German.Inflation.Year.on.Year.difference",
+ # "German.Inflation.Balanced",
+ # "German.Inflation.Balanced.difference",
   "Eurostoxx",
   "Eurostoxx.difference"
 )
@@ -137,19 +154,24 @@ merged_df <- adf_results_df %>%
                rename(PP_Stat = Test_Statistic, PP_pval = Approx_P_Value),
              by = "Variable")
 
-bold_if_significant <- function(stat_value, p_val, digits = 3) {
+add_stars <- function(stat_value, p_val, digits = 3) {
   val_str <- format(round(stat_value, digits), nsmall = digits)
-  if (!is.na(p_val) && p_val < 0.05) {
-    paste0("\\textbf{", val_str, "}")
-  } else {
-    val_str
+  if (!is.na(p_val)) {
+    if (p_val <= 0.01) {
+      val_str <- paste0(val_str, "***")
+    } else if (p_val <= 0.05) {
+      val_str <- paste0(val_str, "**")
+    } else if (p_val < 0.10) {
+      val_str <- paste0(val_str, "*")
+    }
   }
+  return(val_str)
 }
 
 merged_df <- merged_df %>%
   mutate(
-    ADF_Stat_fmt = mapply(bold_if_significant, ADF_Stat, ADF_pval),
-    PP_Stat_fmt  = mapply(bold_if_significant, PP_Stat, PP_pval)
+    ADF_Stat_fmt = mapply(add_stars, ADF_Stat, ADF_pval),
+    PP_Stat_fmt  = mapply(add_stars, PP_Stat, PP_pval)
   )
 
 ################################################################################
@@ -197,6 +219,17 @@ variable_order <- c(
   "$\\mathrm{ECB \\ Economy_t^{Increasing}}$",
   "$\\mathrm{ECB \\ Economy_t^{Decreasing}}$",
   "$\\mathrm{ECB \\ Economy_t^{Outlook}}$",
+  
+#  "Yield",
+#  "Spread",
+#  "Oil_d",
+#  "Confidence",
+  
+#  "$\\Delta$ Yield",
+#  "$\\Delta$ Spread",
+  
+#  "Energy",
+#  "$\\Delta$ Energy",
   
 #   "News - Inflation Inc.",
 #  # "News - Inflation Stable",
@@ -246,16 +279,16 @@ variable_order <- c(
   "$\\Delta$ Household Inflation Expectations",
   "HICP Inflation",
   "$\\Delta$ HICP Inflation",
-  "output Gap",
+  "Output Gap",
   "Unemployment Rate",
   "$\\Delta$ Unemployment Rate",
   "Confidence",
   "$\\Delta$ Confidence",
-  "Unemployment Expectations",
-  "$\\Delta$ Unemployment Expectations",
-  "Financial Expectations",
-  "$\\Delta$ Financial Expectations",
-  "Economic Expectations",
+#  "Unemployment Expectations",
+#  "$\\Delta$ Unemployment Expectations",
+#  "Financial Expectations",
+#  "$\\Delta$ Financial Expectations",
+#  "Economic Expectations",
   "Eurostoxx",
   "Eurostoxx.difference"
 )
@@ -297,6 +330,21 @@ name_mapping <- c(
   # "ECB - Economic Outlook Inc."       = "ECB.PC.Outlook.Up",
   # "ECB - Economic Outlook Stable"     = "ECB.PC.Outlook.Same",
   # "ECB - Economic Outlook Dec."       = "ECB.PC.Outlook.Down",
+  
+#  "$\\Delta$ Energy" = "Germany.Energy.difference",
+  
+#  "Oil_d" = "Oil.Change",
+  
+#  "Yield" = "Germany.Yield",
+#  "Spread" = "Germany.Spread",
+  
+#  "Confidence" = "Germany.Conf",
+  
+#"Energy" = "Germany.Energy",
+  
+ # "$\\Delta$ Yield" = "Germany.Yield.difference",
+#  "$\\Delta$ Spread" = "Germany.Spread.difference",
+  
   "Positive Interest Rate Surprise"   = "ECB.MRO.POS",
   "Negative Interest Rate Surprise"   = "ECB.MRO.NEG",
   "MRO rate"                     = "ECB.MRO",
@@ -310,16 +358,16 @@ name_mapping <- c(
   "$\\Delta$ Professional Inflation Forecast"   = "Reuter.Poll.Forecast.difference",
   "HICP Inflation"                    = "German.Inflation.Year.on.Year",
   "$\\Delta$ HICP Inflation"            = "German.Inflation.Year.on.Year.difference",
-  "Industrial Production Gap"         = "German.Industrial.Production.Gap",
+  "Output Gap"         = "German.Industrial.Production.Gap",
   "Unemployment Rate"                 = "Germany.Unemployment",
   "$\\Delta$ Unemployment Rate"         = "Germany.Unemployment.difference",
   "Confidence"                        = "Germany.Conf",
-  "$\\Delta$ Confidence"                = "Germany.Conf.difference",
-  "Unemployment Expectations"         = "Germany.Future.Un",
-  "$\\Delta$ Unemployment Expectations" = "Germany.Future.Un.difference",
-  "Financial Expectations"            = "Germany.Future.Fin",
-  "$\\Delta$ Financial Expectations"    = "Germany.Future.Fin.difference",
-  "Economic Expectations"             = "Germany.Future.Eco"
+  "$\\Delta$ Confidence"                = "Germany.Conf.difference"
+#  "Unemployment Expectations"         = "Germany.Future.Un",
+#  "$\\Delta$ Unemployment Expectations" = "Germany.Future.Un.difference",
+ # "Financial Expectations"            = "Germany.Future.Fin",
+  #"$\\Delta$ Financial Expectations"    = "Germany.Future.Fin.difference",
+  #"Economic Expectations"             = "Germany.Future.Eco"
 )
 
 table_vars <- data.frame(LatexLabel = variable_order)
@@ -582,10 +630,11 @@ cat(latex_table)
 ################################################################################
 
 data = read_excel('D:/Studium/PhD/Github/Single-Author/Code/Regression/Regession_data_monthly_2_processed_inf.xlsx')
-data = data.frame(data)
-data = data[12:(nrow(data)),]
+data <- data.frame(data)
+data$time <- as.Date(strptime(data$time, "%Y-%m-%d"))
 
-data$time = as.Date(strptime(data$time, "%Y-%m-%d"))
+data <- data %>%
+  filter(time >= as.Date("2003-02-28")) 
 
 variables_to_test <- c(
   
@@ -636,17 +685,22 @@ variables_to_test <- c(
   "News.Monetary.Quote.Sentiment.Index",
   "News.Monetary.Quote.Pos.",
   "News.Monetary.Quote.Neg.",
+  
+#  "Germany.Yield",
+#  "Germany.Spread",
+  
+#  "Germany.Future.Pur",
 
   "Quote_Ratio",
-  "ECB.PC.Inflation.Inc.",
+  # "ECB.PC.Inflation.Inc.",
   # "ECB.PC.Inflation.Stable",
-  "ECB.PC.Inflation.Dec.",
-  "ECB.PC.Monetary.Haw.",
+  # "ECB.PC.Inflation.Dec.",
+  # "ECB.PC.Monetary.Haw.",
   # "ECB.PC.Monetary.Stab.",
-  "ECB.PC.Monetary.Dov.",
-  "ECB.PC.Outlook.Up",
+  # "ECB.PC.Monetary.Dov.",
+  # "ECB.PC.Outlook.Up",
   # "ECB.PC.Outlook.Same",
-  "ECB.PC.Outlook.Down",
+  # "ECB.PC.Outlook.Down",
   # "News_res_inf_rising_stored_1",
   # "News_res_inf_falling_stored_1",
   # "News_res_inf_good_stored_1",
@@ -662,11 +716,11 @@ variables_to_test <- c(
  "Germany.Unemployment",
  "Germany.Unemployment.difference",
  "German.Industrial.Production.Gap",
- "Germany.Future.Un",
- "Germany.Future.Un.difference",
- "Germany.Future.Eco",
- "Germany.Future.Fin",
- "Germany.Future.Fin.difference",
+# "Germany.Future.Un",
+# "Germany.Future.Un.difference",
+# "Germany.Future.Eco",
+# "Germany.Future.Fin",
+# "Germany.Future.Fin.difference",
  "Germany.Conf",
  "Germany.Conf.difference",
  "ECB.MRO",
@@ -716,21 +770,26 @@ variable_order <- c(
   
   "$\\mathrm{News \\ MP}_t^{QuoteShare}$", 
   
-  "$\\mathrm{ECB \\ Inflation_t^{Increasing}}$",
-  "$\\mathrm{ECB \\ Inflation_t^{Decreasing}}$",
-  "$\\mathrm{ECB \\ Inflation_t^{Outlook}}$",
+  # "$\\mathrm{ECB \\ Inflation_t^{Increasing}}$",
+  # "$\\mathrm{ECB \\ Inflation_t^{Decreasing}}$",
+  # "$\\mathrm{ECB \\ Inflation_t^{Outlook}}$",
+  # 
+  # "$\\mathrm{ECB \\ MP_t^{Hawkish}}$",
+  # "$\\mathrm{ECB \\ MP_t^{Dovish}}$",
+  # "$\\mathrm{ECB \\ MP_t^{Stance}}$",
+  # 
+  # "$\\Delta \\mathrm{ECB \\ MP_t^{Hawkish}}$",
+  # "$\\Delta \\mathrm{ECB \\ MP_t^{Dovish}}$",
+  # "$\\Delta \\mathrm{ECB \\ MP_t^{Stance}}$",
+  # 
+  # "$\\mathrm{ECB \\ Economy_t^{Increasing}}$",
+  # "$\\mathrm{ECB \\ Economy_t^{Decreasing}}$",
+  # "$\\mathrm{ECB \\ Economy_t^{Outlook}}$",
   
-  "$\\mathrm{ECB \\ MP_t^{Hawkish}}$",
-  "$\\mathrm{ECB \\ MP_t^{Dovish}}$",
-  "$\\mathrm{ECB \\ MP_t^{Stance}}$",
+#  "Yield",
+#  "Spread",
   
-  "$\\Delta \\mathrm{ECB \\ MP_t^{Hawkish}}$",
-  "$\\Delta \\mathrm{ECB \\ MP_t^{Dovish}}$",
-  "$\\Delta \\mathrm{ECB \\ MP_t^{Stance}}$",
-  
-  "$\\mathrm{ECB \\ Economy_t^{Increasing}}$",
-  "$\\mathrm{ECB \\ Economy_t^{Decreasing}}$",
-  "$\\mathrm{ECB \\ Economy_t^{Outlook}}$",
+#  "Germany.Future.Pur",
   
   "MRO rate",
   "$\\Delta$ MRO rate",
@@ -753,15 +812,21 @@ variable_order <- c(
   "Unemployment Rate",
   "$\\Delta$ Unemployment Rate",
   "Confidence",
-  "$\\Delta$ Confidence",
-  "Unemployment Expectations",
-  "$\\Delta$ Unemployment Expectations",
-  "Financial Expectations",
-  "$\\Delta$ Financial Expectations",
-  "Economic Expectations"
+  "$\\Delta$ Confidence"
+#  "Unemployment Expectations",
+#  "$\\Delta$ Unemployment Expectations",
+#  "Financial Expectations",
+#  "$\\Delta$ Financial Expectations",
+#  "Economic Expectations"
 )
 
 name_mapping <- c(
+  
+#  "Yield" = "Germany.Yield",
+#  "Spread" = "Germany.Spread",
+  
+#  "Germany.Future.Pur" = "Germany.Future.Pur",
+  
   "Positive Interest Rate Surprise"   = "ECB.MRO.POS",
   "Negative Interest Rate Surprise"   = "ECB.MRO.NEG",
   "MRO rate"                     = "ECB.MRO",
@@ -781,12 +846,12 @@ name_mapping <- c(
   "Unemployment Rate"                 = "Germany.Unemployment",
   "$\\Delta$ Unemployment Rate"         = "Germany.Unemployment.difference",
   "Confidence"                        = "Germany.Conf",
-  "$\\Delta$ Confidence"                = "Germany.Conf.difference",
-  "Unemployment Expectations"         = "Germany.Future.Un",
-  "$\\Delta$ Unemployment Expectations" = "Germany.Future.Un.difference",
-  "Financial Expectations"            = "Germany.Future.Fin",
-  "$\\Delta$ Financial Expectations"    = "Germany.Future.Fin.difference",
-  "Economic Expectations"             = "Germany.Future.Eco"
+  "$\\Delta$ Confidence"                = "Germany.Conf.difference"
+#  "Unemployment Expectations"         = "Germany.Future.Un",
+#  "$\\Delta$ Unemployment Expectations" = "Germany.Future.Un.difference",
+#  "Financial Expectations"            = "Germany.Future.Fin",
+#  "$\\Delta$ Financial Expectations"    = "Germany.Future.Fin.difference",
+#  "Economic Expectations"             = "Germany.Future.Eco"
 )
 
 adf_results <- lapply(variables_to_test, perform_adf_test, data = data)
@@ -816,8 +881,8 @@ bold_if_significant <- function(stat_value, p_val, digits = 3) {
 
 merged_df <- merged_df %>%
   mutate(
-    ADF_Stat_fmt = mapply(bold_if_significant, ADF_Stat, ADF_pval),
-    PP_Stat_fmt  = mapply(bold_if_significant, PP_Stat, PP_pval)
+    ADF_Stat_fmt = mapply(add_stars, ADF_Stat, ADF_pval),
+    PP_Stat_fmt  = mapply(add_stars, PP_Stat, PP_pval)
   )
 
 ################################################################################
@@ -997,82 +1062,82 @@ cat(latex_table)
 
 ################################################################################
 
-name_mapping <- c(
-  
-  "$\\mathrm{ECB \\ Inflation_t^{Increasing}}$" = "ECB.PC.Inflation.Inc.",
-  "$\\mathrm{ECB \\ Inflation_t^{Decreasing}}$" = "ECB.PC.Inflation.Dec.",
-  "$\\mathrm{ECB \\ Inflation_t^{Outlook}}$" = "ECB.PC.Inflation.Index",
-  
-  "$\\mathrm{ECB \\ Economy_t^{Increasing}}$" = "ECB.PC.Outlook.Up",
-  "$\\mathrm{ECB \\ Economy_t^{Decreasing}}$" = "ECB.PC.Outlook.Down",
-  "$\\mathrm{ECB \\ Economy_t^{Outlook}}$" = "ECB.PC.Outlook.Index",
-  
-  "$\\mathrm{ECB \\ MP_t^{Hawkish}}$" = "ECB.PC.Monetary.Haw.",
-  "$\\mathrm{ECB \\ MP_t^{Dovish}}$" = "ECB.PC.Monetary.Dov.",
-  "$\\mathrm{ECB \\ MP_t^{Stance}}$" = "ECB.PC.Monetary.Index",
-  
-  "$\\Delta \\mathrm{ECB \\ MP_t^{Hawkish}}$" = "ECB.PC.Monetary.Haw..difference",
-  "$\\Delta \\mathrm{ECB \\ MP_t^{Dovish}}$" = "ECB.PC.Monetary.Dov..difference",
-  "$\\Delta \\mathrm{ECB \\ MP_t^{Stance}}$" = "ECB.PC.Monetary.Index.difference"
-  
-)
-
-table_vars <- data.frame(LatexLabel = variable_order)
-table_vars$CodeVar <- ifelse(
-  table_vars$LatexLabel %in% names(name_mapping),
-  name_mapping[table_vars$LatexLabel],
-  NA
-)
-
-table_vars <- table_vars[!is.na(table_vars$CodeVar), ]
-
-final_table <- table_vars %>%
-  left_join(
-    merged_df %>% select(Variable, ADF_Stat_fmt, PP_Stat_fmt),
-    by = c("CodeVar" = "Variable")
-  )
-
-kable_table <- final_table %>%
-  select(LatexLabel, ADF_Stat_fmt, PP_Stat_fmt) %>%
-  rename(
-    Variables               = LatexLabel,
-    `ADF-test statistic`    = ADF_Stat_fmt,
-    `PP-test statistic`     = PP_Stat_fmt
-  ) %>%
-  kable(
-    format = "latex",
-    booktabs = TRUE,
-    caption = "Stationarity Tests - ECB Variables - 14 Days after Press Conferences",
-    label = "statio_test_ECB_14",
-    escape = FALSE
-  ) %>%
-  kable_styling(latex_options = c("hold_position"), font_size = 10) %>%
-  footnote(
-    general = "\\parbox[t]{\\textwidth}{Note: The table depicts ADF and PP test statistics for the variables. Bold values indicate \\\\ rejection of the null hypothesis of a unit root at the 5\\\\% significance level.}",
-    general_title = "",
-    escape = FALSE  
-  )
-
-kable_table <- gsub(
-  "parbox[t]{textwidth}",
-  "\\parbox[t]{\\textwidth}",
-  kable_table,
-  fixed = TRUE
-)
-
-for (i in seq(3, nrow(final_table), by = 3)) {
-  kable_table <- kable_table %>% row_spec(i, hline_after = TRUE)
-}
-
-latex_table <- as.character(kable_table)
-latex_table <- gsub("Bold values indicate \\\\ rejection", 
-                    "Bold values indicate \\\\\\\\ rejection", 
-                    latex_table)
-latex_table <- gsub("\\\\begin\\{tabular\\}\\[t\\]\\{lll\\}", "\\\\begin\\{tabular\\}\\[t\\]\\{lcc\\}", latex_table)
-#latex_table <- gsub("\\\\end\\{tabular\\}", "\\\\end{tabularx}", latex_table)
-latex_table <- gsub("(?m)^\\\\addlinespace\\s*\n", "", latex_table, perl = TRUE)
-#latex_table <- gsub("\\\\addlinespace", "\\\\midrule", latex_table)
-latex_table <- gsub("\\\\fontsize\\{10\\}\\{12\\}\\\\selectfont", "\\\\footnotesize\\\n\\\\setlength\\{\\\\tabcolsep\\}\\{6pt\\}", latex_table)
-latex_table <- gsub("Variable & ADF-test statistic & PP-test statistic", 
-                    "\\\\textbf{Variable} & \\\\textbf{ADF-test statistic} & \\\\textbf{PP-test statistic}", latex_table)
-cat(latex_table)
+# name_mapping <- c(
+#   
+#   "$\\mathrm{ECB \\ Inflation_t^{Increasing}}$" = "ECB.PC.Inflation.Inc.",
+#   "$\\mathrm{ECB \\ Inflation_t^{Decreasing}}$" = "ECB.PC.Inflation.Dec.",
+#   "$\\mathrm{ECB \\ Inflation_t^{Outlook}}$" = "ECB.PC.Inflation.Index",
+#   
+#   "$\\mathrm{ECB \\ Economy_t^{Increasing}}$" = "ECB.PC.Outlook.Up",
+#   "$\\mathrm{ECB \\ Economy_t^{Decreasing}}$" = "ECB.PC.Outlook.Down",
+#   "$\\mathrm{ECB \\ Economy_t^{Outlook}}$" = "ECB.PC.Outlook.Index",
+#   
+#   "$\\mathrm{ECB \\ MP_t^{Hawkish}}$" = "ECB.PC.Monetary.Haw.",
+#   "$\\mathrm{ECB \\ MP_t^{Dovish}}$" = "ECB.PC.Monetary.Dov.",
+#   "$\\mathrm{ECB \\ MP_t^{Stance}}$" = "ECB.PC.Monetary.Index",
+#   
+#   "$\\Delta \\mathrm{ECB \\ MP_t^{Hawkish}}$" = "ECB.PC.Monetary.Haw..difference",
+#   "$\\Delta \\mathrm{ECB \\ MP_t^{Dovish}}$" = "ECB.PC.Monetary.Dov..difference",
+#   "$\\Delta \\mathrm{ECB \\ MP_t^{Stance}}$" = "ECB.PC.Monetary.Index.difference"
+#   
+# )
+# 
+# table_vars <- data.frame(LatexLabel = variable_order)
+# table_vars$CodeVar <- ifelse(
+#   table_vars$LatexLabel %in% names(name_mapping),
+#   name_mapping[table_vars$LatexLabel],
+#   NA
+# )
+# 
+# table_vars <- table_vars[!is.na(table_vars$CodeVar), ]
+# 
+# final_table <- table_vars %>%
+#   left_join(
+#     merged_df %>% select(Variable, ADF_Stat_fmt, PP_Stat_fmt),
+#     by = c("CodeVar" = "Variable")
+#   )
+# 
+# kable_table <- final_table %>%
+#   select(LatexLabel, ADF_Stat_fmt, PP_Stat_fmt) %>%
+#   rename(
+#     Variables               = LatexLabel,
+#     `ADF-test statistic`    = ADF_Stat_fmt,
+#     `PP-test statistic`     = PP_Stat_fmt
+#   ) %>%
+#   kable(
+#     format = "latex",
+#     booktabs = TRUE,
+#     caption = "Stationarity Tests - ECB Variables - 14 Days after Press Conferences",
+#     label = "statio_test_ECB_14",
+#     escape = FALSE
+#   ) %>%
+#   kable_styling(latex_options = c("hold_position"), font_size = 10) %>%
+#   footnote(
+#     general = "\\parbox[t]{\\textwidth}{Note: The table depicts ADF and PP test statistics for the variables. Bold values indicate \\\\ rejection of the null hypothesis of a unit root at the 5\\\\% significance level.}",
+#     general_title = "",
+#     escape = FALSE  
+#   )
+# 
+# kable_table <- gsub(
+#   "parbox[t]{textwidth}",
+#   "\\parbox[t]{\\textwidth}",
+#   kable_table,
+#   fixed = TRUE
+# )
+# 
+# for (i in seq(3, nrow(final_table), by = 3)) {
+#   kable_table <- kable_table %>% row_spec(i, hline_after = TRUE)
+# }
+# 
+# latex_table <- as.character(kable_table)
+# latex_table <- gsub("Bold values indicate \\\\ rejection", 
+#                     "Bold values indicate \\\\\\\\ rejection", 
+#                     latex_table)
+# latex_table <- gsub("\\\\begin\\{tabular\\}\\[t\\]\\{lll\\}", "\\\\begin\\{tabular\\}\\[t\\]\\{lcc\\}", latex_table)
+# #latex_table <- gsub("\\\\end\\{tabular\\}", "\\\\end{tabularx}", latex_table)
+# latex_table <- gsub("(?m)^\\\\addlinespace\\s*\n", "", latex_table, perl = TRUE)
+# #latex_table <- gsub("\\\\addlinespace", "\\\\midrule", latex_table)
+# latex_table <- gsub("\\\\fontsize\\{10\\}\\{12\\}\\\\selectfont", "\\\\footnotesize\\\n\\\\setlength\\{\\\\tabcolsep\\}\\{6pt\\}", latex_table)
+# latex_table <- gsub("Variable & ADF-test statistic & PP-test statistic", 
+#                     "\\\\textbf{Variable} & \\\\textbf{ADF-test statistic} & \\\\textbf{PP-test statistic}", latex_table)
+# cat(latex_table)

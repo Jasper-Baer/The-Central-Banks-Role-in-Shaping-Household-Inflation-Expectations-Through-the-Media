@@ -10,7 +10,7 @@ import json
 
 def load_scraped_data(path: str) -> pd.DataFrame:
     """
-    Loads the doubly-encoded JSON data from the scraper into a pandas DataFrame.
+    Loads the JSON data from the scraper into a pandas DataFrame.
 
     Args:
         path (str): The file path to the press_conferences.json file.

@@ -35,28 +35,6 @@ data$ECB_inf_index =  data$ECB_inf_up_og - data$ECB_inf_down_og
 
 ###
 
-data$'stored_1' = data$Reuter.Poll.Forecast
-data$'stored_2' = data$German.Inflation.Year.on.Year
-
-predictors_names <- c("stored_2")
-
-indices <- c(
-  "ecbhawkish_non_quotes_og", "ecbnomon_non_quotes_og","ecbdovish_non_quotes_og",
-  "ecbhawkish_quotes_og", "ecbnomon_quotes_og","ecbdovish_quotes_og",
-  "ecbpositive_non_quotes_og", "ecbneutral_non_quotes_og", "ecbnegative_non_quotes_og",
-  "ecbpositive_quotes_og", "ecbneutral_quotes_og", "ecbnegative_quotes_og")
-
-results <- list()
-
-for(pred_name in predictors_names) {
-  for(index in indices) {
-    formula_str <- paste("news_index_", index, " ~ ", pred_name, sep = "")
-    formula_obj <- as.formula(formula_str)
-    model <- lm(formula_obj, data = data)
-    results[[paste("News_res_inf", index, pred_name, sep = "_")]] <- model$residuals
-  }
-}
-
 data <- data %>%
   rename( "ECB.PC.Inflation.Inc." = "ECB_inf_up_og" ,"ECB.PC.Inflation.Stable" = "ECB_inf_same_og","ECB.PC.Inflation.Dec." = "ECB_inf_down_og",
           "ECB.PC.Inflation.Index" = "ECB_inf_index",
@@ -80,7 +58,7 @@ first_diff_names = c("ED.Exchange.Rate",
                      "VDAX",
                      "ECB.MRO", 
                      "Eurostoxx",
-                     "German.Inflation.Year.on.Year", 
+                     "German.Inflation.Year.on.Year",
                      "Household.Inflation.Expectations",
                      "Reuter.Poll.Forecast",
                      "News.Inflation.Direction.Index",
@@ -95,23 +73,25 @@ first_diff_names = c("ED.Exchange.Rate",
                      "ECB.PC.Monetary.Index",
                      "Germany.Unemployment", 
                      "German.Industrial.Production.Gap",
-                     "Germany.Future.Un",
-                     "Germany.Future.Eco",
-                     "Germany.Future.Fin",
                      "Germany.Conf",
                      "ECB.MRO.POS",
                      "ECB.MRO.NEG"
 )
 
+data$"DAX" = log(data$"DAX")
+data$"ED.Exchange.Rate" = log(data$"ED.Exchange.Rate")
+
+simple_diff_names <- first_diff_names
+
 data <- data %>%
+  
   mutate(across(
-    .cols = all_of(first_diff_names),
+    .cols = all_of(simple_diff_names),
     .fns = ~ c(NA, diff(.)),
     .names = "{.col}.difference"
-  ))
+  )) 
 
-#data <- data[-1, ]
-data <- data[-nrow(data), ]
+data <- data[-1, ]
 
 ###
 
@@ -131,51 +111,20 @@ for (var in names(data)[2:dim(data)[2]]) {
 }
 
 data = cbind(data, data_lags)
-#data = data[(lag_order+1):nrow(data),]
 
 ################################################################################
 
 data$time = as.Date(strptime(data$date, "%Y-%m-%d"))
 
-data$GR = ifelse(data$time > as.Date("2008-09-15"), 1, 0)
-data$debt = ifelse(data$time > as.Date("2010-01-01"), 1, 0)
-data$forward = ifelse(data$time > as.Date("2013-07-01"), 1, 0)
-data$ni = ifelse(data$time > as.Date("2014-06-05"), 1, 0)
-data$qe = ifelse(data$time > as.Date("2015-01-22"), 1, 0)
-data$brexit = ifelse(data$time > as.Date("2016-06-23"), 1, 0)
-
-data$duisenberg = ifelse(data$time >= as.Date("2002-01-01") & data$time <= as.Date("2003-10-31"), 1, 0)
-data$trichet = ifelse(data$time >= as.Date("2003-11-01") & data$time <= as.Date("2011-10-31"), 1, 0)
-data$draghi = ifelse(data$time >= as.Date("2011-11-30") & data$time <= as.Date("2019-10-31"), 1, 0)
-data$lagarde = ifelse(data$time >= as.Date("2019-11-01"), 1, 0)
-data$low_int = ifelse(data$time >= as.Date("2011-07-01"), 1, 0)
-
-data$negative = ifelse(data$time >= as.Date("2013-06-11") & data$time <= as.Date("2013-07-11"), 1, 0)
+data$draghi = ifelse(data$time >= as.Date("2011-11-01") & data$time <= as.Date("2019-10-31"), 1, 0)
+data$negative = ifelse(data$time >= as.Date("2014-06-05") & data$time <= as.Date("2022-07-27"), 1, 0)
 data$whatever = ifelse(data$time >= as.Date("2012-07-12") & data$time <= as.Date("2012-08-02"), 1, 0)
-
-###
-
-data$UB = ifelse(data$time > as.Date("2009-05-07"), 1, 0)
-data$SM1 = ifelse(data$time >= as.Date("2010-05-10"), 1, 0)
-data$SM2 = ifelse(data$time >= as.Date("2011-08-07"), 1, 0)
-data$CB = ifelse(data$time >= as.Date("2011-10-06"), 1, 0)
-data$OMT = ifelse(data$time >= as.Date("2012-09-06"), 1, 0)
-data$ABS = ifelse(data$time >= as.Date("2014-06-05"), 1, 0)
-data$ABSCS = ifelse(data$time >= as.Date("2014-09-04"), 1, 0)
-data$PS = ifelse(data$time >= as.Date("2015-01-22"), 1, 0)
-data$PSNA1 = ifelse(data$time >= as.Date("2015-03-09"), 1, 0)
-data$PSNA2 = ifelse(data$time >= as.Date("2016-03-10"), 1, 0)
-
-###
-
-financial_crisis_start <- as.Date("2007-09-01")
-financial_crisis_end <- as.Date("2009-06-30")
-data$financial_crisis <- ifelse(data$time >= financial_crisis_start & data$time <= financial_crisis_end, 1, 0)
 
 ### Unconventional monetary policy:
 
 event_dates <- as.Date(c("2009-05-07", "2010-05-10", "2011-08-07", "2011-10-06", "2012-09-06", 
                          "2014-06-05", "2014-09-04", "2015-01-22", "2015-03-09", "2016-03-10"))
+
 
 event_months <- format(event_dates, "%Y-%m")
 
@@ -296,12 +245,9 @@ name_mapping <- c(
   "German.Industrial.Production.Gap" = "Industrial Production Gap",  
   "Germany.Unemployment" = "Unemployment Rate",
   "Germany.Unemployment.difference" = "$\\Delta$ Unemployment Rate",
-  "Germany.Future.Un" = "Unemployment Expectations",
-  "Germany.Future.Un.difference" = "$\\Delta$ Unemployment Expectations",
-  "Germany.Future.Fin" = "Financial Expectations",
-  "Germany.Future.Fin.difference" = "$\\Delta$ Financial Expectations",
-  "Germany.Future.Eco" = "Economic Expectations",
-  "Germany.Future.Eco.difference" = "$\\Delta$ Economic Expectations",
+  
+  "Germany.Conf" = "Household Confidence",
+  "Germany.Conf.difference" = "$\\Delta$ Household Confidence",
   
   "Reuter.Poll.Forecast" = "Professional Inflation Forecast",
   "Reuter.Poll.Forecast.difference" = "$\\Delta$ Professional Inflation Forecast",

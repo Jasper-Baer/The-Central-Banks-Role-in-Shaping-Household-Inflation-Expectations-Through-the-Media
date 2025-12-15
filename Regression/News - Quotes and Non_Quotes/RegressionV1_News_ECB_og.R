@@ -15,9 +15,10 @@ library("tseries")
 data <- read_excel('D:/Studium/PhD/Github/Single-Author/Code/Regression/Regession_data_monthly_2_processed_ECB_2_og.xlsx')
 data <- data.frame(data)
 
-data <- data[12:(nrow(data)), ]
-
 data$time <- as.Date(strptime(data$time, "%Y-%m-%d"))
+
+data <- data %>%
+  filter(time >= as.Date("2003-02-28")) 
 
 numeric_columns <- sapply(data, is.numeric)
 dont_scale_names <- c("draghi", "negative", "trichet", "whatever", "Unmon")
@@ -48,9 +49,11 @@ make_var_labels <- function(use_diffs_infeco, use_diffs_mp) {
     "Reuter.Poll.Forecast.difference"          = "$\\Delta$Prof. Inflation Forecast",
     "German.Industrial.Production.Gap" = "Industrial Production Gap",
     "Germany.Unemployment.difference"  = "$\\Delta$Unemployment Rate",
-    "Germany.Future.Un.difference"     = "$\\Delta$Unemployment Expectations",
-    "Germany.Future.Fin.difference"    = "$\\Delta$Financial Expectations",
-    "Germany.Future.Eco"               = "Economic Expectations",
+    
+    "Germany.Conf.difference" = "\\Delta$Confidence",
+   # "Germany.Future.Un.difference"     = "$\\Delta$Unemployment Expectations",
+   # "Germany.Future.Fin.difference"    = "$\\Delta$Financial Expectations",
+   # "Germany.Future.Eco"               = "Economic Expectations",
     "whatever"                         = "Whatever it Takes",
     "negative"                         = "Negative Rate",
     "ECB.MRO.POS"                      = "Positive Interest Surprise",
@@ -157,15 +160,18 @@ build_mon_stance_table <- function(df, type = c("Quote","Non.Quote"),
            "ECB.PC.Inflation.Inc. + ECB.PC.Inflation.Dec. + ECB.MRO.difference")), df)
   fit_macro_haw <- lm(as.formula(
     paste0(stem,".Hawkish ~ ", stem,".Hawkish.Lag1 + ", stem,".Hawkish.Lag2 + ", stem,".Hawkish.Lag3 + ",
-           "ECB.PC.Inflation.Inc. + ECB.PC.Inflation.Dec. + ECB.PC.Monetary.Haw. + ECB.PC.Monetary.Dov. + ",
-           "ECB.PC.Outlook.Up + ECB.PC.Outlook.Down + Germany.Future.Un.difference + Germany.Future.Eco + ",
-           "Germany.Future.Fin.difference + German.Inflation.Year.on.Year.difference + Reuter.Poll.Forecast.difference + ",
+           "ECB.PC.Outlook.Up + ECB.PC.Outlook.Down + ECB.PC.Monetary.Haw. + ECB.PC.Monetary.Dov. + ",
+           "ECB.PC.Inflation.Inc. + ECB.PC.Inflation.Dec. + Germany.Conf.difference +",
+           
+           "German.Inflation.Year.on.Year.difference + Reuter.Poll.Forecast.difference + ",
            "German.Industrial.Production.Gap + Germany.Unemployment.difference + ECB.MRO.difference")), df)
   fit_all_controls_haw <- lm(as.formula(
     paste0(stem,".Hawkish ~ ", stem,".Hawkish.Lag1 + ", stem,".Hawkish.Lag2 + ", stem,".Hawkish.Lag3 + ",
            "ECB.PC.Outlook.Up + ECB.PC.Outlook.Down + ECB.PC.Monetary.Haw. + ECB.PC.Monetary.Dov. + ",
-           "ECB.PC.Inflation.Inc. + ECB.PC.Inflation.Dec. + Germany.Future.Un.difference + Germany.Future.Eco + ",
-           "Germany.Future.Fin.difference + German.Inflation.Year.on.Year.difference + Reuter.Poll.Forecast.difference + ",
+           "ECB.PC.Inflation.Inc. + ECB.PC.Inflation.Dec. + Germany.Conf.difference +",
+          # Germany.Future.Un.difference + Germany.Future.Eco + ",
+         #  "Germany.Future.Fin.difference + 
+           "German.Inflation.Year.on.Year.difference + Reuter.Poll.Forecast.difference + ",
            "German.Industrial.Production.Gap + Germany.Unemployment.difference + ECB.MRO.difference + ",
            "draghi + negative + whatever + ECB.MRO.POS + ECB.MRO.NEG + ED.Exchange.Rate.difference + ",
            "DAX.difference + VDAX + Unmon")), df)
@@ -177,14 +183,22 @@ build_mon_stance_table <- function(df, type = c("Quote","Non.Quote"),
   fit_macro_dov <- lm(as.formula(
     paste0(stem,".Dovish ~ ", stem,".Dovish.Lag1 + ", stem,".Dovish.Lag2 + ", stem,".Dovish.Lag3 + ",
            "ECB.PC.Inflation.Inc. + ECB.PC.Inflation.Dec. + ECB.PC.Monetary.Haw. + ECB.PC.Monetary.Dov. + ",
-           "ECB.PC.Outlook.Up + ECB.PC.Outlook.Down + Germany.Future.Un.difference + Germany.Future.Eco + ",
-           "Germany.Future.Fin.difference + German.Inflation.Year.on.Year.difference + Reuter.Poll.Forecast.difference + ",
+           "ECB.PC.Outlook.Up + ECB.PC.Outlook.Down + Germany.Conf.difference +",
+           
+           #"Germany.Future.Un.difference + Germany.Future.Eco + ",
+          # "Germany.Future.Fin.difference + 
+          
+           "German.Inflation.Year.on.Year.difference + Reuter.Poll.Forecast.difference + ",
            "German.Industrial.Production.Gap + Germany.Unemployment.difference + ECB.MRO.difference")), df)
   fit_all_controls_dov <- lm(as.formula(
     paste0(stem,".Dovish ~ ", stem,".Dovish.Lag1 + ", stem,".Dovish.Lag2 + ", stem,".Dovish.Lag3 + ",
            "ECB.PC.Outlook.Up + ECB.PC.Outlook.Down + ECB.PC.Monetary.Haw. + ECB.PC.Monetary.Dov. + ",
-           "ECB.PC.Inflation.Inc. + ECB.PC.Inflation.Dec. + Germany.Future.Un.difference + Germany.Future.Eco + ",
-           "Germany.Future.Fin.difference + German.Inflation.Year.on.Year.difference + Reuter.Poll.Forecast.difference + ",
+           "ECB.PC.Inflation.Inc. + ECB.PC.Inflation.Dec. + Germany.Conf.difference +",
+           
+         #  "Germany.Future.Un.difference + Germany.Future.Eco + ",
+         #  "Germany.Future.Fin.difference + 
+           
+           "German.Inflation.Year.on.Year.difference + Reuter.Poll.Forecast.difference + ",
            "German.Industrial.Production.Gap + Germany.Unemployment.difference + ECB.MRO.difference + ",
            "draghi + negative + whatever + ECB.MRO.POS + ECB.MRO.NEG + DAX.difference + VDAX + ",
            "ED.Exchange.Rate.difference + Unmon")), df)
@@ -196,14 +210,22 @@ build_mon_stance_table <- function(df, type = c("Quote","Non.Quote"),
   fit_macro_ind <- lm(as.formula(
     paste0(stem,".Index ~ ", stem,".Index.Lag1 + ", stem,".Index.Lag2 + ", stem,".Index.Lag3 + ",
            "ECB.PC.Inflation.Inc. + ECB.PC.Inflation.Dec. + ECB.PC.Monetary.Haw. + ECB.PC.Monetary.Dov. + ",
-           "ECB.PC.Outlook.Up + ECB.PC.Outlook.Down + Germany.Future.Un.difference + Germany.Future.Eco + ",
-           "Germany.Future.Fin.difference + German.Inflation.Year.on.Year.difference + Reuter.Poll.Forecast.difference + ",
+           "ECB.PC.Outlook.Up + ECB.PC.Outlook.Down + Germany.Conf.difference +",
+           
+          # "Germany.Future.Un.difference + Germany.Future.Eco + ",
+          # "Germany.Future.Fin.difference + 
+           
+           "German.Inflation.Year.on.Year.difference + Reuter.Poll.Forecast.difference + ",
            "German.Industrial.Production.Gap + Germany.Unemployment.difference + ECB.MRO.difference")), df)
   fit_all_controls_ind <- lm(as.formula(
     paste0(stem,".Index ~ ", stem,".Index.Lag1 + ", stem,".Index.Lag2 + ", stem,".Index.Lag3 + ",
            "ECB.PC.Outlook.Up + ECB.PC.Outlook.Down + ECB.PC.Monetary.Haw. + ECB.PC.Monetary.Dov. + ",
-           "ECB.PC.Inflation.Inc. + ECB.PC.Inflation.Dec. + Germany.Future.Un.difference + Germany.Future.Eco + ",
-           "Germany.Future.Fin.difference + German.Inflation.Year.on.Year.difference + Reuter.Poll.Forecast.difference + ",
+           "ECB.PC.Inflation.Inc. + ECB.PC.Inflation.Dec. + Germany.Conf.difference +",
+           
+          # "Germany.Future.Un.difference + Germany.Future.Eco + ",
+          # "Germany.Future.Fin.difference + 
+           
+           "German.Inflation.Year.on.Year.difference + Reuter.Poll.Forecast.difference + ",
            "German.Industrial.Production.Gap + Germany.Unemployment.difference + ECB.MRO.difference + ",
            "draghi + negative + whatever + ECB.MRO.POS + ECB.MRO.NEG + DAX.difference + VDAX + ",
            "ED.Exchange.Rate.difference + Unmon")), df)
@@ -227,7 +249,8 @@ build_mon_stance_table <- function(df, type = c("Quote","Non.Quote"),
     "ECB.PC.Inflation.Inc.","ECB.PC.Inflation.Dec.","ECB.PC.Outlook.Up","ECB.PC.Outlook.Down",
     "ECB.PC.Monetary.Haw.","ECB.PC.Monetary.Dov.","German.Inflation.Year.on.Year.difference",
     "Reuter.Poll.Forecast.difference","German.Industrial.Production.Gap","Germany.Unemployment.difference",
-    "Germany.Future.Un.difference","Germany.Future.Fin.difference","Germany.Future.Eco","ECB.MRO.difference",
+   # "Germany.Future.Un.difference","Germany.Future.Fin.difference","Germany.Future.Eco",
+    "ECB.MRO.difference","Germany.Conf.difference",
     "whatever","negative","ECB.MRO.POS","ECB.MRO.NEG","Unmon","DAX.difference","VDAX","ED.Exchange.Rate.difference",
     "(Intercept)"
   )
@@ -305,14 +328,22 @@ build_mon_sentiment_table <- function(df, type = c("Quote","Non.Quote"),
   fit_macro_pos <- lm(as.formula(
     paste0(stem,".Pos. ~ ", stem,".Pos..Lag1 + ", stem,".Pos..Lag2 + ", stem,".Pos..Lag3 + ",
            "ECB.PC.Inflation.Inc. + ECB.PC.Inflation.Dec. + ECB.PC.Monetary.Haw. + ECB.PC.Monetary.Dov. + ",
-           "ECB.PC.Outlook.Up + ECB.PC.Outlook.Down + ECB.MRO.difference + Germany.Future.Un.difference + Germany.Future.Eco + ",
-           "Germany.Future.Fin.difference + German.Inflation.Year.on.Year.difference + Reuter.Poll.Forecast.difference + ",
+           "ECB.PC.Outlook.Up + ECB.PC.Outlook.Down + ECB.MRO.difference + Germany.Conf.difference +",
+           
+          # "Germany.Future.Un.difference + Germany.Future.Eco + ",
+          # "Germany.Future.Fin.difference + ",
+           
+           "German.Inflation.Year.on.Year.difference + Reuter.Poll.Forecast.difference + ",
            "German.Industrial.Production.Gap + Germany.Unemployment.difference")), df)
   fit_all_controls_pos <- lm(as.formula(
     paste0(stem,".Pos. ~ ", stem,".Pos..Lag1 + ", stem,".Pos..Lag2 + ", stem,".Pos..Lag3 + ",
            "ECB.PC.Outlook.Up + ECB.PC.Outlook.Down + ECB.PC.Monetary.Haw. + ECB.PC.Monetary.Dov. + ",
-           "ECB.PC.Inflation.Inc. + ECB.PC.Inflation.Dec. + Germany.Future.Un.difference + Germany.Future.Eco + ",
-           "Germany.Future.Fin.difference + German.Inflation.Year.on.Year.difference + Reuter.Poll.Forecast.difference + ",
+           "ECB.PC.Inflation.Inc. + ECB.PC.Inflation.Dec. + Germany.Conf.difference +",
+           
+         #  "Germany.Future.Un.difference + Germany.Future.Eco + ",
+         #  "Germany.Future.Fin.difference + ",
+           
+           "German.Inflation.Year.on.Year.difference + Reuter.Poll.Forecast.difference + ",
            "German.Industrial.Production.Gap + Germany.Unemployment.difference + ECB.MRO.difference + ",
            "draghi + negative + whatever + ECB.MRO.POS + ECB.MRO.NEG + ED.Exchange.Rate.difference + ",
            "DAX.difference + VDAX + Unmon")), df)
@@ -324,14 +355,21 @@ build_mon_sentiment_table <- function(df, type = c("Quote","Non.Quote"),
   fit_macro_neg <- lm(as.formula(
     paste0(stem,".Neg. ~ ", stem,".Neg..Lag1 + ", stem,".Neg..Lag2 + ", stem,".Neg..Lag3 + ",
            "ECB.PC.Inflation.Inc. + ECB.PC.Inflation.Dec. + ECB.PC.Monetary.Haw. + ECB.PC.Monetary.Dov. + ",
-           "ECB.PC.Outlook.Up + ECB.PC.Outlook.Down + ECB.MRO.difference + Germany.Future.Un.difference + Germany.Future.Eco + ",
-           "Germany.Future.Fin.difference + German.Inflation.Year.on.Year.difference + Reuter.Poll.Forecast.difference + ",
+           "ECB.PC.Outlook.Up + ECB.PC.Outlook.Down + ECB.MRO.difference + Germany.Conf.difference + ",
+           
+         #  "Germany.Future.Un.difference + Germany.Future.Eco + ",
+         #  "Germany.Future.Fin.difference + ",
+           
+           "German.Inflation.Year.on.Year.difference + Reuter.Poll.Forecast.difference + ",
            "German.Industrial.Production.Gap + Germany.Unemployment.difference")), df)
   fit_all_controls_neg <- lm(as.formula(
     paste0(stem,".Neg. ~ ", stem,".Neg..Lag1 + ", stem,".Neg..Lag2 + ", stem,".Neg..Lag3 + ",
            "ECB.PC.Outlook.Up + ECB.PC.Outlook.Down + ECB.PC.Monetary.Haw. + ECB.PC.Monetary.Dov. + ",
-           "ECB.PC.Inflation.Inc. + ECB.PC.Inflation.Dec. + ECB.MRO.difference + Germany.Future.Un.difference + Germany.Future.Eco + ",
-           "Germany.Future.Fin.difference + German.Inflation.Year.on.Year.difference + Reuter.Poll.Forecast.difference + ",
+           "ECB.PC.Inflation.Inc. + ECB.PC.Inflation.Dec. + ECB.MRO.difference + Germany.Conf.difference + ",
+           
+          # "Germany.Future.Un.difference + Germany.Future.Eco + Germany.Future.Fin.difference + ",
+           
+           "German.Inflation.Year.on.Year.difference + Reuter.Poll.Forecast.difference + ",
            "German.Industrial.Production.Gap + Germany.Unemployment.difference + ECB.MRO.difference + ",
            "draghi + negative + whatever + ECB.MRO.POS + ECB.MRO.NEG + DAX.difference + VDAX + ",
            "ED.Exchange.Rate.difference + Unmon")), df)
@@ -345,15 +383,23 @@ build_mon_sentiment_table <- function(df, type = c("Quote","Non.Quote"),
     paste0(stem,".Sentiment.Index ~ ", stem,".Sentiment.Index.Lag1 + ",
            stem,".Sentiment.Index.Lag2 + ", stem,".Sentiment.Index.Lag3 + ",
            "ECB.PC.Inflation.Inc. + ECB.PC.Inflation.Dec. + ECB.PC.Monetary.Haw. + ECB.PC.Monetary.Dov. + ",
-           "ECB.PC.Outlook.Up + ECB.PC.Outlook.Down + ECB.MRO.difference + Germany.Future.Un.difference + Germany.Future.Eco + ",
-           "Germany.Future.Fin.difference + German.Inflation.Year.on.Year.difference + Reuter.Poll.Forecast.difference + ",
+           "ECB.PC.Outlook.Up + ECB.PC.Outlook.Down + ECB.MRO.difference + Germany.Conf.difference + ", 
+           
+          # "Germany.Future.Un.difference + Germany.Future.Eco + ",
+          # "Germany.Future.Fin.difference +", 
+           
+           "German.Inflation.Year.on.Year.difference + Reuter.Poll.Forecast.difference + ",
            "German.Industrial.Production.Gap + Germany.Unemployment.difference")), df)
   fit_all_controls_sen <- lm(as.formula(
     paste0(stem,".Sentiment.Index ~ ", stem,".Sentiment.Index.Lag1 + ",
            stem,".Sentiment.Index.Lag2 + ", stem,".Sentiment.Index.Lag3 + ",
            "ECB.PC.Outlook.Up + ECB.PC.Outlook.Down + ECB.PC.Monetary.Haw. + ECB.PC.Monetary.Dov. + ",
-           "ECB.PC.Inflation.Inc. + ECB.PC.Inflation.Dec. + Germany.Future.Un.difference + Germany.Future.Eco + ",
-           "Germany.Future.Fin.difference + German.Inflation.Year.on.Year.difference + Reuter.Poll.Forecast.difference + ",
+           "ECB.PC.Inflation.Inc. + ECB.PC.Inflation.Dec. + Germany.Conf.difference + ", 
+           
+           #"Germany.Future.Un.difference + Germany.Future.Eco + ",
+           #"Germany.Future.Fin.difference + ", 
+           
+           "German.Inflation.Year.on.Year.difference + Reuter.Poll.Forecast.difference + ",
            "German.Industrial.Production.Gap + Germany.Unemployment.difference + ECB.MRO.difference + ",
            "draghi + negative + whatever + ECB.MRO.POS + ECB.MRO.NEG + DAX.difference + VDAX + ",
            "ED.Exchange.Rate.difference + Unmon")), df)
@@ -376,7 +422,10 @@ build_mon_sentiment_table <- function(df, type = c("Quote","Non.Quote"),
     "ECB.PC.Inflation.Inc.","ECB.PC.Inflation.Dec.","ECB.PC.Outlook.Up","ECB.PC.Outlook.Down",
     "ECB.PC.Monetary.Haw.","ECB.PC.Monetary.Dov.","German.Inflation.Year.on.Year.difference",
     "Reuter.Poll.Forecast.difference","German.Industrial.Production.Gap","Germany.Unemployment.difference",
-    "Germany.Future.Un.difference","Germany.Future.Fin.difference","Germany.Future.Eco","ECB.MRO.difference",
+    
+   # "Germany.Future.Un.difference","Germany.Future.Fin.difference","Germany.Future.Eco",
+    
+    "ECB.MRO.difference", "Germany.Conf.difference",
     "whatever","negative","ECB.MRO.POS","ECB.MRO.NEG","Unmon","DAX.difference","VDAX","ED.Exchange.Rate.difference",
     "(Intercept)"
   )
@@ -445,11 +494,19 @@ build_mon_small_table <- function(df, type = c("Quote","Non.Quote"),
   if (which == "stance") {
     fit_h <- lm(as.formula(
       paste0(stem,".Hawkish ~ ", stem,".Hawkish.Lag1 + ", stem,".Hawkish.Lag2 + ", stem,".Hawkish.Lag3 + ",
-             "ECB.PC.Outlook.Up + ECB.PC.Outlook.Down + ",
+             "ECB.PC.Outlook.Up + ECB.PC.Outlook.Down +",
              "ECB.PC.Monetary.Haw. + ECB.PC.Monetary.Dov. + ",
              "ECB.PC.Inflation.Inc. + ECB.PC.Inflation.Dec. + ",
-             "Germany.Future.Un.difference + Germany.Future.Eco + ",
-             "Germany.Future.Fin.difference + German.Inflation.Year.on.Year.difference + Reuter.Poll.Forecast.difference + ",
+             
+           #  "Germany.Future.Un.difference + Germany.Future.Eco + ",
+            # "Germany.Future.Fin.difference +",
+             
+             "Germany.Conf.difference + ",
+             # "Germany.Conf.difference.Lag1",
+             # "Germany.Conf.difference.Lag2",
+             # "Germany.Conf.difference.Lag3",
+             
+             "German.Inflation.Year.on.Year.difference + Reuter.Poll.Forecast.difference + ",
              "German.Industrial.Production.Gap + Germany.Unemployment.difference + ECB.MRO.difference + ",
              "draghi + negative + whatever + ECB.MRO.POS + ECB.MRO.NEG + DAX.difference + VDAX + ",
              "ED.Exchange.Rate.difference + Unmon")), df)
@@ -458,8 +515,16 @@ build_mon_small_table <- function(df, type = c("Quote","Non.Quote"),
              "ECB.PC.Outlook.Up + ECB.PC.Outlook.Down + ",
              "ECB.PC.Monetary.Haw. + ECB.PC.Monetary.Dov. + ",
              "ECB.PC.Inflation.Inc. + ECB.PC.Inflation.Dec. + ",
-             "Germany.Future.Un.difference + Germany.Future.Eco + ",
-             "Germany.Future.Fin.difference + German.Inflation.Year.on.Year.difference + Reuter.Poll.Forecast.difference + ",
+             
+             "Germany.Conf.difference + ",
+             # "Germany.Conf.difference.Lag1",
+             # "Germany.Conf.difference.Lag2",
+             # "Germany.Conf.difference.Lag3",
+             
+            # "Germany.Future.Un.difference + Germany.Future.Eco + ",
+           #  "Germany.Future.Fin.difference +", 
+             
+             "German.Inflation.Year.on.Year.difference + Reuter.Poll.Forecast.difference + ",
              "German.Industrial.Production.Gap + Germany.Unemployment.difference + ECB.MRO.difference + ",
              "draghi + negative + whatever + ECB.MRO.POS + ECB.MRO.NEG + DAX.difference + VDAX + ",
              "ED.Exchange.Rate.difference + Unmon")), df)
@@ -468,8 +533,16 @@ build_mon_small_table <- function(df, type = c("Quote","Non.Quote"),
              "ECB.PC.Outlook.Up + ECB.PC.Outlook.Down + ",
              "ECB.PC.Monetary.Haw. + ECB.PC.Monetary.Dov. + ",
              "ECB.PC.Inflation.Inc. + ECB.PC.Inflation.Dec. + ",
-             "Germany.Future.Un.difference + Germany.Future.Eco + ",
-             "Germany.Future.Fin.difference + German.Inflation.Year.on.Year.difference + Reuter.Poll.Forecast.difference + ",
+             
+             "Germany.Conf.difference + ",
+             # "Germany.Conf.difference.Lag1",
+             # "Germany.Conf.difference.Lag2",
+             # "Germany.Conf.difference.Lag3",
+             
+             # "Germany.Future.Un.difference + Germany.Future.Eco + ",
+             #  "Germany.Future.Fin.difference +", 
+             
+             "German.Inflation.Year.on.Year.difference + Reuter.Poll.Forecast.difference + ",
              "German.Industrial.Production.Gap + Germany.Unemployment.difference + ECB.MRO.difference + ",
              "draghi + negative + whatever + ECB.MRO.POS + ECB.MRO.NEG + DAX.difference + VDAX + ",
              "ED.Exchange.Rate.difference + Unmon")), df)
@@ -537,8 +610,12 @@ build_mon_small_table <- function(df, type = c("Quote","Non.Quote"),
              "ECB.PC.Outlook.Up + ECB.PC.Outlook.Down + ",
              "ECB.PC.Monetary.Haw. + ECB.PC.Monetary.Dov. + ",
              "ECB.PC.Inflation.Inc. + ECB.PC.Inflation.Dec. + ",
-             "Germany.Future.Un.difference + Germany.Future.Eco + ",
-             "Germany.Future.Fin.difference + German.Inflation.Year.on.Year.difference + Reuter.Poll.Forecast.difference + ",
+             "Germany.Conf.difference + ",
+             
+             #"Germany.Future.Un.difference + Germany.Future.Eco + ",
+             #"Germany.Future.Fin.difference + ",
+             
+             "German.Inflation.Year.on.Year.difference + Reuter.Poll.Forecast.difference + ",
              "German.Industrial.Production.Gap + Germany.Unemployment.difference + ECB.MRO.difference + ",
              "draghi + negative + whatever + ECB.MRO.POS + ECB.MRO.NEG + DAX.difference + VDAX + ",
              "ED.Exchange.Rate.difference + Unmon")), df)
@@ -547,8 +624,12 @@ build_mon_small_table <- function(df, type = c("Quote","Non.Quote"),
              "ECB.PC.Outlook.Up + ECB.PC.Outlook.Down + ",
              "ECB.PC.Monetary.Haw. + ECB.PC.Monetary.Dov. + ",
              "ECB.PC.Inflation.Inc. + ECB.PC.Inflation.Dec. + ",
-             "Germany.Future.Un.difference + Germany.Future.Eco + ",
-             "Germany.Future.Fin.difference + German.Inflation.Year.on.Year.difference + Reuter.Poll.Forecast.difference + ",
+             "Germany.Conf.difference + ",
+             
+             #"Germany.Future.Un.difference + Germany.Future.Eco + ",
+             #"Germany.Future.Fin.difference + ",
+             
+             "German.Inflation.Year.on.Year.difference + Reuter.Poll.Forecast.difference + ",
              "German.Industrial.Production.Gap + Germany.Unemployment.difference + ECB.MRO.difference + ",
              "draghi + negative + whatever + ECB.MRO.POS + ECB.MRO.NEG + DAX.difference + VDAX + ",
              "ED.Exchange.Rate.difference + Unmon")), df)
@@ -556,8 +637,13 @@ build_mon_small_table <- function(df, type = c("Quote","Non.Quote"),
       paste0(stem,".Sentiment.Index ~ ", stem,".Sentiment.Index.Lag1 + ",
              stem,".Sentiment.Index.Lag2 + ", stem,".Sentiment.Index.Lag3 + ",
              "ECB.PC.Outlook.Up + ECB.PC.Outlook.Down + ECB.PC.Monetary.Haw. + ECB.PC.Monetary.Dov. + ",
-             "ECB.PC.Inflation.Inc. + ECB.PC.Inflation.Dec. + Germany.Future.Un.difference + Germany.Future.Eco + ",
-             "Germany.Future.Fin.difference + German.Inflation.Year.on.Year.difference + Reuter.Poll.Forecast.difference + ",
+             "ECB.PC.Inflation.Inc. + ECB.PC.Inflation.Dec. + ",
+             "Germany.Conf.difference + ",
+             
+           #  "Germany.Future.Un.difference + Germany.Future.Eco + ",
+           #  "Germany.Future.Fin.difference +", 
+             
+             "German.Inflation.Year.on.Year.difference + Reuter.Poll.Forecast.difference + ",
              "German.Industrial.Production.Gap + Germany.Unemployment.difference + ECB.MRO.difference + ",
              "draghi + negative + whatever + ECB.MRO.POS + ECB.MRO.NEG + DAX.difference + VDAX + ",
              "ED.Exchange.Rate.difference + Unmon")), df)
@@ -626,50 +712,50 @@ build_mon_small_table <- function(df, type = c("Quote","Non.Quote"),
 
 # Build the four dataframes (specs)
 df_levels       <- canonize_ecb_pc(data, use_diffs_infeco = FALSE, use_diffs_mp = FALSE)
-df_mp_diffs     <- canonize_ecb_pc(data, use_diffs_infeco = FALSE, use_diffs_mp = TRUE)
-df_infeco_diffs <- canonize_ecb_pc(data, use_diffs_infeco = TRUE,  use_diffs_mp = FALSE)
-df_diffs        <- canonize_ecb_pc(data, use_diffs_infeco = TRUE,  use_diffs_mp = TRUE)
+# df_mp_diffs     <- canonize_ecb_pc(data, use_diffs_infeco = FALSE, use_diffs_mp = TRUE)
+# df_infeco_diffs <- canonize_ecb_pc(data, use_diffs_infeco = TRUE,  use_diffs_mp = FALSE)
+# df_diffs        <- canonize_ecb_pc(data, use_diffs_infeco = TRUE,  use_diffs_mp = TRUE)
 
 # ===== FULL TABLES =====
 # Non-Quote
 cat( build_mon_stance_table(df_levels,       type="Non.Quote", use_diffs_infeco=FALSE, use_diffs_mp=FALSE, caption_note="(MP levels; Inf/Eco levels)") )
 cat( build_mon_sentiment_table(df_levels,    type="Non.Quote", use_diffs_infeco=FALSE, use_diffs_mp=FALSE, caption_note="(MP levels; Inf/Eco levels)") )
 
-cat( build_mon_stance_table(df_mp_diffs,     type="Non.Quote", use_diffs_infeco=FALSE, use_diffs_mp=TRUE,  caption_note="(MP Diffs; Inf/Eco levels)") )
-cat( build_mon_sentiment_table(df_mp_diffs,  type="Non.Quote", use_diffs_infeco=FALSE, use_diffs_mp=TRUE,  caption_note="(MP Diffs; Inf/Eco levels)") )
-
-cat( build_mon_stance_table(df_infeco_diffs, type="Non.Quote", use_diffs_infeco=TRUE,  use_diffs_mp=FALSE, caption_note="(MP levels; Inf/Eco Diffs)") )
-cat( build_mon_sentiment_table(df_infeco_diffs, type="Non.Quote", use_diffs_infeco=TRUE, use_diffs_mp=FALSE, caption_note="(MP levels; Inf/Eco Diffs)") )
-
-cat( build_mon_stance_table(df_diffs,        type="Non.Quote", use_diffs_infeco=TRUE,  use_diffs_mp=TRUE,  caption_note="(MP Diffs; Inf/Eco Diffs)") )
-cat( build_mon_sentiment_table(df_diffs,     type="Non.Quote", use_diffs_infeco=TRUE,  use_diffs_mp=TRUE,  caption_note="(MP Diffs; Inf/Eco Diffs)") )
+# cat( build_mon_stance_table(df_mp_diffs,     type="Non.Quote", use_diffs_infeco=FALSE, use_diffs_mp=TRUE,  caption_note="(MP Diffs; Inf/Eco levels)") )
+# cat( build_mon_sentiment_table(df_mp_diffs,  type="Non.Quote", use_diffs_infeco=FALSE, use_diffs_mp=TRUE,  caption_note="(MP Diffs; Inf/Eco levels)") )
+# 
+# cat( build_mon_stance_table(df_infeco_diffs, type="Non.Quote", use_diffs_infeco=TRUE,  use_diffs_mp=FALSE, caption_note="(MP levels; Inf/Eco Diffs)") )
+# cat( build_mon_sentiment_table(df_infeco_diffs, type="Non.Quote", use_diffs_infeco=TRUE, use_diffs_mp=FALSE, caption_note="(MP levels; Inf/Eco Diffs)") )
+# 
+# cat( build_mon_stance_table(df_diffs,        type="Non.Quote", use_diffs_infeco=TRUE,  use_diffs_mp=TRUE,  caption_note="(MP Diffs; Inf/Eco Diffs)") )
+# cat( build_mon_sentiment_table(df_diffs,     type="Non.Quote", use_diffs_infeco=TRUE,  use_diffs_mp=TRUE,  caption_note="(MP Diffs; Inf/Eco Diffs)") )
 
 # Quote
 cat( build_mon_sentiment_table(df_levels,    type="Quote", use_diffs_infeco=FALSE, use_diffs_mp=FALSE, caption_note="(MP levels; Inf/Eco levels)") )
 cat( build_mon_stance_table(df_levels,       type="Quote", use_diffs_infeco=FALSE, use_diffs_mp=FALSE, caption_note="(MP levels; Inf/Eco levels)") )
 
-cat( build_mon_stance_table(df_mp_diffs,     type="Quote", use_diffs_infeco=FALSE, use_diffs_mp=TRUE,  caption_note="(MP Diffs; Inf/Eco levels)") )
-cat( build_mon_sentiment_table(df_mp_diffs,  type="Quote", use_diffs_infeco=FALSE, use_diffs_mp=TRUE,  caption_note="(MP Diffs; Inf/Eco levels)") )
-
-cat( build_mon_stance_table(df_infeco_diffs, type="Quote", use_diffs_infeco=TRUE,  use_diffs_mp=FALSE, caption_note="(MP levels; Inf/Eco Diffs)") )
-cat( build_mon_sentiment_table(df_infeco_diffs, type="Quote", use_diffs_infeco=TRUE, use_diffs_mp=FALSE, caption_note="(MP levels; Inf/Eco Diffs)") )
-
-cat( build_mon_stance_table(df_diffs,        type="Quote", use_diffs_infeco=TRUE,  use_diffs_mp=TRUE,  caption_note="(MP Diffs; Inf/Eco Diffs)") )
-cat( build_mon_sentiment_table(df_diffs,     type="Quote", use_diffs_infeco=TRUE,  use_diffs_mp=TRUE,  caption_note="(MP Diffs; Inf/Eco Diffs)") )
+# cat( build_mon_stance_table(df_mp_diffs,     type="Quote", use_diffs_infeco=FALSE, use_diffs_mp=TRUE,  caption_note="(MP Diffs; Inf/Eco levels)") )
+# cat( build_mon_sentiment_table(df_mp_diffs,  type="Quote", use_diffs_infeco=FALSE, use_diffs_mp=TRUE,  caption_note="(MP Diffs; Inf/Eco levels)") )
+# 
+# cat( build_mon_stance_table(df_infeco_diffs, type="Quote", use_diffs_infeco=TRUE,  use_diffs_mp=FALSE, caption_note="(MP levels; Inf/Eco Diffs)") )
+# cat( build_mon_sentiment_table(df_infeco_diffs, type="Quote", use_diffs_infeco=TRUE, use_diffs_mp=FALSE, caption_note="(MP levels; Inf/Eco Diffs)") )
+# 
+# cat( build_mon_stance_table(df_diffs,        type="Quote", use_diffs_infeco=TRUE,  use_diffs_mp=TRUE,  caption_note="(MP Diffs; Inf/Eco Diffs)") )
+# cat( build_mon_sentiment_table(df_diffs,     type="Quote", use_diffs_infeco=TRUE,  use_diffs_mp=TRUE,  caption_note="(MP Diffs; Inf/Eco Diffs)") )
 
 # ===== COMPACT TABLES (All controls) =====
 # Non-Quote (stance + sentiment)
 cat( build_mon_small_table(df_levels,     type="Non.Quote", which="stance",    use_diffs_infeco=FALSE, use_diffs_mp=FALSE) )
 cat( build_mon_small_table(df_levels,     type="Non.Quote", which="sentiment", use_diffs_infeco=FALSE, use_diffs_mp=FALSE) )
-cat( build_mon_small_table(df_diffs,      type="Non.Quote", which="stance",    use_diffs_infeco=TRUE,  use_diffs_mp=TRUE ) )
-cat( build_mon_small_table(df_diffs,      type="Non.Quote", which="sentiment", use_diffs_infeco=TRUE,  use_diffs_mp=TRUE ) )
-cat( build_mon_small_table(df_mp_diffs ,      type="Non.Quote", which="stance",    use_diffs_infeco=FALSE,  use_diffs_mp=TRUE ) )
-cat( build_mon_small_table(df_mp_diffs ,      type="Non.Quote", which="sentiment", use_diffs_infeco=FALSE,  use_diffs_mp=TRUE ) )
+# cat( build_mon_small_table(df_diffs,      type="Non.Quote", which="stance",    use_diffs_infeco=TRUE,  use_diffs_mp=TRUE ) )
+# cat( build_mon_small_table(df_diffs,      type="Non.Quote", which="sentiment", use_diffs_infeco=TRUE,  use_diffs_mp=TRUE ) )
+# cat( build_mon_small_table(df_mp_diffs ,      type="Non.Quote", which="stance",    use_diffs_infeco=FALSE,  use_diffs_mp=TRUE ) )
+# cat( build_mon_small_table(df_mp_diffs ,      type="Non.Quote", which="sentiment", use_diffs_infeco=FALSE,  use_diffs_mp=TRUE ) )
 
 # Quote (stance + sentiment)
 cat( build_mon_small_table(df_levels,     type="Quote", which="stance",    use_diffs_infeco=FALSE, use_diffs_mp=FALSE) )
 cat( build_mon_small_table(df_levels,     type="Quote", which="sentiment", use_diffs_infeco=FALSE, use_diffs_mp=FALSE) )
-cat( build_mon_small_table(df_diffs,      type="Quote", which="stance",    use_diffs_infeco=TRUE,  use_diffs_mp=TRUE ) )
-cat( build_mon_small_table(df_diffs,      type="Quote", which="sentiment", use_diffs_infeco=TRUE,  use_diffs_mp=TRUE ) )
-cat( build_mon_small_table(df_mp_diffs ,      type="Quote", which="stance",    use_diffs_infeco=FALSE,  use_diffs_mp=TRUE ) )
-cat( build_mon_small_table(df_mp_diffs ,      type="Quote", which="sentiment", use_diffs_infeco=FALSE,  use_diffs_mp=TRUE ) )
+# cat( build_mon_small_table(df_diffs,      type="Quote", which="stance",    use_diffs_infeco=TRUE,  use_diffs_mp=TRUE ) )
+# cat( build_mon_small_table(df_diffs,      type="Quote", which="sentiment", use_diffs_infeco=TRUE,  use_diffs_mp=TRUE ) )
+# cat( build_mon_small_table(df_mp_diffs ,      type="Quote", which="stance",    use_diffs_infeco=FALSE,  use_diffs_mp=TRUE ) )
+# cat( build_mon_small_table(df_mp_diffs ,      type="Quote", which="sentiment", use_diffs_infeco=FALSE,  use_diffs_mp=TRUE ) )
