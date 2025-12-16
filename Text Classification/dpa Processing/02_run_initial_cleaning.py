@@ -1,8 +1,16 @@
 # -*- coding: utf-8 -*-
 """
-Created on Mon Aug 11 12:10:32 2025
+Created on Mon Aug 11 12:10:32 2024
 
 @author: Jasper Bär
+"""
+
+"""
+This script loads the raw articles CSV produced in Stage 1, sorts the articles
+chronologically, applies the rule-based cleaning steps defined in dpa_rules.yaml 
+(drop malformed/empty records, normalize text and remove obvious boilerplate/noise, 
+and filter out unwanted item types/categories)via DpaCleaner. The cleaned result 
+is saved as the Stage 2 CSV for the next processing steps.
 """
 
 import yaml
@@ -13,7 +21,6 @@ from src.data_cleaning import DpaCleaner
 def main():
     """Orchestrates the initial data cleaning stage of the DPA pipeline."""
     print("--- STAGE 2: Initial Data Cleaning ---")
-
 
     # Load config
     with open('config/dpa_config.yaml', 'r', encoding='utf-8') as f:

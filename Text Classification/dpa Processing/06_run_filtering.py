@@ -5,6 +5,13 @@ Created on Mon Aug 25 21:59:38 2025
 @author: Jasper Bär
 """
 
+"""
+This script loads the sentence-level, stemmed data from Stage 5 and use 
+SentenceFilter (configured via dpa_rules.yaml) to select keyword-based subsets. 
+The script writes two sentence datasets: an inflation-related subset and an 
+ECB-related subset.
+"""
+
 import yaml
 import os
 import pandas as pd

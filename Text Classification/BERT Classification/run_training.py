@@ -1,8 +1,14 @@
 # -*- coding: utf-8 -*-
 """
-Created on Wed Sep 10 20:09:03 2025
+Created on Wed Sep 10 20:09:03 2024
 
-@author: Ja-ba
+@author: Jasper Bär
+"""
+
+"""
+Train and evaluate a BERT text classifier from a YAML config: load the labeled 
+Excel data, build train/val/test DataLoaders, train and save the best model 
+checkpoint, then reload that checkpoint and evaluate on the test set.
 """
 
 import yaml

@@ -5,6 +5,14 @@ Created on Mon Aug 11 16:10:46 2025
 @author: Jasper Bär
 """
 
+"""
+This script loads the Stage 3 CSV and apply FinalCleaner to do the last text 
+cleanup and formatting. Then optionally run a final filter that removes articles 
+dominated by person names (counts names from names.txt in parallel and drops 
+texts above the configured ratio threshold). Save the resulting analysis-ready 
+CSV as the final dataset.
+"""
+
 import yaml
 import os
 import pandas as pd

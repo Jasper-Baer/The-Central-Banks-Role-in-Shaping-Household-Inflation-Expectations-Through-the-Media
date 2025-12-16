@@ -68,10 +68,7 @@ class TextProcessor:
         return speech, qa
 
     def _clean_and_tokenize_speeches(self, speeches_list: list) -> list:
-        """
-        Applies the full cleaning, tokenizing, and stemming pipeline from your original script.
-        This method replaces the placeholder.
-        """
+        """Applies the full cleaning, tokenizing, and stemming pipeline."""
         print("Applying custom cleaning and tokenization pipeline...")
         
         port_stemmer = PorterStemmer()
@@ -105,9 +102,7 @@ class TextProcessor:
         return final_tokenized_speeches
 
     def process_dataframe(self, df: pd.DataFrame) -> pd.DataFrame:
-        """
-        Applies the processing pipeline to the DataFrame.
-        """
+        """Applies the processing pipeline to the DataFrame."""
         print("Starting text processing pipeline...")
         
         df['clean press cons'] = df['Texts'].apply(lambda x: self._clean_initial_text(' '.join(x)))

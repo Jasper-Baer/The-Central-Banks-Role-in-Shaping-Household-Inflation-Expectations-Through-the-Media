@@ -1,3 +1,7 @@
+# This script loads the processed monthly regression datasets and produces/saves all figures used in the paper:
+# news-based ECB coverage and inflation measures vs policy rate/inflation, plus ECB press-conference indicators vs
+# inflation, the MRO, and EU staff forecasts.
+
 library("readxl")
 library("ggplot2")
 library("zoo")
@@ -14,7 +18,7 @@ down_color = "gray47"
 line_color = "red"
 
 ################################################################################
-### Figure 2
+### Figure 2: News ECB quote vs non-quote counts + MRO
 ################################################################################
 
 # EU Enlargement
@@ -107,14 +111,17 @@ arrow_y_start_ru_uk <- data[data$time == closest_date_ru_uk, ]$ECB.Non.Quote.Cou
 
 ###
 
+# Secondary axis scaling for MRO so it can be shown together with % news coverage
 sec_scale_mro <- 0.38
 sec_scale_ratio <- 1
 text_offset <- 0.16
 
 p <- ggplot(data, aes(x = time)) + 
-  
+  # Main series: quote / non-quote counts (scaled to match left axis)
   geom_line(aes(y = ECB.Quote.Count * sec_scale_ratio , color = "News ECB Quote Count"), linewidth = 1.6, linetype = "longdash") +
   geom_line(aes(y = ECB.Non.Quote.Count * sec_scale_ratio, color = "News ECB Non Quote Count"), linewidth = 1.6, linetype = "longdash") +
+  
+  # Secondary series: MRO scaled to left axis, then transformed back in sec.axis
   geom_line(aes(y = ECB.MRO * sec_scale_mro, color = "MRO"), linewidth = 1.6, linetype = "solid") +
   
   scale_color_manual(values = c(
@@ -122,9 +129,11 @@ p <- ggplot(data, aes(x = time)) +
     "News ECB Non Quote Count" = "green", 
     "MRO" = line_color)) +
   
+  # Left axis is "% of News Coverage"; right axis is MRO (%) via inverse transform
   scale_y_continuous(name = "% of News Coverage", limits = c(0, 2.15), expand = c(0, 0),
                      sec.axis = sec_axis(~./sec_scale_mro, name = "MRO Rate")) +
   
+  # Common x-axis formatting for all figures
   scale_x_date(expand = c(0.015, 0), date_labels="%Y", 
                breaks = seq(as.Date("2002-01-01"), as.Date("2024-01-01"), by = "1 year"), 
                name = "", limits = c(as.Date("2002-01-01"), as.Date("2024-01-01"))) +
@@ -146,27 +155,17 @@ p <- ggplot(data, aes(x = time)) +
         legend.justification = c(0, -1.5),
         legend.key.size = unit(0.5, "cm")) +
   
-  # Annotations
- # annotate("text", x = as.Date("2004-06-28"), y = (specific_value_eu + text_offset), label = label_eu, color = label_color_eu, angle = 0, vjust = 1, size = 9) +
-  #  annotate("text", x = as.Date("2007-03-30"), y = (specific_value_lb + text_offset), label = label_lb, color = label_color_lb, angle = 0, vjust = 1, size = 6.5) +
+  # Text labels (manual x positions chosen for readability)
   annotate("text", x = as.Date("2005-12-31"), y = (specific_value_ns + text_offset), label = label_ns, color = label_color_ns, angle = 0, vjust = 1, size = 10) +
-  #  annotate("text", x = as.Date("2009-07-31"), y = (specific_value_gd + text_offset), label = label_gd, color = label_color_gd, angle = 0, vjust = 1) +
   annotate("text", x = as.Date("2009-12-30"), y = (specific_value_sm + text_offset), label = label_sm, color = label_color_sm, angle = 0, vjust = 1, size = 10) +
   annotate("text", x = as.Date("2011-03-30"), y = (specific_value_lt + text_offset), label = label_lt, color = label_color_lt, angle = 0, vjust = 1, size = 10) +
   annotate("text", x = as.Date("2010-01-30"), y = (specific_value_wt + text_offset), label = label_wt, color = label_color_wt, angle = 0, vjust = 1, size = 10) +
- # annotate("text", x = as.Date("2014-09-30"), y = (specific_value_nr + text_offset), label = label_nr, color = label_color_nr, angle = 0, vjust = 1, size = 7) +
   annotate("text", x = as.Date("2016-03-31"), y = (specific_value_qe + text_offset), label = label_qe, color = label_color_qe, angle = 0, vjust = 1, size = 10) +
   annotate("text", x = as.Date("2017-10-31"), y = (specific_value_ta + text_offset), label = label_ta, color = label_color_ta, angle = 0, vjust = 1, size = 10) +
- 
   annotate("text", x = as.Date("2019-07-31"), y = (specific_value_covid + text_offset), label = label_covid, color = label_color_covid, angle = 0, vjust = 1, size = 10) +
   annotate("text", x = as.Date("2020-06-28"), y = (specific_value_ru_uk + text_offset), label = label_ru_uk, color = label_color_ru_uk, angle = 0, vjust = 1, size = 10) +
   
- # annotate("segment", x = as.Date("2004-02-28"), xend = specific_time_eu, y = specific_value_eu, yend = arrow_y_start_eu, 
-#           colour = label_color_eu, size = 0.75) +
-  # annotate("segment", x = as.Date("2007-03-30"), xend = specific_time_lb, y = specific_value_lb, yend = arrow_y_start_lb, 
-  #           colour = label_color_lb, size = 0.5) +
-  #  annotate("segment", x = as.Date("2009-07-31"), xend = specific_time_gd, y = specific_value_gd, yend = arrow_y_start_gd, 
-  #           colour = label_color_gd, size = 0.5) +
+  # Arrows / segments from label position to the actual data point
   annotate("segment", x = as.Date("2005-12-31"), xend = specific_time_ns, y = specific_value_ns, yend = arrow_y_start_ns, 
            colour = label_color_ns, size = 0.75) +
   annotate("segment", x = as.Date("2009-12-30"), xend = specific_time_sm, y = specific_value_sm, yend = arrow_y_start_sm, 
@@ -175,8 +174,6 @@ p <- ggplot(data, aes(x = time)) +
            colour = label_color_lt, size = 0.75) + 
   annotate("segment", x = as.Date("2010-01-30"), xend = specific_time_wt, y = specific_value_wt, yend = arrow_y_start_wt, 
            colour = label_color_wt, size = 0.75) + 
-#  annotate("segment", x = as.Date("2014-09-30"), xend = specific_time_nr, y = specific_value_nr, yend = arrow_y_start_nr, 
-#           colour = label_color_nr, size = 0.75) + 
   annotate("segment", x = as.Date("2016-03-31"), xend = specific_time_qe, y = specific_value_qe, yend = arrow_y_start_qe, 
            colour = label_color_qe, size = 0.75) +
   annotate("segment", x = as.Date("2017-10-31"), xend = specific_time_ta, y = specific_value_ta, yend = arrow_y_start_ta, 
@@ -191,7 +188,7 @@ print(p)
 ggsave("D:/Studium/PhD/Github/Single-Author/First Draw/Single Author Text/final/NEWS_Quota_Count.png", p, width = 16, height = 6)
 
 ################################################################################
-### Figure 3(a)
+### Figure 3(a): share of inc/dec inflation sentences vs actual inflation
 ################################################################################
 
 offset <- -0.00
@@ -378,7 +375,7 @@ ggsave("D:/Studium/PhD/Github/Single-Author/First Draw/Single Author Text/final/
 
 
 ################################################################################
-### Figure 3(b)
+#Figure 3(b): share of negative/positive inflation sentiment vs actual inflation
 ################################################################################
 
 scaling_factor <- max(abs(data$News.Inflation.Neg.*300)) / max(data$German.Inflation.Year.on.Year)
@@ -528,7 +525,7 @@ ggsave("D:/Studium/PhD/Github/Single-Author/First Draw/Single Author Text/final/
        p, width = 16, height = 6, dpi = 300)
 
 ################################################################################
-### Figure 4(a)
+#Figure 4(a): share of hawkish/dovish ECB quote sentences vs MRO
 ################################################################################
 
 # EU Enlargement
@@ -648,17 +645,7 @@ p <- ggplot() +
   geom_line(data = data, aes(x = time,y = (ECB.MRO + offset) * scaling_factor, color = "MRO"), 
             linetype = "solid", size = 1.6, show.legend = TRUE) +
   
-  # geom_col(aes(y = News.Monetary.Non.Quote.Hawkish, color = "News Non Quote Hawkish"), fill = "black", size = 0.1, show.legend = FALSE) +
-  # geom_col(aes(y = -News.Monetary.Non.Quote.Dovish, color = "News Non Quote Dovish"), fill = "grey40", size = 0.1, show.legend = FALSE) +
-  # 
-  # geom_line(aes(y = (ECB.MRO + offset)  * scaling_factor, color = "MRO"), 
-  #           linetype = "solid", size = 0.8) +
-  # 
-  # geom_point(aes(x = as.Date("2000-01-01"), y = 0, color = "News Non Quote Hawkish"), 
-  #            size = 5, shape = 22, fill = "black", show.legend = TRUE) +
-  # geom_point(aes(x = as.Date("2000-01-01"), y = 0, color = "News Non Quote Dovish"), 
-  #            size = 5, shape = 22, fill = "grey40", show.legend = TRUE) +
-  
+ 
   scale_y_continuous(
     name = "% of News Coverage",
     labels = function(x) ifelse(abs(x) < .Machine$double.eps^0.5, "0", as.character(abs(x))),
@@ -684,21 +671,17 @@ p <- ggplot() +
         axis.text.x = element_text(angle = 90, vjust = 0.5, size = 22),
         panel.grid.minor = element_blank(),
         panel.grid.major = element_blank(),
-        #   legend.position = c(0.025, -0.16),
         legend.position = "none",
         legend.text = element_text(size = 22), 
         legend.justification = c(0, -1),
         legend.key.size = unit(0.5, "cm")) + 
+  
   # Annotations
   annotate("text", x = as.Date("2005-06-28"), y = (specific_value_eu + 0.08), label = label_eu, color = label_color_eu, angle = 0, vjust = 1, size = 10) +
-  # annotate("text", x = as.Date("2005-03-30"), y = (specific_value_lb - text_offset), label = label_lb, color = label_color_lb, angle = 0, vjust = 1, size = 6.75) +
-  #  annotate("text", x = as.Date("2006-08-30"), y = (specific_value_ih + 0.02), label = label_ih, color = label_color_ih, angle = 0, vjust = 1, size = 6.75) +
   annotate("text", x = as.Date("2007-03-30"), y = (specific_value_ns - text_offset), label = label_ns, color = label_color_ns, angle = 0, vjust = 1, size = 10) +
-  #  annotate("text", x = as.Date("2009-07-31"), y = (specific_value_gd + text_offset), label = label_gd, color = label_color_gd, angle = 0, vjust = 1) +
   annotate("text", x = as.Date("2006-03-30"), y = (specific_value_sm - text_offset), label = label_sm, color = label_color_sm, angle = 0, vjust = 1, size = 10) +
   annotate("text", x = as.Date("2010-06-30"), y = (specific_value_lt - text_offset), label = label_lt, color = label_color_lt, angle = 0, vjust = 1, size = 10) +
   annotate("text", x = as.Date("2011-01-30"), y = (specific_value_wt - text_offset), label = label_wt, color = label_color_wt, angle = 0, vjust = 1, size = 10) +
-  # annotate("text", x = as.Date("2015-05-30"), y = (specific_value_nr - text_offset), label = label_nr, color = label_color_nr, angle = 0, vjust = 1, size = 8.5) +
   annotate("text", x = as.Date("2015-09-30"), y = (specific_value_qe - text_offset), label = label_qe, color = label_color_qe, angle = 0, vjust = 1, size = 10) +
   annotate("text", x = as.Date("2017-12-30"), y = (specific_value_ta - text_offset), label = label_ta, color = label_color_ta, angle = 0, vjust = 1, size = 10) +
   annotate("text", x = as.Date("2021-01-30"), y = (specific_value_covid - text_offset), label = label_covid, color = label_color_covid, angle = 0, vjust = 1, size = 10) +
@@ -706,12 +689,6 @@ p <- ggplot() +
   
   annotate("segment", x = as.Date("2005-06-28"), xend = specific_time_eu, y = specific_value_eu, yend = arrow_y_start_eu, 
            colour = label_color_eu, size = 0.75, linewidth = 1.3) +
-  # annotate("segment", x = as.Date("2006-08-28"), xend = specific_time_ih, y = specific_value_ih, yend = arrow_y_start_ih, 
-  #          colour = label_color_ih, size = 0.5) +
-  # annotate("segment", x = as.Date("2005-03-30"), xend = specific_time_lb, y = specific_value_lb, yend = arrow_y_start_lb, 
-  #         colour = label_color_lb, size = 0.5) +
-  #  annotate("segment", x = as.Date("2009-07-31"), xend = specific_time_gd, y = specific_value_gd, yend = arrow_y_start_gd, 
-  #           colour = label_color_gd, size = 0.5) +
   annotate("segment", x = as.Date("2007-03-30"), xend = specific_time_ns, y = specific_value_ns, yend = arrow_y_start_ns, 
            colour = label_color_ns, size = 0.75, linewidth = 1.3) +
   annotate("segment", x = as.Date("2006-03-30"), xend = specific_time_sm, y = specific_value_sm, yend = arrow_y_start_sm, 
@@ -720,8 +697,6 @@ p <- ggplot() +
            colour = label_color_lt, size = 0.75, linewidth = 1.3) + 
   annotate("segment", x = as.Date("2011-01-30"), xend = specific_time_wt, y = specific_value_wt, yend = arrow_y_start_wt, 
            colour = label_color_wt, size = 0.75, linewidth = 1.3) + 
-  # annotate("segment", x = as.Date("2015-05-30"), xend = specific_time_nr, y = specific_value_nr, yend = arrow_y_start_nr, 
-  #          colour = label_color_nr, size = 0.5) + 
   annotate("segment", x = as.Date("2015-09-30"), xend = specific_time_qe, y = specific_value_qe, yend = arrow_y_start_qe, 
            colour = label_color_qe, size = 0.75, linewidth = 1.3) +
   annotate("segment", x = as.Date("2017-12-30"), xend = specific_time_ta, y = specific_value_ta, yend = arrow_y_start_ta, 
@@ -736,7 +711,7 @@ print(p)
 ggsave("D:/Studium/PhD/Github/Single-Author/First Draw/Single Author Text/final/NEWSECB_NON_QUOTE_MON_2.png", p, width = 16, height = 6, dpi = 300)
 
 ################################################################################
-### Figure 4(b)
+# Figure 4(b): share of negative/positive ECB quote sentiment vs MRO
 ################################################################################
 
 text_offset <- 0.06
@@ -892,7 +867,6 @@ p <- ggplot() +
         axis.text.x = element_text(angle = 90, vjust = 0.5, size = 22),
         panel.grid.minor = element_blank(),
         panel.grid.major = element_blank(),
-        #   legend.position = c(0.025, 0.6),
         legend.position = 'none',
         legend.text = element_text(size = 22), 
         legend.justification = c(0, -1),
@@ -900,25 +874,17 @@ p <- ggplot() +
   
   # Annotations
   annotate("text", x = as.Date("2005-03-28"), y = (specific_value_eu + text_offset), label = label_eu, color = label_color_eu, angle = 0, vjust = 1, size = 10) +
-  # annotate("text", x = as.Date("2005-03-30"), y = (specific_value_lb + text_offset), label = label_lb, color = label_color_lb, angle = 0, vjust = 1, size = 4.2) +
   annotate("text", x = as.Date("2008-03-30"), y = (specific_value_ns - 0.0125), label = label_ns, color = label_color_ns, angle = 0, vjust = 1, size = 10) +
-  #  annotate("text", x = as.Date("2009-07-31"), y = (specific_value_gd + text_offset), label = label_gd, color = label_color_gd, angle = 0, vjust = 1) +
   annotate("text", x = as.Date("2008-08-30"), y = (specific_value_sm + text_offset), label = label_sm, color = label_color_sm, angle = 0, vjust = 1, size = 10) +
   annotate("text", x = as.Date("2010-10-30"), y = (specific_value_lt + text_offset), label = label_lt, color = label_color_lt, angle = 0, vjust = 1, size = 10) +
   annotate("text", x = as.Date("2011-10-31"), y = (specific_value_wt + text_offset), label = label_wt, color = label_color_wt, angle = 0, vjust = 1, size = 10) +
-  # annotate("text", x = as.Date("2014-06-30"), y = (specific_value_nr + text_offset), label = label_nr, color = label_color_nr, angle = 0, vjust = 1, size = 8.5) +
   annotate("text", x = as.Date("2016-03-28"), y = (specific_value_qe + text_offset), label = label_qe, color = label_color_qe, angle = 0, vjust = 1, size = 10) +
   annotate("text", x = as.Date("2018-06-30"), y = (specific_value_ta + text_offset), label = label_ta, color = label_color_ta, angle = 0, vjust = 1, size = 10) +
   annotate("text", x = as.Date("2019-03-01"), y = (specific_value_covid - 0.0125), label = label_covid, color = label_color_covid, angle = 0, vjust = 1, size = 10) +
   annotate("text", x = as.Date("2020-07-28"), y = (specific_value_ru_uk + text_offset), label = label_ru_uk, color = label_color_ru_uk, angle = 0, vjust = 1, size = 10) +
   
-  
   annotate("segment", x = as.Date("2005-03-28"), xend = specific_time_eu, y = specific_value_eu, yend = arrow_y_start_eu, 
            colour = label_color_eu, size = 0.75, linewidth = 1.3) +
-  #  annotate("segment", x = as.Date("2005-03-30"), xend = specific_time_lb, y = specific_value_lb, yend = arrow_y_start_lb, 
-  #          colour = label_color_lb, size = 0.5) +
-  #  annotate("segment", x = as.Date("2009-07-31"), xend = specific_time_gd, y = specific_value_gd, yend = arrow_y_start_gd, 
-  #           colour = label_color_gd, size = 0.5) +
   annotate("segment", x = as.Date("2008-03-30"), xend = specific_time_ns, y = specific_value_ns, yend = arrow_y_start_ns, 
            colour = label_color_ns, size = 0.75, linewidth = 1.3) +
   annotate("segment", x = as.Date("2008-11-30"), xend = specific_time_sm, y = specific_value_sm, yend = arrow_y_start_sm, 
@@ -927,8 +893,6 @@ p <- ggplot() +
            colour = label_color_lt, size = 0.75, linewidth = 1.3) + 
   annotate("segment", x = as.Date("2011-10-31"), xend = specific_time_wt, y = specific_value_wt, yend = arrow_y_start_wt, 
            colour = label_color_wt, size = 0.75, linewidth = 1.3) + 
-  # annotate("segment", x = as.Date("2014-06-30"), xend = specific_time_nr, y = specific_value_nr, yend = arrow_y_start_nr, 
-  #           colour = label_color_nr, size = 0.5) + 
   annotate("segment", x = as.Date("2016-03-28"), xend = specific_time_qe, y = specific_value_qe, yend = arrow_y_start_qe, 
            colour = label_color_qe, size = 0.75, linewidth = 1.3) +
   annotate("segment", x = as.Date("2018-06-30"), xend = specific_time_ta, y = specific_value_ta, yend = arrow_y_start_ta, 
@@ -943,7 +907,7 @@ print(p)
 ggsave("D:/Studium/PhD/Github/Single-Author/First Draw/Single Author Text/final/NEWSECB_NON_QUOTE_SENT_2.png", p, width = 16, height = 6, dpi = 300)
 
 ################################################################################
-### Figure E.1(a)
+# Figure E.1(a): share of hawkish/dovish ECB non quote sentences vs MRO
 ################################################################################
 
 text_offset <- 0.003
@@ -1067,18 +1031,7 @@ p <- ggplot() +
   
   geom_line(data = data, aes(x = time,y = (ECB.MRO + offset) * scaling_factor, color = "MRO"), 
             linetype = "solid", size = 1.6, show.legend = TRUE) +
-  
-  # geom_col(aes(y = News.Monetary.Quote.Hawkish, color = "News Quote Hawkish"), fill = "black", size = 0.1, show.legend = FALSE) +
-  # geom_col(aes(y = -News.Monetary.Quote.Dovish, color = "News Quote Dovish"), fill = "grey40", size = 0.1, show.legend = FALSE) +
-  # 
-  # geom_line(aes(y = (ECB.MRO + offset)  * scaling_factor, color = "MRO"), 
-  #           linetype = "solid", size = 0.8) +
-  # 
-  # geom_point(aes(x = as.Date("2000-01-01"), y = 0, color = "News Quote Hawkish"), 
-  #            size = 5, shape = 22, fill = "black", show.legend = TRUE) +
-  # geom_point(aes(x = as.Date("2000-01-01"), y = 0, color = "News Quote Dovish"), 
-  #            size = 5, shape = 22, fill = "grey40", show.legend = TRUE) +
-  # 
+
   scale_y_continuous(
     name = "% of News Coverage",
     labels = function(x) abs(x),
@@ -1104,7 +1057,6 @@ p <- ggplot() +
         axis.text.x = element_text(angle = 90, vjust = 0.5, size = 22),
         panel.grid.minor = element_blank(),
         panel.grid.major = element_blank(),
-        #  legend.position = c(0.025, -0.16),
         legend.position = 'none',
         legend.text = element_text(size = 22), 
         legend.justification = c(0, -1),
@@ -1112,17 +1064,10 @@ p <- ggplot() +
   
   # Annotations
   annotate("text", x = as.Date("2004-05-01"), y = (specific_value_eu + 0.03), label = label_eu, color = label_color_eu, angle = 0, vjust = 1, size = 10) +
-  #annotate("text", x = as.Date("2005-03-30"), y = (specific_value_lb - text_offset), label = label_lb, color = label_color_lb, angle = 0, vjust = 1, size = 6.75) +
-  # annotate("text", x = as.Date("2006-08-30"), y = (specific_value_ih + 0.02), label = label_ih, color = label_color_ih, angle = 0, vjust = 1, size = 6.75) +
-  # annotate("text", x = as.Date("2005-06-28"), y = (specific_value_eu + text_offset), label = label_eu, color = label_color_eu, angle = 0, vjust = 1, size = 9) +
-  # annotate("text", x = as.Date("2005-03-30"), y = (specific_value_lb - text_offset), label = label_lb, color = label_color_lb, angle = 0, vjust = 1, size = 6.75) +
-  #  annotate("text", x = as.Date("2006-08-30"), y = (specific_value_ih + 0.02), label = label_ih, color = label_color_ih, angle = 0, vjust = 1, size = 6.75) +
   annotate("text", x = as.Date("2007-03-30"), y = (specific_value_ns - text_offset), label = label_ns, color = label_color_ns, angle = 0, vjust = 1, size = 10) +
-  #  annotate("text", x = as.Date("2009-07-31"), y = (specific_value_gd + text_offset), label = label_gd, color = label_color_gd, angle = 0, vjust = 1) +
   annotate("text", x = as.Date("2009-03-30"), y = (specific_value_sm - text_offset), label = label_sm, color = label_color_sm, angle = 0, vjust = 1, size = 10) +
   annotate("text", x = as.Date("2011-03-30"), y = (specific_value_lt - text_offset), label = label_lt, color = label_color_lt, angle = 0, vjust = 1, size = 10) +
   annotate("text", x = as.Date("2014-12-30"), y = (specific_value_wt - text_offset), label = label_wt, color = label_color_wt, angle = 0, vjust = 1, size = 10) +
-  # annotate("text", x = as.Date("2015-05-30"), y = (specific_value_nr - text_offset), label = label_nr, color = label_color_nr, angle = 0, vjust = 1, size = 7) +
   annotate("text", x = as.Date("2016-05-30"), y = (specific_value_qe - text_offset), label = label_qe, color = label_color_qe, angle = 0, vjust = 1, size = 10) +
   annotate("text", x = as.Date("2016-05-30"), y = (specific_value_ta + 0.03), label = label_ta, color = label_color_ta, angle = 0, vjust = 1, size = 10) +
   annotate("text", x = as.Date("2020-09-30"), y = (specific_value_covid - text_offset), label = label_covid, color = label_color_covid, angle = 0, vjust = 1, size = 10) +
@@ -1130,12 +1075,6 @@ p <- ggplot() +
   
   annotate("segment", x = as.Date("2004-05-01"), xend = specific_time_eu, y = specific_value_eu, yend = arrow_y_start_eu, 
            colour = label_color_eu, size = 0.75, linewidth = 1.3) +
-  # annotate("segment", x = as.Date("2006-08-28"), xend = specific_time_ih, y = specific_value_ih, yend = arrow_y_start_ih, 
-  #          colour = label_color_ih, size = 0.5) +
-  # annotate("segment", x = as.Date("2005-03-30"), xend = specific_time_lb, y = specific_value_lb, yend = arrow_y_start_lb, 
-  #         colour = label_color_lb, size = 0.5) +
-  #  annotate("segment", x = as.Date("2009-07-31"), xend = specific_time_gd, y = specific_value_gd, yend = arrow_y_start_gd, 
-  #           colour = label_color_gd, size = 0.5) +
   annotate("segment", x = as.Date("2007-03-30"), xend = specific_time_ns, y = specific_value_ns, yend = arrow_y_start_ns, 
            colour = label_color_ns, size = 0.75, linewidth = 1.3) +
   annotate("segment", x = as.Date("2009-03-30"), xend = specific_time_sm, y = specific_value_sm, yend = arrow_y_start_sm, 
@@ -1144,8 +1083,6 @@ p <- ggplot() +
            colour = label_color_lt, size = 0.75, linewidth = 1.3) + 
   annotate("segment", x = as.Date("2014-12-30"), xend = specific_time_wt, y = specific_value_wt, yend = arrow_y_start_wt, 
            colour = label_color_wt, size = 0.75, linewidth = 1.3) + 
-  # annotate("segment", x = as.Date("2015-05-30"), xend = specific_time_nr, y = specific_value_nr, yend = arrow_y_start_nr, 
-  #          colour = label_color_nr, size = 0.5) + 
   annotate("segment", x = as.Date("2016-05-30"), xend = specific_time_qe, y = specific_value_qe, yend = arrow_y_start_qe, 
            colour = label_color_qe, size = 0.75, linewidth = 1.3) +
   annotate("segment", x = as.Date("2017-05-30"), xend = specific_time_ta, y = specific_value_ta, yend = arrow_y_start_ta, 
@@ -1160,7 +1097,7 @@ print(p)
 ggsave("D:/Studium/PhD/Github/Single-Author/First Draw/Single Author Text/final/NEWSECB_QUOTE_MON_2.png", p, width = 16, height = 6, dpi = 300)
 
 ################################################################################
-### Figure E.1(b)
+# Figure E.1(b): share of negative/positive ECB non quote sentiment vs MRO
 ################################################################################
 
 text_offset <- 0.02
@@ -1292,17 +1229,6 @@ p <- ggplot() +
   geom_line(data = data, aes(x = time,y = (ECB.MRO + offset) * scaling_factor, color = "MRO"), 
             linetype = "solid", size = 1.6, show.legend = TRUE) +
   
-  # geom_col(aes(y = News.Monetary.Quote.Neg., color = "News Quote Negative"), fill = "black", size = 0.1, show.legend = FALSE) +
-  # geom_col(aes(y = -News.Monetary.Quote.Pos., color = "News Quote Positive"), fill = "grey40", size = 0.1, show.legend = FALSE) +
-  # 
-  # geom_line(aes(y = (ECB.MRO + offset)  * scaling_factor, color = "MRO"), 
-  #           linetype = "solid", size = 0.8) +
-  # 
-  # geom_point(aes(x = as.Date("2002-01-01"), y = 0, color = "News Quote Negative"), 
-  #            size = 5, shape = 22, fill = "black", show.legend = TRUE) +
-  # geom_point(aes(x = as.Date("2002-01-01"), y = 0, color = "News Quote Positive"), 
-  #            size = 5, shape = 22, fill = "grey40", show.legend = TRUE) +
-
 scale_y_continuous(
   name = "% of News Coverage",
   labels = function(x) abs(x),
@@ -1328,7 +1254,6 @@ scale_y_continuous(
         axis.text.x = element_text(angle = 90, vjust = 0.5, size = 22),
         panel.grid.minor = element_blank(),
         panel.grid.major = element_blank(),
-        #   legend.position = c(0.025, 0.6),
         legend.position = 'none',
         legend.text = element_text(size = 22), 
         legend.justification = c(0, -1),
@@ -1336,13 +1261,10 @@ scale_y_continuous(
   
   # Annotations
   annotate("text", x = as.Date("2004-08-28"), y = (specific_value_eu - 0.007), label = label_eu, color = label_color_eu, angle = 0, vjust = 1, size = 10) +
-  # annotate("text", x = as.Date("2005-03-30"), y = (specific_value_lb + text_offset), label = label_lb, color = label_color_lb, angle = 0, vjust = 1, size = 4.2) +
   annotate("text", x = as.Date("2006-03-30"), y = (specific_value_ns + text_offset), label = label_ns, color = label_color_ns, angle = 0, vjust = 1, size = 10) +
-  #  annotate("text", x = as.Date("2009-07-31"), y = (specific_value_gd + text_offset), label = label_gd, color = label_color_gd, angle = 0, vjust = 1) +
   annotate("text", x = as.Date("2008-08-30"), y = (specific_value_sm + text_offset), label = label_sm, color = label_color_sm, angle = 0, vjust = 1, size = 10) +
   annotate("text", x = as.Date("2010-06-30"), y = (specific_value_lt + text_offset), label = label_lt, color = label_color_lt, angle = 0, vjust = 1, size = 10) +
   annotate("text", x = as.Date("2014-12-31"), y = (specific_value_wt + text_offset), label = label_wt, color = label_color_wt, angle = 0, vjust = 1, size = 10) +
-  # annotate("text", x = as.Date("2014-06-30"), y = (specific_value_nr + text_offset), label = label_nr, color = label_color_nr, angle = 0, vjust = 1, size = 8.5) +
   annotate("text", x = as.Date("2016-03-28"), y = (specific_value_qe + text_offset), label = label_qe, color = label_color_qe, angle = 0, vjust = 1, size = 10) +
   annotate("text", x = as.Date("2018-06-30"), y = (specific_value_ta + text_offset), label = label_ta, color = label_color_ta, angle = 0, vjust = 1, size = 10) +
   annotate("text", x = as.Date("2019-03-01"), y = (specific_value_covid - 0.007), label = label_covid, color = label_color_covid, angle = 0, vjust = 1, size = 10) +
@@ -1351,10 +1273,6 @@ scale_y_continuous(
   
   annotate("segment", x = as.Date("2004-08-28"), xend = specific_time_eu, y = specific_value_eu, yend = arrow_y_start_eu, 
            colour = label_color_eu, size = 0.75, linewidth = 1.3) +
-  #  annotate("segment", x = as.Date("2005-03-30"), xend = specific_time_lb, y = specific_value_lb, yend = arrow_y_start_lb, 
-  #          colour = label_color_lb, size = 0.5) +
-  #  annotate("segment", x = as.Date("2009-07-31"), xend = specific_time_gd, y = specific_value_gd, yend = arrow_y_start_gd, 
-  #           colour = label_color_gd, size = 0.5) +
   annotate("segment", x = as.Date("2006-03-30"), xend = specific_time_ns, y = specific_value_ns, yend = arrow_y_start_ns, 
            colour = label_color_ns, size = 0.75, linewidth = 1.3) +
   annotate("segment", x = as.Date("2008-11-30"), xend = specific_time_sm, y = specific_value_sm, yend = arrow_y_start_sm, 
@@ -1363,8 +1281,6 @@ scale_y_continuous(
            colour = label_color_lt, size = 0.75, linewidth = 1.3) + 
   annotate("segment", x = as.Date("2014-12-31"), xend = specific_time_wt, y = specific_value_wt, yend = arrow_y_start_wt, 
            colour = label_color_wt, size = 0.75, linewidth = 1.3) + 
-  # annotate("segment", x = as.Date("2014-06-30"), xend = specific_time_nr, y = specific_value_nr, yend = arrow_y_start_nr, 
-  #           colour = label_color_nr, size = 0.5) + 
   annotate("segment", x = as.Date("2016-03-28"), xend = specific_time_qe, y = specific_value_qe, yend = arrow_y_start_qe, 
            colour = label_color_qe, size = 0.75, linewidth = 1.3) +
   annotate("segment", x = as.Date("2018-06-30"), xend = specific_time_ta, y = specific_value_ta, yend = arrow_y_start_ta, 
@@ -1379,20 +1295,13 @@ print(p)
 ggsave("D:/Studium/PhD/Github/Single-Author/First Draw/Single Author Text/final/NEWSECB_QUOTE_SENT_2.png", p, width = 16, height = 6, dpi = 300)
 
 ################################################################################
-### Figure 5
+# Figure 5: ECB press conference inflation inc/dec vs actual inflation and EU staff forecast
 ################################################################################
 
 data_ECB = read_excel('D:/Studium/PhD/Github/Single-Author/Code/Regression/Regession_data_monthly_2_processed_ECB_2_og.xlsx')
 data_ECB = data.frame(data_ECB)
-#data_ECB = data_ECB[7:dim(data_ECB)[1],]
 
 data_ECB$time = as.Date(strptime(data_ECB$time, "%Y-%m-%d"))
-
-# data_ECB <- data_ECB %>%
-#   arrange(time) %>%
-#   mutate(width = as.numeric(difftime(lead(time, default = last(time) + 30), time, units = "days")))
-
-###
 
 data_eu_for = read_excel('D:/Studium/PhD/Github/Single-Author/Data/Regression/EU_staff_forecast.xlsx')
 data_eu_for = data.frame(data_eu_for)
@@ -1402,7 +1311,6 @@ data_eu_for$time = as.Date(strptime(data_eu_for$Date, "%Y-%m-%d"))
 ###
 
 data = read_excel('D:/Studium/PhD/Github/Single-Author/Code/Regression/Regession_data_monthly_2_processed_inf.xlsx')
-#data = read_excel('D:/Studium/PhD/Github/Single-Author/Code/Regression/Regession_data_monthly_2_processed_ECB_2_og.xlsx')
 data = data.frame(data)
 
 data$time = as.Date(strptime(data$time, "%Y-%m-%d"))
@@ -1433,7 +1341,6 @@ label_color_eu_enlargement <- label_color
 arrow_y_start_eu_enlargement <- data_ECB[data_ECB$time == specific_time_eu_enlargement, ]$ECB.PC.Inflation.Inc.
 
 specific_time_ns <- as.Date("2007-09-06")
-#specific_time_lb <- as.Date("2008-09-30")
 specific_value_ns <- 29
 label_ns <- "First Non-Standard Measures"
 label_color_ns <- label_color
@@ -1447,7 +1354,6 @@ arrow_y_start_lb <- data_ECB[data_ECB$time == specific_time_lb, ]$ECB.PC.Inflati
 
 specific_time_lb <- as.Date("2008-10-02")
 specific_value_lb <- -21
-#label_lb <- "Interest Rate Cuts"
 label_lb <- "Fall of Lehman Brothers"
 label_color_lb <- label_color
 arrow_y_start_lb <- -data_ECB[data_ECB$time == specific_time_lb, ]$ECB.PC.Inflation.Dec.
@@ -1594,7 +1500,6 @@ p <- ggplot() +
     values = c("Next Year Forecast" = "green", "Inflation" = line_color)  
   ) +
   
-  # Define Y-axis with secondary axis
   scale_y_continuous(
     name = "% in Press Conferences",
     labels = function(x) abs(x),
@@ -1605,7 +1510,6 @@ p <- ggplot() +
                         breaks = breaks_inflation)
   ) +
   
-  # Define X-axis as Date
   scale_x_date(
     expand = c(0.015, 0), 
     date_labels = "%Y", 
@@ -1621,33 +1525,24 @@ p <- ggplot() +
         axis.text.x = element_text(angle = 90, vjust = 0.5, size = 22),
         panel.grid.minor = element_blank(),
         panel.grid.major = element_blank(),
-        # legend.position = c(0.025, 0.5),
         legend.position = "none",
         legend.text = element_text(size = 22), 
         legend.justification = c(0, -1.5),
         legend.key.size = unit(0.5, "cm")) +
 
-# Annotations 
-#annotate("text", x = as.Date("2004-03-01"), y = (specific_value_euro_intro - text_offset), label = label_euro_intro, color = label_color_euro_intro, angle = 0, vjust = 1, size = 6.5) +
- # annotate("text", x = as.Date("2004-05-01"), y = (specific_value_eu_enlargement + text_offset), label = label_eu_enlargement, color = label_color_eu_enlargement, angle = 0, vjust = 1, size = 6.5) +
+  # Annotations 
   annotate("text", x = as.Date("2007-08-30"), y = (specific_value_ns + text_offset), label = label_ns, color = label_color_ns, angle = 0, vjust = 1, size = 10) +
   annotate("text", x = as.Date("2007-11-30"), y = (specific_value_sm - text_offset + 3.5), label = label_sm, color = label_color_sm, angle = 0, vjust = 1, size = 10) +
   annotate("text", x = as.Date("2011-01-31"), y = (specific_value_lt - text_offset + 3.5), label = label_lt, color = label_color_lt, angle = 0, vjust = 1, size = 10) +
   annotate("text", x = as.Date("2012-04-30"), y = (specific_value_wt - text_offset + 3.5), label = label_wt, color = label_color_wt, angle = 0, vjust = 1, size = 10) +
- # annotate("text", x = as.Date("2015-06-30"), y = (specific_value_nr - text_offset + 1.5), label = label_nr, color = label_color_nr, angle = 0, vjust = 1, size = 7) +
   annotate("text", x = as.Date("2015-01-22"), y = (specific_value_qe + text_offset), label = label_qe, color = label_color_qe, angle = 0, vjust = 1, size = 10) +
   annotate("text", x = as.Date("2016-05-30"), y = (specific_value_ta + text_offset), label = label_ta, color = label_color_ta, angle = 0, vjust = 1, size = 10) +
   annotate("text", x = as.Date("2005-08-28"), y = (specific_value_lb - text_offset + 3.5), label = label_lb, color = label_color_lb, angle = 0, vjust = 1, size = 10) +
   annotate("text", x = as.Date("2020-03-12"), y = (specific_value_covid - text_offset + 3.5), label = label_covid, color = label_color_covid, angle = 0, vjust = 1, size = 10) +
   annotate("text", x = as.Date("2019-02-28"), y = (specific_value_ru_uk + text_offset), label = label_ru_uk, color = label_color_ru_uk, angle = 0, vjust = 1, size = 10) +
   
-  # Existing segments
- # annotate("segment", x = as.Date("2004-03-01"), xend = specific_time_euro_intro, y = specific_value_euro_intro, yend = arrow_y_start_euro_intro, 
-#           colour = label_color_euro_intro, size = 0.5) +
   annotate("segment", x = as.Date("2007-08-30"), xend = specific_time_ns, y = specific_value_ns, yend = arrow_y_start_ns, 
            colour = label_color_ns, size = 0.75, linewidth = 1.3) +
-#  annotate("segment", x = as.Date("2004-05-01"), xend = specific_time_eu_enlargement, y = specific_value_eu_enlargement, yend = arrow_y_start_eu_enlargement, 
- #          colour = label_color_eu_enlargement, size = 0.5) +
   annotate("segment", x = as.Date("2007-11-30"), xend = specific_time_sm, y = specific_value_sm, yend = arrow_y_start_sm, 
            colour = label_color_sm, size = 0.75, linewidth = 1.3) +
   annotate("segment", x = as.Date("2011-01-31"), xend = specific_time_lt, y = specific_value_lt, yend = arrow_y_start_lt, 
@@ -1656,8 +1551,6 @@ p <- ggplot() +
            colour = label_color_lb, size = 0.75, linewidth = 1.3) + 
   annotate("segment", x = as.Date("2012-04-30"), xend = specific_time_wt, y = specific_value_wt, yend = arrow_y_start_wt, 
            colour = label_color_wt, size = 0.75, linewidth = 1.3) + 
-#  annotate("segment", x = as.Date("2015-06-30"), xend = specific_time_nr, y = specific_value_nr, yend = arrow_y_start_nr, 
- #          colour = label_color_nr, size = 0.75) + 
   annotate("segment", x = as.Date("2015-01-22"), xend = specific_time_qe, y = specific_value_qe, yend = arrow_y_start_qe, 
            colour = label_color_qe, size = 0.75, linewidth = 1.3) +
   annotate("segment", x = as.Date("2016-05-30"), xend = specific_time_ta, y = specific_value_ta, yend = arrow_y_start_ta, 
@@ -1671,6 +1564,8 @@ print(p)
 
 ggsave("D:/Studium/PhD/Github/Single-Author/First Draw/Single Author Text/final/ECB_INF.png", p, width = 16, height = 6, dpi = 300)
 
+################################################################################
+# Figure 6: ECB press conference monetary hawkish/dovish vs MRO
 ################################################################################
 
 text_offset = 6
@@ -1697,16 +1592,13 @@ label_color_eu_enlargement <- label_color
 arrow_y_start_eu_enlargement <- data_ECB[data_ECB$time == specific_time_eu_enlargement, ]$ECB.PC.Monetary.Haw.
 
 specific_time_ns <- as.Date("2007-09-06")
-#specific_time_lb <- as.Date("2008-09-30")
 specific_value_ns <- 25
 label_ns <- "First Non-Standard Measures"
 label_color_ns <- label_color
 arrow_y_start_ns <- data_ECB[data_ECB$time == specific_time_ns, ]$ECB.PC.Monetary.Haw.
 
 specific_time_lb <- as.Date("2008-10-02")
-#specific_time_lb <- as.Date("2008-09-30")
 specific_value_lb <- 19
-#label_lb <- "Interest Rate Cuts"
 label_lb <- "Fall of Lehman Brothers"
 label_color_lb <- label_color
 arrow_y_start_lb <- data_ECB[data_ECB$time == specific_time_lb, ]$ECB.PC.Monetary.Haw.
@@ -1859,26 +1751,18 @@ p <- ggplot() +
     legend.key.size = unit(0.5, "cm")) +
   
   # Annotations 
- # annotate("text", x = as.Date("2004-03-01"), y = (specific_value_euro_intro - text_offset), label = label_euro_intro, color = label_color_euro_intro, angle = 0, vjust = 1, size = 6.5) +
-#  annotate("text", x = as.Date("2004-05-01"), y = (specific_value_eu_enlargement + text_offset), label = label_eu_enlargement, color = label_color_eu_enlargement, angle = 0, vjust = 1, size = 6.5) +
   annotate("text", x = as.Date("2006-08-30"), y = (specific_value_ns + text_offset), label = label_ns, color = label_color_ns, angle = 0, vjust = 1, size = 10) +
   annotate("text", x = as.Date("2005-11-30"), y = (specific_value_sm - text_offset + 3.5), label = label_sm, color = label_color_sm, angle = 0, vjust = 1, size = 10) +
   annotate("text", x = as.Date("2009-07-31"), y = (specific_value_lt - text_offset + 3.5), label = label_lt, color = label_color_lt, angle = 0, vjust = 1, size = 10) +
   annotate("text", x = as.Date("2011-04-30"), y = (specific_value_wt - text_offset + 3.5), label = label_wt, color = label_color_wt, angle = 0, vjust = 1, size = 10) +
- # annotate("text", x = as.Date("2012-06-30"), y = (specific_value_nr - text_offset + 2), label = label_nr, color = label_color_nr, angle = 0, vjust = 1, size = 7) +
   annotate("text", x = as.Date("2014-09-30"), y = (specific_value_qe - text_offset + 3.5), label = label_qe, color = label_color_qe, angle = 0, vjust = 1, size = 10) +
   annotate("text", x = as.Date("2017-05-30"), y = (specific_value_ta + text_offset), label = label_ta, color = label_color_ta, angle = 0, vjust = 1, size = 10) +
   annotate("text", x = as.Date("2011-08-28"), y = (specific_value_lb + text_offset), label = label_lb, color = label_color_lb, angle = 0, vjust = 1, size = 10) +
   annotate("text", x = as.Date("2018-01-01"), y = (specific_value_covid - text_offset + 3.5), label = label_covid, color = label_color_covid, angle = 0, vjust = 1, size = 10) +
   annotate("text", x = as.Date("2020-02-28"), y = (specific_value_ru_uk + text_offset), label = label_ru_uk, color = label_color_ru_uk, angle = 0, vjust = 1, size = 10) +
   
-  # Existing segments
- # annotate("segment", x = as.Date("2004-03-01"), xend = specific_time_euro_intro, y = specific_value_euro_intro, yend = arrow_y_start_euro_intro, 
-  #         colour = label_color_euro_intro, size = 0.5) +
   annotate("segment", x = as.Date("2006-08-30"), xend = specific_time_ns, y = specific_value_ns, yend = arrow_y_start_ns, 
            colour = label_color_ns, size = 0.75, linewidth = 1.3) +
-  #annotate("segment", x = as.Date("2004-05-01"), xend = specific_time_eu_enlargement, y = specific_value_eu_enlargement, yend = arrow_y_start_eu_enlargement, 
-  #         colour = label_color_eu_enlargement, size = 0.5) +
   annotate("segment", x = as.Date("2005-11-30"), xend = specific_time_sm, y = specific_value_sm, yend = arrow_y_start_sm, 
            colour = label_color_sm, size = 0.75, linewidth = 1.3) +
   annotate("segment", x = as.Date("2009-07-31"), xend = specific_time_lt, y = specific_value_lt, yend = arrow_y_start_lt, 
@@ -1887,8 +1771,6 @@ p <- ggplot() +
            colour = label_color_lb, size = 0.75, linewidth = 1.3) + 
   annotate("segment", x = as.Date("2011-04-30"), xend = specific_time_wt, y = specific_value_wt, yend = arrow_y_start_wt, 
            colour = label_color_wt, size = 0.75, linewidth = 1.3) + 
-#  annotate("segment", x = as.Date("2012-06-30"), xend = specific_time_nr, y = specific_value_nr, yend = arrow_y_start_nr, 
-#           colour = label_color_nr, size = 0.5) + 
   annotate("segment", x = as.Date("2014-09-30"), xend = specific_time_qe, y = specific_value_qe, yend = arrow_y_start_qe, 
            colour = label_color_qe, size = 0.75, linewidth = 1.3) +
   annotate("segment", x = as.Date("2017-05-30"), xend = specific_time_ta, y = specific_value_ta, yend = arrow_y_start_ta, 
@@ -1902,6 +1784,8 @@ print(p)
 
 ggsave("D:/Studium/PhD/Github/Single-Author/First Draw/Single Author Text/final/ECB_MRO.png", p, width = 16, height = 6, dpi = 300)
 
+################################################################################
+# Figure 7: ECB press conference outlook up/down vs EU staff GDP forecast
 ################################################################################
 
 text_offset = 6
@@ -1930,7 +1814,6 @@ label_color_eu_enlargement <- label_color
 arrow_y_start_eu_enlargement <- data_ECB[data_ECB$time == specific_time_eu_enlargement, ]$ECB.PC.Outlook.Up
 
 specific_time_ns <- as.Date("2007-09-06")
-#specific_time_lb <- as.Date("2008-09-30")
 specific_value_ns <- 39
 label_ns <- "First Non-Standard Measures"
 label_color_ns <- label_color
@@ -1941,14 +1824,6 @@ specific_value_lb <- 31
 label_lb <- "Fall of Lehman Brothers"
 label_color_lb <- label_color
 arrow_y_start_lb <- data_ECB[data_ECB$time == specific_time_lb, ]$ECB.PC.Outlook.Up
-
-# specific_time_lb <- as.Date("2008-10-02")
-# #specific_time_lb <- as.Date("2008-09-30")
-# specific_value_lb <- -9
-# label_lb <- "Interest Rate Cuts"
-# #label_lb <- "Fall of Lehman Brothers"
-# label_color_lb <- "red"
-# arrow_y_start_lb <- -data_ECB[data_ECB$time == specific_time_lb, ]$ECB.PC.Outlook.Up
 
 specific_time_sm <- as.Date("2010-03-04")
 specific_value_sm<- 22.5
@@ -2115,26 +1990,18 @@ p <- ggplot() +
     legend.key.size = unit(0.5, "cm")) +
   
   # Annotations 
- # annotate("text", x = as.Date("2004-03-01"), y = (specific_value_euro_intro - text_offset), label = label_euro_intro, color = label_color_euro_intro, angle = 0, vjust = 1, size = 6.5) +
-#  annotate("text", x = as.Date("2004-05-01"), y = (specific_value_eu_enlargement + text_offset), label = label_eu_enlargement, color = label_color_eu_enlargement, angle = 0, vjust = 1, size = 6.5) +
   annotate("text", x = as.Date("2006-08-30"), y = (specific_value_ns + text_offset), label = label_ns, color = label_color_ns, angle = 0, vjust = 1, size = 10) +
   annotate("text", x = as.Date("2011-06-30"), y = (specific_value_sm + text_offset), label = label_sm, color = label_color_sm, angle = 0, vjust = 1, size = 10) +
   annotate("text", x = as.Date("2010-07-31"), y = (specific_value_lt - text_offset + 3.5), label = label_lt, color = label_color_lt, angle = 0, vjust = 1, size = 10) +
   annotate("text", x = as.Date("2013-04-30"), y = (specific_value_wt - text_offset + 3.5), label = label_wt, color = label_color_wt, angle = 0, vjust = 1, size = 10) +
- # annotate("text", x = as.Date("2015-06-30"), y = (specific_value_nr - text_offset + 1.25), label = label_nr, color = label_color_nr, angle = 0, vjust = 1, size = 7) +
   annotate("text", x = as.Date("2015-09-30"), y = (specific_value_qe - text_offset + 3.5), label = label_qe, color = label_color_qe, angle = 0, vjust = 1, size = 10) +
   annotate("text", x = as.Date("2017-05-30"), y = (specific_value_ta + text_offset), label = label_ta, color = label_color_ta, angle = 0, vjust = 1, size = 10) +
   annotate("text", x = as.Date("2010-08-28"), y = (specific_value_lb + text_offset), label = label_lb, color = label_color_lb, angle = 0, vjust = 1, size = 10) +
   annotate("text", x = as.Date("2019-03-01"), y = (specific_value_covid - text_offset + 3.5), label = label_covid, color = label_color_covid, angle = 0, vjust = 1, size = 10) +
   annotate("text", x = as.Date("2021-02-28"), y = (specific_value_ru_uk + text_offset), label = label_ru_uk, color = label_color_ru_uk, angle = 0, vjust = 1, size = 10) +
   
-  # Existing segments
- # annotate("segment", x = as.Date("2004-03-01"), xend = specific_time_euro_intro, y = specific_value_euro_intro, yend = arrow_y_start_euro_intro, 
-#           colour = label_color_euro_intro, size = 0.75) +
   annotate("segment", x = as.Date("2006-08-30"), xend = specific_time_ns, y = specific_value_ns, yend = arrow_y_start_ns, 
            colour = label_color_ns, size = 0.75, linewidth = 1.3) +
-#  annotate("segment", x = as.Date("2004-05-01"), xend = specific_time_eu_enlargement, y = specific_value_eu_enlargement, yend = arrow_y_start_eu_enlargement, 
- #          colour = label_color_eu_enlargement, size = 0.75) +
   annotate("segment", x = as.Date("2011-06-30"), xend = specific_time_sm, y = specific_value_sm, yend = arrow_y_start_sm, 
            colour = label_color_sm, size = 0.75, linewidth = 1.3) +
   annotate("segment", x = as.Date("2010-07-31"), xend = specific_time_lt, y = specific_value_lt, yend = arrow_y_start_lt, 
@@ -2143,8 +2010,6 @@ p <- ggplot() +
            colour = label_color_lb, size = 0.75, linewidth = 1.3) + 
   annotate("segment", x = as.Date("2013-04-30"), xend = specific_time_wt, y = specific_value_wt, yend = arrow_y_start_wt, 
            colour = label_color_wt, size = 0.75, linewidth = 1.3) + 
-#  annotate("segment", x = as.Date("2015-06-30"), xend = specific_time_nr, y = specific_value_nr, yend = arrow_y_start_nr, 
-#           colour = label_color_nr, size = 0.75) + 
   annotate("segment", x = as.Date("2015-09-30"), xend = specific_time_qe, y = specific_value_qe, yend = arrow_y_start_qe, 
            colour = label_color_qe, size = 0.75, linewidth = 1.3) +
   annotate("segment", x = as.Date("2017-05-30"), xend = specific_time_ta, y = specific_value_ta, yend = arrow_y_start_ta, 

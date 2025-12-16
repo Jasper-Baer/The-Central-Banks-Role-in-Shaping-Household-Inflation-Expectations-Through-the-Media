@@ -1,8 +1,15 @@
 # -*- coding: utf-8 -*-
 """
-Created on Mon Aug 11 12:03:33 2025
+Created on Mon Aug 11 12:03:33 2024
 
 @author: Jasper Bär
+"""
+
+"""
+This script reads the input and output paths from the YAML config, decompresses 
+the raw DPA .gz archives into extracted text files, loads the extracted article 
+records into a single DataFrame, and saves them as one CSV that serves as the 
+input for the next processing step.
 """
 
 import yaml
@@ -24,17 +31,7 @@ def main():
     decompress_files(raw_path, extracted_path)
     df = load_articles_to_dataframe(extracted_path)
     
-    # Check if debug mode is active in the config file
-    DEBUG = bool(config.get('debug_mode'))
-    DEBUG_ROWS = int(config.get('debug_rows', 1000))
-    
-    if DEBUG:
-        print(f"\n--- ⚠️  DEBUG MODE ACTIVE: Subsetting to the first {DEBUG_ROWS} raw articles. ---\n")
-        df = df.head(DEBUG_ROWS)
-
     if not df.empty:
-        print(f"{DEBUG_ROWS}")
-        print(f"{DEBUG}")
         print(f"{len(df)}")
         print(f"Saving data to {output_csv_path}...")
         df.to_csv(output_csv_path, index=False)

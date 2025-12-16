@@ -11,7 +11,6 @@ from src.ecb_scraper import ECBScraper
 
 def main():
     """
-    Main entry point for the application.
     Loads configuration, instantiates the scraper, and runs it.
     """
     print("--- Starting ECB Press Conference Scraper ---")
@@ -21,7 +20,7 @@ def main():
         with open('config/ecb_scraper.yaml', 'r') as f:
             config = yaml.safe_load(f)
     except FileNotFoundError:
-        print("Error: 'config/config.yaml' not found. Please ensure the file exists in the correct location.")
+        print("Error: 'ecb_scraper.yaml' not found. Please ensure the file exists in the correct location.")
         return
     
     output_dir = os.path.dirname(config.get("output_path", "data/"))
@@ -33,7 +32,6 @@ def main():
     scraper.run()
     
     print("--- Scraper finished ---")
-
 
 if __name__ == "__main__":
     main()

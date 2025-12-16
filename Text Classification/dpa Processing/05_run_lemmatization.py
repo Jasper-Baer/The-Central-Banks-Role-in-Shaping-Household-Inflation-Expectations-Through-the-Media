@@ -5,6 +5,13 @@ Created on Mon Aug 25 21:49:58 2025
 @author: Jasper Bär
 """
 
+"""
+This script loads the final cleaned articles from Stage 4, split each article 
+text into German sentences, then run TextStemmer on the sentences (in chunks) 
+to tokenize and stem them. Save the sentence-level dataset with tokens as a CSV, 
+and save a stem-to-original mapping as a JSON file.
+"""
+
 import yaml
 import os
 import pandas as pd

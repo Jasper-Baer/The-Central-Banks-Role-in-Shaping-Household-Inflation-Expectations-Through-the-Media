@@ -10,8 +10,8 @@ import re
 
 def count_names(text, word_count, names_list):
     
-    '''This function computes the ratio of the occurrence of names to the
-    total word count (excluding numbers) within a given text.'''
+    """This function computes the ratio of the occurrence of names to the
+    total word count (excluding numbers) within a given text."""
     
     words = re.findall(r'\b\w+\b', text)
     word_counts = Counter(words)

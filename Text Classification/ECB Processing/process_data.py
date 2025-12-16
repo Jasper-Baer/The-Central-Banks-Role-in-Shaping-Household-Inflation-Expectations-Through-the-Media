@@ -22,7 +22,7 @@ def main():
         with open('config/processing_rules.yaml', 'r') as f:
 
             config = yaml.safe_load(f)
-            input_path = config.get('output_path', 'data/press_conferences.json') # Use scraper output as input
+            input_path = config.get('output_path', 'data/press_conferences.json')
             processed_output_path = 'data/ECB_sents_prepared.xlsx'
 
         with open('config/processing_rules.yaml', 'r') as f:
@@ -59,7 +59,6 @@ def main():
     press_sents_df.to_excel(processed_output_path, index=False)
     
     print("--- Pipeline Finished Successfully ---")
-
 
 if __name__ == "__main__":
     main()

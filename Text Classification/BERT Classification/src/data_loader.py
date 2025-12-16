@@ -1,5 +1,11 @@
 # -*- coding: utf-8 -*-
 """
+Created on Wed Sep 22 15:12:23 2024
+
+@author: Jasper Bär
+"""
+
+"""
 This module handles all data loading and preprocessing for the BERT model.
 It takes a pandas DataFrame and converts it into PyTorch DataLoaders suitable
 for training, evaluation, and prediction.

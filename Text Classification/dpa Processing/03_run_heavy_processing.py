@@ -5,6 +5,14 @@ Created on Mon Aug 11 12:28:28 2025
 @author: Jasper Bär
 """
 
+"""
+This script loads the Stage 2 cleaned CSV, parse the timestamps,then run the 
+main processing step via DpaProcessor using the rules in dpa_rules.yaml. 
+This stage does the stricter filtering and deduplication (including more 
+aggressive text-based cleanup) and writes the resulting candidate set to the 
+Stage 3 CSV for final polishing.
+"""
+
 import yaml
 import os
 import pandas as pd

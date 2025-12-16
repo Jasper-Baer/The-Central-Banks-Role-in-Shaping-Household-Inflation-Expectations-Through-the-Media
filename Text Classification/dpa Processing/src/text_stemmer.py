@@ -5,8 +5,8 @@ Created on Wed Aug 27 21:30:08 2025
 @author: Jasper Bär
 
 This module contains the TextLemmatizer class for advanced NLP preprocessing,
-including cleaning, tokenizing, and stemming of German text.
-This logic is adapted from the original prepare_text class in PR_index_supp.py.
+including cleaning, tokenizing, and stemming of German text. This logic is 
+adapted from the original prepare_text class in PR_index_supp.py.
 """
 
 import re

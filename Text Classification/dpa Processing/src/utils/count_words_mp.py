@@ -9,7 +9,7 @@ import re
 
 def count_words_mp(text):
     
-    '''This function calculates the number of words in a text.'''
+    """This function calculates the number of words in a text."""
     
     # remove each occurence of the quotation marks ' and `
     text = re.sub(r"['`]", r'', text)

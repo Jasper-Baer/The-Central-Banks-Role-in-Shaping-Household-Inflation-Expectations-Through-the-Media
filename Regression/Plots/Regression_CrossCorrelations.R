@@ -1,4 +1,10 @@
 ################################################################################
+# This script computes correlations and cross-correlations between (i) inflation,
+# monetary policy, and output variables and (ii) news- and ECB-communication text
+# indicators. It outputs LaTeX tables (correlations, max CCF) and saves CCF plots.
+################################################################################
+
+################################################################################
 # Libraries
 ################################################################################
 library("readxl")
@@ -20,21 +26,23 @@ library("kableExtra")
 
 #####################################################################################
 
+# Load data
 # data = read_excel('D:/Studium/PhD/Github/Single-Author/Code/Regression/Regession_data_monthly_2_processed_inf.xlsx')
 # data = data.frame(data)
 
 data = read_excel('D:/Studium/PhD/Github/Single-Author/Code/Regression/Regession_data_monthly_2_processed_ECB_2_og.xlsx')
 data = data.frame(data)
 
+# Sample start date
 START_DATE <- as.Date("2002-01-01")
 
+# Parse date column and filter sample window
 data$time <- as.Date(strptime(data$time, "%Y-%m-%d"))
 data <- data |> dplyr::filter(time >= START_DATE)
 
+# Identify numeric columns and scale them, excluding binary variables
 numeric_columns <- sapply(data, is.numeric)
-
 dont_scale_names = c("draghi", "negative", "trichet", "whatever", "Unmon")
-
 numeric_columns[dont_scale_names] <- FALSE
 data[numeric_columns] <- scale(data[numeric_columns])
 
@@ -44,15 +52,15 @@ data[numeric_columns] <- scale(data[numeric_columns])
 
 ################################################################################
 
+# If TRUE, correlations use first differences of the reference variables
 use_first_differences <- FALSE
 #use_first_differences <- TRUE
 
+# LaTeX labels for variables used in tables/plots
 name_mapping <- c(
-  
   "News.Inflation.Inc." = "$\\mathrm{News \\ Inflation}_t^{\\text{Increasing}}$",
   "News.Inflation.Dec." = "$\\mathrm{News \\ Inflation}_t^{\\text{Decreasing}}$",
   "News.Inflation.Direction.Index" = "$\\mathrm{News \\ Inflation}_t^{\\text{Direction}}$",
-  
   "News.Inflation.Pos." = "$\\mathrm{News \\ Inflation}_t^{\\text{Positive}}$",
   "News.Inflation.Neg." = "$\\mathrm{News \\ Inflation}_t^{\\text{Negative}}$",
   "News.Inflation.Sentiment.Index" = "$\\mathrm{News \\ Inflation}_t^{\\text{Sentiment}}$",
@@ -60,7 +68,6 @@ name_mapping <- c(
   "News.Monetary.Quote.Hawkish" = "$\\mathrm{News \\ MP}_t^{\\text{Quote,Hawkish}}$",
   "News.Monetary.Quote.Dovish" = "$\\mathrm{News \\ MP}_t^{\\text{Quote,Dovish}}$",
   "News.Monetary.Quote.Index" = "$\\mathrm{News \\ MP}_t^{\\text{Quote,Stance}}$",
-  
   "News.Monetary.Quote.Pos." = "$\\mathrm{News \\ MP}_t^{\\text{Quote,Positive}}$",
   "News.Monetary.Quote.Neg." = "$\\mathrm{News \\ MP}_t^{\\text{Quote,Negative}}$",
   "News.Monetary.Quote.Sentiment.Index" = "$\\mathrm{News \\ MP}_t^{\\text{Quote,Sentiment}}$",
@@ -68,11 +75,10 @@ name_mapping <- c(
   "News.Monetary.Non.Quote.Hawkish" = "$\\mathrm{News \\ MP}_t^{\\text{NoQuote,Hawkish}}$",
   "News.Monetary.Non.Quote.Dovish" = "$\\mathrm{News \\ MP}_t^{\\text{NoQuote,Dovish}}$",
   "News.Monetary.Non.Quote.Index" = "$\\mathrm{News \\ MP}_t^{\\text{NoQuote,Stance}}$",
-  
   "News.Monetary.Non.Quote.Pos." = "$\\mathrm{News \\ MP}_t^{\\text{NoQuote,Positive}}$",
   "News.Monetary.Non.Quote.Neg." = "$\\mathrm{News \\ MP}_t^{\\text{NoQuote,Negative}}$",
   "News.Monetary.Non.Quote.Sentiment.Index" = "$\\mathrm{News \\ MP}_t^{\\text{NoQuote,Sentiment}}$",
-
+  
   "ECB.PC.Inflation.Inc." = "$\\mathrm{ECB \\ Inflation_t^{Increasing}}$",
   "ECB.PC.Inflation.Dec." = "$\\mathrm{ECB \\ Inflation_t^{Decreasing}}$",
   "ECB.PC.Inflation.Index"= "$\\mathrm{ECB \\ Inflation_t^{Outlook}}$",
@@ -84,63 +90,54 @@ name_mapping <- c(
   "ECB.PC.Monetary.Haw."  = "$\\mathrm{ECB \\ MP_t^{Hawkish}}$",
   "ECB.PC.Monetary.Dov."  = "$\\mathrm{ECB \\ MP_t^{Dovish}}$",
   "ECB.PC.Monetary.Index" = "$\\mathrm{ECB \\ MP_t^{Stance}}$"
-
 )
 
+# Group structure for (i) correlation tables and (ii) cross-correlation analysis
 groups <- list(
   "Inflation News" = c(
     "News.Inflation.Inc.",
-   # "News.Inflation.Stable",
     "News.Inflation.Dec.",
     "News.Inflation.Direction.Index",
     "News.Inflation.Pos.",
-   # "News.Inflation.Neu.",
     "News.Inflation.Neg.",
     "News.Inflation.Sentiment.Index"
   ),
   "Monetary Policy News - Quotes" = c(
     "News.Monetary.Quote.Hawkish",
- #   "News.Monetary.Quote.Stable",     
     "News.Monetary.Quote.Dovish",
-"News.Monetary.Quote.Index",
-"News.Monetary.Quote.Pos.",
-#"News.Monetary.Quote.Neu.",
-"News.Monetary.Quote.Neg.",
-"News.Monetary.Quote.Sentiment.Index"
+    "News.Monetary.Quote.Index",
+    "News.Monetary.Quote.Pos.",
+    "News.Monetary.Quote.Neg.",
+    "News.Monetary.Quote.Sentiment.Index"
   ),
   "Monetary Policy News - Non-Quotes" = c(
     "News.Monetary.Non.Quote.Hawkish",
- #   "News.Monetary.Non.Quote.Stable",  
     "News.Monetary.Non.Quote.Dovish",
-"News.Monetary.Non.Quote.Index",
+    "News.Monetary.Non.Quote.Index",
     "News.Monetary.Non.Quote.Pos.",
- #   "News.Monetary.Non.Quote.Neu.",
     "News.Monetary.Non.Quote.Neg.",
-"News.Monetary.Non.Quote.Sentiment.Index"
+    "News.Monetary.Non.Quote.Sentiment.Index"
   ),
   "ECB Inflation Outlook" = c(
     "ECB.PC.Inflation.Inc.",
-  #  "ECB.PC.Inflation.Stable",
     "ECB.PC.Inflation.Dec.",
-  "ECB.PC.Inflation.Index"
+    "ECB.PC.Inflation.Index"
   ),
-
-"ECB Monetary Stance" = c(
- "ECB.PC.Monetary.Haw.",
-#  "ECB.PC.Monetary.Stab.",
-  "ECB.PC.Monetary.Dov.",
-"ECB.PC.Monetary.Index"
-),
-
-"ECB Economic Outlook" = c(
-  "ECB.PC.Outlook.Up",
-  #  "ECB.PC.Monetary.Stab.",
-  "ECB.PC.Outlook.Down",
-  "ECB.PC.Outlook.Index"
+  "ECB Monetary Stance" = c(
+    "ECB.PC.Monetary.Haw.",
+    "ECB.PC.Monetary.Dov.",
+    "ECB.PC.Monetary.Index"
+  ),
+  "ECB Economic Outlook" = c(
+    "ECB.PC.Outlook.Up",
+    "ECB.PC.Outlook.Down",
+    "ECB.PC.Outlook.Index"
+  )
 )
 
-)
-
+# Shift a series by n periods:
+#  n > 0  => lag (move series right)
+#  n < 0  => lead (move series left)
 shift <- function(x, n) {
   if (n > 0) {
     c(rep(NA, n), x[1:(length(x) - n)])
@@ -151,10 +148,11 @@ shift <- function(x, n) {
   }
 }
 
-
+# Correlations at t, t-1 (lag), t+1 (lead)
 shifts <- c(0, 1, -1)
 shift_labels <- c("Contemporaneous", "Lag 1", "Lead 1")
 
+# Store correlation results for each shift setting
 all_correlation_results <- list()
 
 for (i in seq_along(shifts)) {
@@ -172,10 +170,13 @@ for (i in seq_along(shifts)) {
   for (grp in names(groups)) {
     vars <- groups[[grp]]
     for (var in vars) {
-      # pick reference variable for correlation (unchanged)
+      
+      # Choose the reference variable depending on the group:
+      # - inflation related groups: HICP inflation
+      # - monetary policy related groups: ECB MRO rate
+      # - economic outlook: output gap proxy
       if (grp == "Inflation News" || grp == "ECB Inflation Outlook") {
         ref_var <- if (use_first_differences) "German.Inflation.Year.on.Year.difference" else "German.Inflation.Year.on.Year"
-      #  ref_var <- if (use_first_differences) "Household.Inflation.Expectations.difference" else "Household.Inflation.Expectations"
       } else if (grp == "Monetary Policy News - Quotes" || grp == "Monetary Policy News - Non-Quotes" || grp == "ECB Monetary Stance") {
         ref_var <- if (use_first_differences) "ECB.MRO.difference" else "ECB.MRO"
       } else if (grp == "ECB Economic Outlook") {
@@ -184,17 +185,17 @@ for (i in seq_along(shifts)) {
         ref_var <- NA
       }
       
-      # correlation (unchanged)
+      # Correlation between shifted reference series and indicator series
       if (!is.na(ref_var) && var %in% names(data) && ref_var %in% names(data)) {
         corr_value <- cor(shift(data[[ref_var]], shift_val), data[[var]], use = "complete.obs")
       } else {
         corr_value <- NA
       }
       
-      # --- NEW: use your existing name_mapping for the News/ECB variable
+      # Use LaTeX label for the indicator variable 
       mapped <- if (var %in% names(name_mapping)) name_mapping[[var]] else var
       
-      # --- NEW: reference label (same wording you’re using in your outputs)
+      # Reference label used in the left-hand side of the table
       ref_label <- switch(
         grp,
         "Inflation News"               = if (use_first_differences) "$\\Delta$ HICP Inflation" else "HICP Inflation",
@@ -206,13 +207,13 @@ for (i in seq_along(shifts)) {
         grp
       )
       
-      left_cell <- paste0(ref_label, " \\& ", mapped)  # keep escape=FALSE in kable()
+      left_cell <- paste0(ref_label, " \\& ", mapped)
       
       correlation_results <- rbind(
         correlation_results,
         data.frame(
           Group = grp,
-          Variable = left_cell,                  # <- uses your mapping
+          Variable = left_cell,
           Correlation = round(corr_value, 3),
           stringsAsFactors = FALSE
         )
@@ -223,22 +224,25 @@ for (i in seq_along(shifts)) {
   all_correlation_results[[shift_label]] <- correlation_results
 }
 
+# Build one LaTeX correlation table per shift setting
 for (shift_label in names(all_correlation_results)) {
   
   correlation_results <- all_correlation_results[[shift_label]]
   
+  # Replace NA correlations with empty strings for LaTeX output
   correlation_results$Correlation <- ifelse(is.na(correlation_results$Correlation), "", correlation_results$Correlation)
   
   current_row <- 1
   
-latex_table_final <- correlation_results %>%
-  select(Variable, Correlation) %>%
-  kable(format = "latex", booktabs = TRUE,
-        caption = paste("Correlation between Inflation/Monetary Policy Variables and News Indicators -", shift_label),
-        align = 'l r',                    # <— was 'lc'
-        escape = FALSE, row.names = FALSE) %>%
-  kable_styling(latex_options = c("hold_position"), font_size = 10)
+  latex_table_final <- correlation_results %>%
+    select(Variable, Correlation) %>%
+    kable(format = "latex", booktabs = TRUE,
+          caption = paste("Correlation between Inflation/Monetary Policy Variables and News Indicators -", shift_label),
+          align = 'l r',
+          escape = FALSE, row.names = FALSE) %>%
+    kable_styling(latex_options = c("hold_position"), font_size = 10)
   
+  # Add group separators (bold group headers) based on 'groups' list
   unique_groups <- unique(correlation_results$Group)
   
   for (grp in unique_groups) {
@@ -261,15 +265,17 @@ latex_table_final <- correlation_results %>%
 }
 
 ################################################################################
+# Quick sanity plots
+################################################################################
 
 plot(data$time, data$Reuter.Poll.Forecast,
-     type = "l", 
-     xlab = "Date", 
+     type = "l",
+     xlab = "Date",
      ylab = "Values",
-     col = "blue", 
+     col = "blue",
      main = "Time Series of News Monetary Quote Hawkish and ECB Monetary Index")
 
-lines(data$time, data$German.Inflation.Year.on.Year, col = "red") 
+lines(data$time, data$German.Inflation.Year.on.Year, col = "red")
 
 legend("topright", legend = c("News Monetary Quote Hawkish", "ECB Monetary Index"),
        col = c("blue", "red"), lty = 1)
@@ -277,13 +283,13 @@ legend("topright", legend = c("News Monetary Quote Hawkish", "ECB Monetary Index
 ################################################################################
 
 plot(data$time, data$Reuter.Poll.Forecast,
-     type = "l", 
-     xlab = "Date", 
+     type = "l",
+     xlab = "Date",
      ylab = "Values",
-     col = "blue", 
+     col = "blue",
      main = "Time Series of News Monetary Quote Hawkish and ECB Monetary Index")
 
-lines(data$time, data$News.Inflation.Direction.Index, col = "red") 
+lines(data$time, data$News.Inflation.Direction.Index, col = "red")
 
 legend("topright", legend = c("News Monetary Quote Hawkish", "ECB Monetary Index"),
        col = c("blue", "red"), lty = 1)
@@ -291,10 +297,10 @@ legend("topright", legend = c("News Monetary Quote Hawkish", "ECB Monetary Index
 ###
 
 plot(data$time, data$Reuter.Poll.Forecast,
-     type = "l", 
-     xlab = "Date", 
+     type = "l",
+     xlab = "Date",
      ylab = "Values",
-     col = "blue", 
+     col = "blue",
      main = "Time Series of News Monetary Quote Hawkish and ECB Monetary Index")
 
 lines(data$time, data$News.Inflation.Inc., col = "red") #
@@ -305,34 +311,35 @@ legend("topright", legend = c("News Monetary Quote Hawkish", "ECB Monetary Index
 ###
 
 plot(data$time, data$Reuter.Poll.Forecast,
-     type = "l", 
-     xlab = "Date", 
+     type = "l",
+     xlab = "Date",
      ylab = "Values",
-     col = "blue", 
+     col = "blue",
      main = "Time Series of News Monetary Quote Hawkish and ECB Monetary Index")
 
-lines(data$time, data$News.Inflation.Dec., col = "red") 
+lines(data$time, data$News.Inflation.Dec., col = "red")
 
 legend("topright", legend = c("News Monetary Quote Hawkish", "ECB Monetary Index"),
        col = c("blue", "red"), lty = 1)
-
 
 ################################################################################
 
 plot(data$time, data$Reuter.Poll.Forecast,
-     type = "l", 
-     xlab = "Date", 
+     type = "l",
+     xlab = "Date",
      ylab = "Values",
-     col = "blue", 
+     col = "blue",
      main = "Time Series of News Monetary Quote Hawkish and ECB Monetary Index")
 
-lines(data$time, data$German.Inflation.Balanced, col = "red") 
+lines(data$time, data$German.Inflation.Balanced, col = "red")
 
 legend("topright", legend = c("News Monetary Quote Hawkish", "ECB Monetary Index"),
        col = c("blue", "red"), lty = 1)
 
 ################################################################################
 ################################################################################
+################################################################################
+# Max absolute cross-correlation within +/- max_lag (summary table)
 ################################################################################
 
 ccf_results <- data.frame(
@@ -343,7 +350,7 @@ ccf_results <- data.frame(
   stringsAsFactors = FALSE
 )
 
-max_lag <- 3  
+max_lag <- 3
 
 for (grp in names(groups)) {
   vars <- groups[[grp]]
@@ -382,7 +389,7 @@ for (grp in names(groups)) {
   }
 }
 
-
+# Format CCF table 
 ccf_results$Max_CCF <- ifelse(is.na(ccf_results$Max_CCF), "", ccf_results$Max_CCF)
 ccf_results$Lag_at_Max <- ifelse(is.na(ccf_results$Lag_at_Max), "", ccf_results$Lag_at_Max)
 
@@ -393,7 +400,7 @@ ccf_table <- ccf_results %>%
         align = 'lcc', escape = FALSE, row.names = FALSE) %>%
   kable_styling(latex_options = c("hold_position"), font_size = 10)
 
-
+# Add group headers in the CCF table
 current_row <- 1
 for (grp in unique(ccf_results$Group)) {
   n_rows <- nrow(ccf_results %>% filter(Group == grp))
@@ -405,6 +412,7 @@ for (grp in unique(ccf_results$Group)) {
 
 cat(ccf_table)
 
+# Detailed CCF plots for inflation news indicators vs HICP inflation
 ref_var <- data$German.Inflation.Year.on.Year
 for (var in groups[["Inflation News"]]) {
   if (var %in% names(data)) {
@@ -412,6 +420,8 @@ for (var in groups[["Inflation News"]]) {
   }
 }
 
+################################################################################
+# Export CCF plots to PNG
 ################################################################################
 
 use_first_differences      <- FALSE
@@ -421,8 +431,10 @@ out_dir <- "D:/Studium/PhD/Github/Single-Author/First Draw/Single Author Text/cc
 
 if (!dir.exists(out_dir)) dir.create(out_dir, recursive = TRUE, showWarnings = FALSE)
 
+# Make filenames safe for Windows and LaTeX
 safe_name <- function(x) gsub("[^A-Za-z0-9._-]", "_", x)
 
+# LaTeX label fallback for plot annotation 
 pretty_var <- function(v) if (!is.null(name_mapping[[v]])) name_mapping[[v]] else v
 
 for (grp in names(groups)) {
@@ -431,6 +443,7 @@ for (grp in names(groups)) {
   for (var in vars) {
     if (!(var %in% names(data))) next
     
+    # Choose reference series for CCF plots (can differ for inflation vs MRO)
     if (grp %in% c("Inflation News", "ECB Inflation Outlook")) {
       ref_var <- if (use_first_differences) "German.Inflation.Year.on.Year.difference" else "German.Inflation.Year.on.Year"
     } else if (grp %in% c("Monetary Policy News - Quotes", "Monetary Policy News - Non-Quotes", "ECB Monetary Stance")) {
@@ -442,9 +455,9 @@ for (grp in names(groups)) {
     }
     
     if (is.na(ref_var) || !(ref_var %in% names(data))) next
-
+    
     fn <- file.path(out_dir, paste0("ccf_", safe_name(ref_var), "_vs_", safe_name(var), ".png"))
-
+    
     png(fn, width = 1200, height = 800, res = 150)
     ccf(
       x = data[[ref_var]],

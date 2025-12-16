@@ -22,7 +22,7 @@ from typing import Optional, Dict, Any, List
 
 class ECBScraper:
     """
-    A scraper for ECB press conferences.
+    A scraper for the ECB press conferences.
     
     This class handles finding conference URLs, parsing each page,
     and saving the data.
@@ -30,7 +30,10 @@ class ECBScraper:
 
     def __init__(self, config: Dict[str, Any]):
         """
-        Initializes the scraper with configuration.
+        Initializes the processor with a dictionary of rules.
+        
+        Args:
+            rules (dict): A dictionary loaded from ECB_scraper.yaml.
         """
         self.base_url = config['base_url']
         self.output_path = config['output_path']
@@ -66,7 +69,7 @@ class ECBScraper:
                     # Scroll page down to load correctly
                     actions.move_to_element(element).perform()
                     
-                    # A small delay can help stabilize interactions
+                    # Small delay to help stabilize interactions
                     time.sleep(0.2)
                     
                     links = element.find_elements(By.TAG_NAME, 'a')
